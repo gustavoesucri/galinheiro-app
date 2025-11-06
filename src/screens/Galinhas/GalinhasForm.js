@@ -8,26 +8,41 @@ import Button from '../../components/Button'
 import Input from '../../components/Input'
 import SwitchField from '../../components/SwitchField'
 import ChoiceButtonGroup from '../../components/ChoiceButtonGroup'
-// import SliderInput from '../../components/SliderInput'
 import NumberInput from '../../components/NumberInput'
 import SelectField from '../../components/SelectField'
 
+// Validação Yup
+import { yupResolver } from '@hookform/resolvers/yup'
+import { galinhaSchema } from '../../schemas/galinhaSchema'
+
 export default function GalinhasForm({ navigation }) {
-  const { control, handleSubmit, watch } = useForm({
+  // Configuração do react-hook-form com Yup
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { errors }, // contém os erros do formulário
+  } = useForm({
+    resolver: yupResolver(galinhaSchema),
     defaultValues: {
       nome: '',
       saude: '',
-      ovosHoje: '',
+      ovosHoje: 0,
       emQuarentena: false,
-      local: '',
+      local: 'galpao', // pré-selecionado como Galpão
     },
   })
 
   const emQuarentena = watch('emQuarentena')
 
+  // Função chamada ao enviar o formulário
   const onSubmit = (data) => {
     console.log('📦 Dados enviados:', data)
     navigation.goBack()
+  }
+
+  const onError = (errors) => {
+    console.log('❌ Erros de validação:', errors)
   }
 
   return (
@@ -36,20 +51,17 @@ export default function GalinhasForm({ navigation }) {
         Cadastrar / Atualizar Galinha
       </Text>
 
-      {/* Nome */}
+      {/* Nome da galinha */}
       <Controller
         control={control}
         name="nome"
-        rules={{ required: 'Nome é obrigatório' }}
         render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <>
-            <Input
-              label="Nome da Galinha"
-              value={value}
-              onChangeText={onChange}
-            />
-            {error && <Text style={styles.errorText}>{error.message}</Text>}
-          </>
+          <Input
+            label="Nome da Galinha"
+            value={value}
+            onChangeText={onChange}
+            error={error?.message} // mostra erro se houver
+          />
         )}
       />
 
@@ -57,7 +69,7 @@ export default function GalinhasForm({ navigation }) {
       <Controller
         control={control}
         name="saude"
-        render={({ field: { onChange, value } }) => (
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
           <ChoiceButtonGroup
             label="Estado de Saúde"
             options={[
@@ -67,22 +79,23 @@ export default function GalinhasForm({ navigation }) {
             ]}
             value={value}
             onChange={onChange}
+            error={error?.message} // mensagem de validação
           />
         )}
       />
 
-      { }
-
+      {/* Ovos postos hoje */}
       <Controller
         control={control}
         name="ovosHoje"
-        render={({ field: { value, onChange } }) => (
+        render={({ field: { value, onChange }, fieldState: { error } }) => (
           <NumberInput
             label="Ovos postos hoje"
             value={value || 0}
             onChange={onChange}
             min={0}
             max={2}
+            error={error?.message} // mensagem de validação
           />
         )}
       />
@@ -91,21 +104,21 @@ export default function GalinhasForm({ navigation }) {
       <Controller
         control={control}
         name="emQuarentena"
-        render={({ field: { onChange, value } }) => (
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
           <SwitchField
             label="Está em quarentena?"
             value={value}
             onValueChange={onChange}
+            error={error?.message} // mensagem de validação
           />
         )}
       />
 
-      {/* Local */}
+      {/* Localização */}
       <Controller
         control={control}
         name="local"
-        defaultValue="galpao" // pré-selecionado como Galpão
-        render={({ field: { onChange, value } }) => (
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
           <SelectField
             label="Local"
             value={value}
@@ -115,11 +128,13 @@ export default function GalinhasForm({ navigation }) {
               { label: 'Campo', value: 'campo' },
               { label: 'Quarentena', value: 'quarentena' },
             ]}
+            error={error?.message} // mensagem de validação
           />
         )}
       />
 
-      <Button onPress={handleSubmit(onSubmit)}>Salvar</Button>
+      {/* Botão de salvar */}
+      <Button onPress={handleSubmit(onSubmit, onError)}>Salvar</Button>
     </ScrollView>
   )
 }
@@ -129,17 +144,6 @@ const styles = StyleSheet.create({
     paddingBottom: 32,
   },
   title: {
-    marginBottom: 16,
-  },
-  errorText: {
-    color: colors.error,
-    fontSize: 12,
-    marginBottom: 8,
-  },
-  switchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
     marginBottom: 16,
   },
 })
