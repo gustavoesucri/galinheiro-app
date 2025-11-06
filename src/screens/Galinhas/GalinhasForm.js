@@ -1,4 +1,3 @@
-import React from 'react'
 import { View, StyleSheet, ScrollView } from 'react-native'
 import { Text } from 'react-native-paper'
 import { useForm, Controller } from 'react-hook-form'
@@ -7,7 +6,11 @@ import { layout, typography, colors } from '../../styles/theme'
 // Componentes reutilizáveis
 import Button from '../../components/Button'
 import Input from '../../components/Input'
-import Switch from '../../components/Switch'
+import SwitchField from '../../components/SwitchField'
+import ChoiceButtonGroup from '../../components/ChoiceButtonGroup'
+// import SliderInput from '../../components/SliderInput'
+import NumberInput from '../../components/NumberInput'
+import SelectField from '../../components/SelectField'
 
 export default function GalinhasForm({ navigation }) {
   const { control, handleSubmit, watch } = useForm({
@@ -55,50 +58,63 @@ export default function GalinhasForm({ navigation }) {
         control={control}
         name="saude"
         render={({ field: { onChange, value } }) => (
-          <Input
+          <ChoiceButtonGroup
             label="Estado de Saúde"
+            options={[
+              { label: 'Boa', value: 'Boa' },
+              { label: 'Fragilizada', value: 'Fragilizada' },
+              { label: 'Adoecida', value: 'Adoecida' },
+            ]}
             value={value}
-            onChangeText={onChange}
-            placeholder="Ex: Boa, Fragilizada, Adoecida..."
+            onChange={onChange}
           />
         )}
       />
 
-      {/* Ovos postos hoje */}
+      { }
+
       <Controller
         control={control}
         name="ovosHoje"
-        render={({ field: { onChange, value } }) => (
-          <Input
+        render={({ field: { value, onChange } }) => (
+          <NumberInput
             label="Ovos postos hoje"
-            keyboardType="numeric"
-            value={value}
-            onChangeText={onChange}
+            value={value || 0}
+            onChange={onChange}
+            min={0}
+            max={2}
           />
         )}
       />
 
       {/* Quarentena */}
-      <View style={styles.switchContainer}>
-        <Text style={typography.subtitle}>Está em quarentena?</Text>
-        <Controller
-          control={control}
-          name="emQuarentena"
-          render={({ field: { onChange, value } }) => (
-            <Switch value={value} onValueChange={onChange} />
-          )}
-        />
-      </View>
+      <Controller
+        control={control}
+        name="emQuarentena"
+        render={({ field: { onChange, value } }) => (
+          <SwitchField
+            label="Está em quarentena?"
+            value={value}
+            onValueChange={onChange}
+          />
+        )}
+      />
 
       {/* Local */}
       <Controller
         control={control}
         name="local"
+        defaultValue="galpao" // pré-selecionado como Galpão
         render={({ field: { onChange, value } }) => (
-          <Input
-            label="Local (Galpão, Campo, Quarentena)"
+          <SelectField
+            label="Local"
             value={value}
-            onChangeText={onChange}
+            onValueChange={onChange}
+            options={[
+              { label: 'Galpão', value: 'galpao' },
+              { label: 'Campo', value: 'campo' },
+              { label: 'Quarentena', value: 'quarentena' },
+            ]}
           />
         )}
       />
