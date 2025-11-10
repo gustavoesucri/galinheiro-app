@@ -1,11 +1,12 @@
-import { StatusBar } from 'react-native'
+import { ActivityIndicator, StatusBar } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { Provider } from 'react-redux'
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper'
 
-import { store } from './src/redux/store'
+import { persistor, store } from './src/redux/store'
 import AppNavigator from './src/navigation/AppNavigator'
 import { colors } from './src/styles/theme'
+import { PersistGate } from 'redux-persist/integration/react'
 
 
 // integração da paleta de cores ao React Native Paper
@@ -29,6 +30,7 @@ const paperTheme = {
 export default function App() {
   return (
     <Provider store={store}>
+      <PersistGate loading={<ActivityIndicator size="large" />} persistor={persistor}>
       <PaperProvider theme={paperTheme}>
         <NavigationContainer>
           <StatusBar
@@ -38,6 +40,7 @@ export default function App() {
           <AppNavigator />
         </NavigationContainer>
       </PaperProvider>
+      </PersistGate>
     </Provider>
   )
 }
