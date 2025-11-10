@@ -15,6 +15,11 @@ import SelectField from '../../components/SelectField'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { galinhaSchema } from '../../schemas/galinhaSchema'
 
+// Redux
+import { useDispatch, useSelector } from 'react-redux'
+import { adicionarGalinha } from '../../redux/slices/galinhasSlice'
+
+
 export default function GalinhasForm({ navigation }) {
   // Configuração do react-hook-form com Yup
   const {
@@ -35,11 +40,18 @@ export default function GalinhasForm({ navigation }) {
 
   const emQuarentena = watch('emQuarentena')
 
+ const dispatch = useDispatch()
+
+ const galinhas = useSelector((state) => state.galinhas.lista)
+
+ console.log('🐔 Galinhas na store:', galinhas)
+  
   // Função chamada ao enviar o formulário
   const onSubmit = (data) => {
-    console.log('📦 Dados enviados:', data)
-    navigation.goBack()
-  }
+  console.log('📦 Dados enviados:', data)
+  dispatch(adicionarGalinha(data))
+  navigation.goBack()
+}
 
   const onError = (errors) => {
     console.log('❌ Erros de validação:', errors)

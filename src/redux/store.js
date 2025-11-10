@@ -1,6 +1,5 @@
-// src/redux/store.js
 import { configureStore } from '@reduxjs/toolkit'
-import galinhasReducer from './galinhasSlice'
+import galinhasReducer from './slices/galinhasSlice'
 
 export const store = configureStore({
   reducer: {
