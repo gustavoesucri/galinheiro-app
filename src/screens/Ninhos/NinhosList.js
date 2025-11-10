@@ -36,7 +36,11 @@ export default function NinhosList() {
       <FlatList
         data={ninhos}
         keyExtractor={(item) => item.id.toString()}
-        ListEmptyComponent={<Text style={{ textAlign: 'center', marginTop: 20, color: colors.textSecondary }}>Nenhum ninho cadastrado ainda 🪺</Text>}
+        ListEmptyComponent={
+          <Text style={{ textAlign: 'center', marginTop: 20, color: colors.textSecondary }}>
+            Nenhum ninho cadastrado ainda 🪺
+          </Text>
+        }
         renderItem={({ item }) => (
           <Card style={layout.card}>
             <Card.Title title={item.identificacao} />
@@ -47,16 +51,27 @@ export default function NinhosList() {
               <Text style={typography.body}>
                 Última limpeza: {formatDate(item.ultima_limpeza)} ({diasDesdeLimpeza(item.ultima_limpeza)} dias atrás)
               </Text>
-              {item.galinha ? <Text style={typography.body}>Galinha: {item.galinha}</Text> : null}
+              <Text style={typography.body}>
+                Galinha: {item.galinha ? item.galinha : '(não adicionada)'}
+              </Text>
+              <Text style={typography.body}>
+                Observações: {item.observacoes ? item.observacoes : '(sem observações)'}
+              </Text>
             </Card.Content>
             <Card.Actions>
-              <Button mode="outlined" textColor={colors.accent} style={{ borderColor: colors.accent }} onPress={() => console.log('Editar ninho', item.id)}>
+              <Button
+                mode="outlined"
+                textColor={colors.accent}
+                style={{ borderColor: colors.accent }}
+                onPress={() => console.log('Editar ninho', item.id)}
+              >
                 <Text>Editar</Text>
               </Button>
             </Card.Actions>
           </Card>
         )}
       />
+
 
       <Button mode="contained" icon="plus" onPress={() => navigation.navigate('NinhosForm')} style={[layout.button, styles.addButton]}>
         <Text>Adicionar Ninho</Text>
