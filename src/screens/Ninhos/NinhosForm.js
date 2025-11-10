@@ -1,7 +1,8 @@
-import { ScrollView, StyleSheet } from 'react-native'
-import { Text } from 'react-native-paper'
+import React, { useEffect, useState } from 'react'
+import { ScrollView, StyleSheet, View } from 'react-native'
+import { Text, ActivityIndicator } from 'react-native-paper'
 import { useForm, Controller } from 'react-hook-form'
-import { layout, typography } from '../../styles/theme'
+import { layout, typography, colors } from '../../styles/theme'
 import Button from '../../components/Button'
 import Input from '../../components/Input'
 import SwitchField from '../../components/SwitchField'
@@ -12,12 +13,14 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { ninhosSchema } from '../../schemas/ninhosSchema'
 import { useDispatch, useSelector } from 'react-redux'
 import { adicionarNinhoThunk } from '../../redux/thunks/ninhosThunk'
+import { carregarGalinhas } from '../../redux/thunks/galinhasThunk'
 
 export default function NinhosForm({ navigation }) {
   const dispatch = useDispatch()
   const galinhas = useSelector(state => state.galinhas.lista)
+  const [loadingGalinhas, setLoadingGalinhas] = useState(true)
 
-  const { control, handleSubmit } = useForm({
+  const { control, handleSubmit, reset } = useForm({
     resolver: yupResolver(ninhosSchema),
     defaultValues: {
       identificacao: '',
@@ -29,6 +32,26 @@ export default function NinhosForm({ navigation }) {
       galinha: '',
     }
   })
+
+  useEffect(() => {
+    const fetchGalinhas = async () => {
+      await dispatch(carregarGalinhas())
+      setLoadingGalinhas(false)
+    }
+    fetchGalinhas()
+  }, [dispatch])
+
+  useEffect(() => {
+    reset({
+      identificacao: '',
+      tipo_material: 'Palha',
+      localizacao: '',
+      ocupado: false,
+      ultima_limpeza: new Date(),
+      observacoes: '',
+      galinha: '',
+    })
+  }, [galinhas, reset])
 
   const onSubmit = (data) => {
     const ninho = { id: Date.now(), ...data }
@@ -98,18 +121,27 @@ export default function NinhosForm({ navigation }) {
         )}
       />
 
-      <Controller
-        control={control}
-        name="galinha"
-        render={({ field: { onChange, value } }) => (
-          <SelectField
-            label="Galinha (opcional)"
-            value={value}
-            onValueChange={onChange}
-            options={[{ label: 'Nenhuma', value: '' }, ...galinhas.map(g => ({ label: g.nome, value: g.nome }))]}
+      <View style={{ marginVertical: 8 }}>
+        {loadingGalinhas ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 12 }}>
+            <ActivityIndicator animating size="small" color={colors.accent} />
+            <Text style={{ marginLeft: 8 }}>Carregando galinhas...</Text>
+          </View>
+        ) : (
+          <Controller
+            control={control}
+            name="galinha"
+            render={({ field: { onChange, value } }) => (
+              <SelectField
+                label="Galinha (opcional)"
+                value={value}
+                onValueChange={onChange}
+                options={[{ label: 'Nenhuma', value: '' }, ...galinhas.map(g => ({ label: g.nome, value: g.nome }))]}
+              />
+            )}
           />
         )}
-      />
+      </View>
 
       <Button onPress={handleSubmit(onSubmit)}>Salvar</Button>
     </ScrollView>
