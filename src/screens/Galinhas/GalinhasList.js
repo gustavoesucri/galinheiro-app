@@ -1,15 +1,23 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { View, FlatList, StyleSheet } from 'react-native'
 import { Card, Text, Button } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { layout, typography, colors } from '../../styles/theme'
+import { carregarGalinhas } from '../../redux/thunks/galinhasThunk'
 
 export default function GalinhasList() {
   const navigation = useNavigation()
 
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+  dispatch(carregarGalinhas())
+  }, [])
+
   // 👇 Lê as galinhas salvas no Redux (e portanto, no persist também)
   const galinhas = useSelector((state) => state.galinhas.lista)
+
 
   return (
     <View style={layout.container}>

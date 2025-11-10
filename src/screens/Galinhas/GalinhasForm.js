@@ -17,7 +17,7 @@ import { galinhaSchema } from '../../schemas/galinhaSchema'
 
 // Redux
 import { useDispatch, useSelector } from 'react-redux'
-import { adicionarGalinha } from '../../redux/slices/galinhasSlice'
+import { adicionarGalinhaThunk } from '../../redux/thunks/galinhasThunk'
 
 
 export default function GalinhasForm({ navigation }) {
@@ -44,12 +44,11 @@ export default function GalinhasForm({ navigation }) {
 
  const galinhas = useSelector((state) => state.galinhas.lista)
 
- console.log('🐔 Galinhas na store:', galinhas)
+//  console.log('🐔 Galinhas na store:', galinhas)
   
   // Função chamada ao enviar o formulário
-  const onSubmit = (data) => {
-  console.log('📦 Dados enviados:', data)
-  dispatch(adicionarGalinha(data))
+const onSubmit = (data) => {
+  dispatch(adicionarGalinhaThunk(data))
   navigation.goBack()
 }
 
