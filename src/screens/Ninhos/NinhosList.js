@@ -15,12 +15,18 @@ export default function NinhosList() {
     dispatch(carregarNinhos())
   }, [])
 
-  // Função para calcular dias desde a última limpeza
   const diasDesdeLimpeza = (data) => {
+    if (!data) return 0
+    const ultima = data instanceof Date ? data : new Date(data)
     const hoje = new Date()
-    const ultima = new Date(data)
     const diff = hoje - ultima
     return Math.floor(diff / (1000 * 60 * 60 * 24))
+  }
+
+  const formatDate = (d) => {
+    if (!d) return 'Não registrada'
+    const dateObj = d instanceof Date ? d : new Date(d)
+    return dateObj.toLocaleDateString()
   }
 
   return (
@@ -38,7 +44,9 @@ export default function NinhosList() {
               <Text style={typography.body}>Material: {item.tipo_material}</Text>
               <Text style={typography.body}>Localização: {item.localizacao}</Text>
               <Text style={typography.body}>Ocupado: {item.ocupado ? 'Sim' : 'Não'}</Text>
-              <Text style={typography.body}>Última limpeza: {new Date(item.ultima_limpeza).toLocaleDateString()} ({diasDesdeLimpeza(item.ultima_limpeza)} dias atrás)</Text>
+              <Text style={typography.body}>
+                Última limpeza: {formatDate(item.ultima_limpeza)} ({diasDesdeLimpeza(item.ultima_limpeza)} dias atrás)
+              </Text>
               {item.galinha ? <Text style={typography.body}>Galinha: {item.galinha}</Text> : null}
             </Card.Content>
             <Card.Actions>

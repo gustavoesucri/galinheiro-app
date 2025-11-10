@@ -1,39 +1,36 @@
 import { ScrollView, StyleSheet } from 'react-native'
 import { Text } from 'react-native-paper'
 import { useForm, Controller } from 'react-hook-form'
-import { layout, typography, colors } from '../../styles/theme'
-
+import { layout, typography } from '../../styles/theme'
 import Button from '../../components/Button'
 import Input from '../../components/Input'
 import SwitchField from '../../components/SwitchField'
 import SelectField from '../../components/SelectField'
-// import DatePickerField from '../../components/DatePickerField'
+import DatePickerField from '../../components/DatePickerField'
 import TextArea from '../../components/TextArea'
-
 import { yupResolver } from '@hookform/resolvers/yup'
 import { ninhosSchema } from '../../schemas/ninhosSchema'
-
 import { useDispatch, useSelector } from 'react-redux'
 import { adicionarNinhoThunk } from '../../redux/thunks/ninhosThunk'
 
 export default function NinhosForm({ navigation }) {
   const dispatch = useDispatch()
-  const galinhas = useSelector(state => state.galinhas.lista) // para opcionalmente selecionar galinha usando o ninho
+  const galinhas = useSelector(state => state.galinhas.lista)
 
   const { control, handleSubmit } = useForm({
     resolver: yupResolver(ninhosSchema),
     defaultValues: {
-  identificacao: '',
-  tipo_material: 'Palha',
-  localizacao: '',
-  ocupado: false,
-  observacoes: '',
-  galinha: '',
-}
+      identificacao: '',
+      tipo_material: 'Palha',
+      localizacao: '',
+      ocupado: false,
+      ultima_limpeza: new Date(),
+      observacoes: '',
+      galinha: '',
+    }
   })
 
   const onSubmit = (data) => {
-    // Adiciona id automático
     const ninho = { id: Date.now(), ...data }
     dispatch(adicionarNinhoThunk(ninho))
     navigation.goBack()
@@ -85,13 +82,13 @@ export default function NinhosForm({ navigation }) {
         )}
       />
 
-      {/* <Controller
+      <Controller
         control={control}
         name="ultima_limpeza"
         render={({ field: { onChange, value }, fieldState: { error } }) => (
           <DatePickerField label="Última Limpeza" date={value} onChange={onChange} error={error?.message} />
         )}
-      /> */}
+      />
 
       <Controller
         control={control}

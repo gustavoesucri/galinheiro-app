@@ -14,6 +14,10 @@ export const ninhosSchema = yup.object().shape({
     .required('Localização é obrigatória')
     .max(100, 'Máximo de 100 caracteres'),
   ocupado: yup.boolean(),
+  ultima_limpeza: yup
+    .date()
+    .required('Data da última limpeza é obrigatória')
+    .typeError('Data inválida'),
   observacoes: yup.string().max(500, 'Máximo de 500 caracteres').nullable(),
   galinha: yup.string().nullable(),
 })
