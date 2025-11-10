@@ -17,7 +17,10 @@ export default function SelectField({ label, value, onValueChange, options = [],
                 value={value}
                 items={items}
                 setOpen={setOpen}
-                setValue={onValueChange}
+                setValue={(callback) => {
+                    const val = callback(value) // executa a função interna e obtém o novo valor
+                    onValueChange(val) // envia o valor limpo pro form
+                }}
                 setItems={setItems}
                 style={styles.dropdown}
                 dropDownContainerStyle={styles.dropdownContainer}

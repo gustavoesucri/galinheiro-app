@@ -43,6 +43,7 @@ export default function GalinhasForm({ navigation }) {
 
   const onError = (errors) => {
     console.log('❌ Erros de validação:', errors)
+    console.log('🧩 Valores atuais:', watch())
   }
 
   return (
