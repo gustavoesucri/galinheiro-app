@@ -3,7 +3,6 @@ import { Text } from 'react-native-paper'
 import { useForm, Controller } from 'react-hook-form'
 import { layout, typography, colors } from '../../styles/theme'
 
-// Componentes reutilizáveis
 import Button from '../../components/Button'
 import Input from '../../components/Input'
 import SwitchField from '../../components/SwitchField'
@@ -11,73 +10,43 @@ import ChoiceButtonGroup from '../../components/ChoiceButtonGroup'
 import NumberInput from '../../components/NumberInput'
 import SelectField from '../../components/SelectField'
 
-// Validação Yup
 import { yupResolver } from '@hookform/resolvers/yup'
 import { galinhaSchema } from '../../schemas/galinhaSchema'
 
-// Redux
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { adicionarGalinhaThunk } from '../../redux/thunks/galinhasThunk'
 
-
 export default function GalinhasForm({ navigation }) {
-  // Configuração do react-hook-form com Yup
-  const {
-    control,
-    handleSubmit,
-    watch,
-    formState: { errors }, // contém os erros do formulário
-  } = useForm({
+  const { control, handleSubmit, watch, formState: { errors } } = useForm({
     resolver: yupResolver(galinhaSchema),
     defaultValues: {
       nome: '',
       saude: '',
       ovosHoje: 0,
       emQuarentena: false,
-      local: 'galpao', // pré-selecionado como Galpão
+      local: 'galpao',
     },
   })
 
-  const emQuarentena = watch('emQuarentena')
+  const dispatch = useDispatch()
 
- const dispatch = useDispatch()
-
- const galinhas = useSelector((state) => state.galinhas.lista)
-
-//  console.log('🐔 Galinhas na store:', galinhas)
-  
-  // Função chamada ao enviar o formulário
-const onSubmit = (data) => {
-  dispatch(adicionarGalinhaThunk(data))
-  navigation.goBack()
-}
-
-  const onError = (errors) => {
-    console.log('❌ Erros de validação:', errors)
-    console.log('🧩 Valores atuais:', watch())
+  const onSubmit = (data) => {
+    dispatch(adicionarGalinhaThunk(data))
+    navigation.goBack()
   }
 
   return (
     <ScrollView contentContainerStyle={[layout.container, styles.container]}>
-      <Text style={[typography.title, styles.title]}>
-        Cadastrar / Atualizar Galinha
-      </Text>
+      <Text style={[typography.title, styles.title]}>Cadastrar / Atualizar Galinha</Text>
 
-      {/* Nome da galinha */}
       <Controller
         control={control}
         name="nome"
         render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <Input
-            label="Nome da Galinha"
-            value={value}
-            onChangeText={onChange}
-            error={error?.message} // mostra erro se houver
-          />
+          <Input label="Nome da Galinha" value={value} onChangeText={onChange} error={error?.message} />
         )}
       />
 
-      {/* Estado de saúde */}
       <Controller
         control={control}
         name="saude"
@@ -91,42 +60,27 @@ const onSubmit = (data) => {
             ]}
             value={value}
             onChange={onChange}
-            error={error?.message} // mensagem de validação
+            error={error?.message}
           />
         )}
       />
 
-      {/* Ovos postos hoje */}
       <Controller
         control={control}
         name="ovosHoje"
         render={({ field: { value, onChange }, fieldState: { error } }) => (
-          <NumberInput
-            label="Ovos postos hoje"
-            value={value || 0}
-            onChange={onChange}
-            min={0}
-            max={2}
-            error={error?.message} // mensagem de validação
-          />
+          <NumberInput label="Ovos postos hoje" value={value || 0} onChange={onChange} min={0} max={2} error={error?.message} />
         )}
       />
 
-      {/* Quarentena */}
       <Controller
         control={control}
         name="emQuarentena"
         render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <SwitchField
-            label="Está em quarentena?"
-            value={value}
-            onValueChange={onChange}
-            error={error?.message} // mensagem de validação
-          />
+          <SwitchField label="Está em quarentena?" value={value} onValueChange={onChange} error={error?.message} />
         )}
       />
 
-      {/* Localização */}
       <Controller
         control={control}
         name="local"
@@ -140,22 +94,17 @@ const onSubmit = (data) => {
               { label: 'Campo', value: 'campo' },
               { label: 'Quarentena', value: 'quarentena' },
             ]}
-            error={error?.message} // mensagem de validação
+            error={error?.message}
           />
         )}
       />
 
-      {/* Botão de salvar */}
-      <Button onPress={handleSubmit(onSubmit, onError)}>Salvar</Button>
+      <Button onPress={handleSubmit(onSubmit)}>Salvar</Button>
     </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    paddingBottom: 32,
-  },
-  title: {
-    marginBottom: 16,
-  },
+  container: { paddingBottom: 32 },
+  title: { marginBottom: 16 },
 })

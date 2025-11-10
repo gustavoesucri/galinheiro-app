@@ -6,11 +6,11 @@ import { colors } from '../styles/theme'
 // Telas principais
 import DashboardScreen from '../screens/Dashboard/DashboardScreen'
 import OvosList from '../screens/Ovos/OvosList'
-import NinhosList from '../screens/Ninhos/NinhosList'
 import GalpoesList from '../screens/Galpoes/GalpoesList'
 
 // Pilha para CRUD de galinhas
 import GalinhasStack from './GalinhasStack'
+import NinhosStack from './NinhosStack'
 
 const Tab = createBottomTabNavigator()
 
@@ -54,14 +54,15 @@ export default function AppNavigator() {
         }}
       />
       <Tab.Screen
-        name="Ninhos"
-        component={NinhosList}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="nest-protect" size={24} color={color} />
-          ),
-        }}
-      />
+  name="Ninhos"
+  component={NinhosStack}
+  options={{
+    headerShown: false,
+    tabBarIcon: ({ color }) => (
+      <MaterialCommunityIcons name="nest-protect" size={24} color={color} />
+    ),
+  }}
+/>
       <Tab.Screen
         name="Galpões"
         component={GalpoesList}

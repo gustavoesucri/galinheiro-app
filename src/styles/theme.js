@@ -39,6 +39,10 @@ export const typography = {
     fontSize: 12,
     color: colors.textSecondary,
   },
+  label: { 
+    fontSize: 14,
+    color: colors.textSecondary,
+  },
 }
 
 export const layout = {

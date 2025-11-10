@@ -8,16 +8,12 @@ import { carregarGalinhas } from '../../redux/thunks/galinhasThunk'
 
 export default function GalinhasList() {
   const navigation = useNavigation()
-
   const dispatch = useDispatch()
+  const galinhas = useSelector(state => state.galinhas.lista)
 
   useEffect(() => {
-  dispatch(carregarGalinhas())
+    dispatch(carregarGalinhas())
   }, [])
-
-  // 👇 Lê as galinhas salvas no Redux (e portanto, no persist também)
-  const galinhas = useSelector((state) => state.galinhas.lista)
-
 
   return (
     <View style={layout.container}>
@@ -26,49 +22,26 @@ export default function GalinhasList() {
       <FlatList
         data={galinhas}
         keyExtractor={(item, index) => item.nome + index}
-        ListEmptyComponent={
-          <Text style={{ textAlign: 'center', marginTop: 20, color: colors.textSecondary }}>
-            Nenhuma galinha cadastrada ainda 🐔
-          </Text>
-        }
+        ListEmptyComponent={<Text style={{ textAlign: 'center', marginTop: 20, color: colors.textSecondary }}>Nenhuma galinha cadastrada ainda 🐔</Text>}
         renderItem={({ item }) => (
           <Card style={layout.card}>
             <Card.Title title={item.nome} />
             <Card.Content style={{ gap: 4 }}>
-              <Text style={typography.body}>
-                Saúde: {item.saude}
-              </Text>
-              <Text style={typography.body}>
-                Ovos postos hoje: {item.ovosHoje}
-              </Text>
-              <Text style={typography.body}>
-                Em quarentena: {item.emQuarentena ? 'Sim' : 'Não'}
-              </Text>
-              <Text style={typography.body}>
-                Local: {item.local}
-              </Text>
+              <Text style={typography.body}>Saúde: {item.saude}</Text>
+              <Text style={typography.body}>Ovos postos hoje: {item.ovosHoje}</Text>
+              <Text style={typography.body}>Em quarentena: {item.emQuarentena ? 'Sim' : 'Não'}</Text>
+              <Text style={typography.body}>Local: {item.local}</Text>
             </Card.Content>
             <Card.Actions>
-              <Button
-                mode="outlined"
-                textColor={colors.accent}
-                style={{ borderColor: colors.accent }}
-                onPress={() => console.log('Ver detalhes de', item.nome)}
-              >
+              <Button mode="outlined" textColor={colors.accent} style={{ borderColor: colors.accent }} onPress={() => console.log('Ver detalhes de', item.nome)}>
                 <Text>Detalhes</Text>
               </Button>
             </Card.Actions>
           </Card>
-
         )}
       />
 
-      <Button
-        mode="contained"
-        icon="plus"
-        onPress={() => navigation.navigate('GalinhasForm')}
-        style={[layout.button, styles.addButton]}
-      >
+      <Button mode="contained" icon="plus" onPress={() => navigation.navigate('GalinhasForm')} style={[layout.button, styles.addButton]}>
         <Text>Adicionar Galinha</Text>
       </Button>
     </View>
