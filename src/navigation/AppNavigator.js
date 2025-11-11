@@ -6,11 +6,11 @@ import { colors } from '../styles/theme'
 // Telas principais
 import DashboardScreen from '../screens/Dashboard/DashboardScreen'
 import OvosList from '../screens/Ovos/OvosList'
-import GalpoesList from '../screens/Galpoes/GalpoesList'
 
-// Pilha para CRUD de galinhas
+// Pilhas de CRUD
 import GalinhasStack from './GalinhasStack'
 import NinhosStack from './NinhosStack'
+import GalpoesStack from './GalpoesStack'  // <— agora importamos a Stack
 
 const Tab = createBottomTabNavigator()
 
@@ -34,6 +34,7 @@ export default function AppNavigator() {
           ),
         }}
       />
+
       <Tab.Screen
         name="Galinhas"
         component={GalinhasStack}
@@ -44,6 +45,7 @@ export default function AppNavigator() {
           ),
         }}
       />
+
       <Tab.Screen
         name="Ovos"
         component={OvosList}
@@ -53,20 +55,23 @@ export default function AppNavigator() {
           ),
         }}
       />
+
       <Tab.Screen
-  name="Ninhos"
-  component={NinhosStack}
-  options={{
-    headerShown: false,
-    tabBarIcon: ({ color }) => (
-      <MaterialCommunityIcons name="nest-protect" size={24} color={color} />
-    ),
-  }}
-/>
+        name="Ninhos"
+        component={NinhosStack}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="nest-protect" size={24} color={color} />
+          ),
+        }}
+      />
+
       <Tab.Screen
         name="Galpões"
-        component={GalpoesList}
+        component={GalpoesStack} // <— agora é a Stack
         options={{
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="home-variant" size={24} color={color} />
           ),
