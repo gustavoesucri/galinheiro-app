@@ -10,9 +10,10 @@ import { layout, typography } from '../../styles/theme'
 import Button from '../../components/Button'
 import Input from '../../components/Input'
 import SwitchField from '../../components/SwitchField'
-import SelectField from '../../components/SelectField'
 import DatePickerField from '../../components/DatePickerField'
 import TextArea from '../../components/TextArea'
+import ChoiceButtonGroup from '../../components/ChoiceButtonGroup'
+import SegmentedControl from '../../components/SegmentedControl'
 
 export default function GalpoesForm({ navigation, route }) {
   const dispatch = useDispatch()
@@ -110,48 +111,46 @@ export default function GalpoesForm({ navigation, route }) {
           <Input
             label="Área (m²)"
             value={String(value)}
-            onChangeText={(text) => onChange(Number(text))}
-            keyboardType="numeric"
-            error={error?.message}
+                      onChangeText={(text) => onChange(Number(text))}
+                      keyboardType="numeric"
+                      error={error?.message}
+                  />
+              )}
           />
-        )}
-      />
 
-      <Controller
-        control={control}
-        name="tipo_piso"
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <SelectField
-            label="Tipo de Piso"
-            value={value}
-            onValueChange={onChange}
-            options={[
-              { label: 'Terra', value: 'terra' },
-              { label: 'Concreto', value: 'concreto' },
-              { label: 'Serragem', value: 'serragem' },
-            ]}
-            error={error?.message}
+          <Controller
+              control={control}
+              name="tipo_piso"
+              render={({ field: { onChange, value }, fieldState: { error } }) => (
+                  <ChoiceButtonGroup
+                      label="Tipo de Piso"
+                      value={value}
+                      onChange={onChange}
+                      options={[
+                          { label: 'Terra', value: 'terra' },
+                          { label: 'Concreto', value: 'concreto' },
+                          { label: 'Serragem', value: 'serragem' },
+                      ]}
+                  />
+              )}
           />
-        )}
-      />
 
-      <Controller
-        control={control}
-        name="ventilacao"
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <SelectField
-            label="Ventilação"
-            value={value}
-            onValueChange={onChange}
-            options={[
-              { label: 'Natural', value: 'natural' },
-              { label: 'Forçada', value: 'forçada' },
-              { label: 'Exaustão', value: 'exaustão' },
-            ]}
-            error={error?.message}
+          <Controller
+              control={control}
+              name="ventilacao"
+              render={({ field: { value, onChange }, fieldState: { error } }) => (
+                  <SegmentedControl
+                      label="Ventilação"
+                      value={value}
+                      onChange={onChange}
+                      options={[
+                          { label: 'Natural', value: 'natural' },
+                          { label: 'Forçada', value: 'forçada' },
+                          { label: 'Exaustão', value: 'exaustao' },
+                      ]}
+                  />
+              )}
           />
-        )}
-      />
 
       <Controller
         control={control}
