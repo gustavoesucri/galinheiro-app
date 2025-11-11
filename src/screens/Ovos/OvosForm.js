@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, ActivityIndicator, View } from 'react-native'
 import { Text } from 'react-native-paper'
 import { useForm, Controller } from 'react-hook-form'
@@ -14,6 +14,8 @@ import DatePickerField from '../../components/DatePickerField'
 import TextArea from '../../components/TextArea'
 import SelectField from '../../components/SelectField'
 import ChoiceButtonGroup from '../../components/ChoiceButtonGroup'
+import { useFocusEffect } from '@react-navigation/native'
+import CustomSelectField from '../../components/CustomSelectField'
 
 export default function OvosForm({ navigation, route }) {
   const dispatch = useDispatch()
@@ -35,15 +37,21 @@ export default function OvosForm({ navigation, route }) {
     }
   })
 
-  // Carrega dados antes de renderizar os selects
-  useEffect(() => {
-    const carregarDados = async () => {
-      await dispatch(carregarGalinhas())
-      await dispatch(carregarNinhos())
-      setLoading(false)
-    }
-    carregarDados()
-  }, [])
+  // RECARREGA DADOS SEMPRE QUE A TELA GANHAR FOCO
+  useFocusEffect(
+    useCallback(() => {
+      const carregarDados = async () => {
+        setLoading(true)
+        await Promise.all([
+          dispatch(carregarGalinhas()),
+          dispatch(carregarNinhos())
+        ])
+        setLoading(false)
+      }
+
+      carregarDados()
+    }, [dispatch])
+  )
 
   // Se estivermos editando, preenche os valores do form
   useEffect(() => {
@@ -79,25 +87,36 @@ export default function OvosForm({ navigation, route }) {
         )}
       />
 
-          <Controller
-              control={control}
-              name="galinha"
-              render={({ field: { value, onChange }, fieldState: { error } }) => (
-                  <SelectField
-                      label="Galinha"
-                      value={value}
-                      onValueChange={onChange}
-                      options={galinhas.map(g => ({ label: g.nome, value: g.nome }))}
-                      zIndex={3000}
-                  />
-              )}
-          />
+         <Controller
+  control={control}
+  name="galinha"
+  render={({ field: { value, onChange }, fieldState: { error } }) => {
+    const opcoesGalinhas = galinhas.map(g => ({
+      label: g.nome,
+      value: g.nome
+    }))
+
+    return (
+      <CustomSelectField
+        key={`galinha-custom-${galinhas.length}`} // opcional
+        label="Galinha"
+        value={value}
+        onValueChange={onChange}
+        options={opcoesGalinhas}
+        placeholder="Selecione uma galinha"
+        zIndex={3000}
+        error={error?.message}
+      />
+    )
+  }}
+/>
 
           <Controller
               control={control}
               name="ninho"
               render={({ field: { value, onChange } }) => (
                   <SelectField
+                      key={`ninho-${ninhos.length}`}
                       label="Ninho (opcional)"
                       value={value}
                       onValueChange={onChange}
