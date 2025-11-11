@@ -15,11 +15,11 @@ const galinhasSlice = createSlice({
       state.lista.push(action.payload)
     },
     atualizarGalinha: (state, action) => {
-      const index = state.lista.findIndex(g => g.nome === action.payload.nome)
+      const index = state.lista.findIndex(g => g.id === action.payload.id)
       if (index !== -1) state.lista[index] = action.payload
     },
     removerGalinha: (state, action) => {
-      state.lista = state.lista.filter(g => g.nome !== action.payload)
+      state.lista = state.lista.filter(g => g.id !== action.payload)
     },
     limparGalinhas: (state) => {
       state.lista = []

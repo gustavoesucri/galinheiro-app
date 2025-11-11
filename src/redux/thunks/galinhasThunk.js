@@ -1,9 +1,16 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { setGalinhas, adicionarGalinha, atualizarGalinha, removerGalinha, limparGalinhas } from '../slices/galinhasSlice'
+import { v4 as uuidv4 } from 'uuid'
+import { 
+  setGalinhas, 
+  adicionarGalinha, 
+  atualizarGalinha, 
+  removerGalinha, 
+  limparGalinhas 
+} from '../slices/galinhasSlice'
 
 const GALINHAS_KEY = '@GALINHAS'
 
-// Carregar galinhas do AsyncStorage
+// Carregar do AsyncStorage
 export const carregarGalinhas = () => async (dispatch) => {
   try {
     const dados = await AsyncStorage.getItem(GALINHAS_KEY)
@@ -15,7 +22,7 @@ export const carregarGalinhas = () => async (dispatch) => {
   }
 }
 
-// Salvar galinhas no AsyncStorage
+// Salvar no AsyncStorage
 export const salvarGalinhas = () => async (dispatch, getState) => {
   try {
     const { lista } = getState().galinhas
@@ -25,9 +32,10 @@ export const salvarGalinhas = () => async (dispatch, getState) => {
   }
 }
 
-// Exemplo: adicionar e já salvar
+// Adicionar e salvar
 export const adicionarGalinhaThunk = (galinha) => async (dispatch) => {
-  dispatch(adicionarGalinha(galinha))
+  const galinhaComId = { ...galinha, id: uuidv4() }
+  dispatch(adicionarGalinha(galinhaComId))
   dispatch(salvarGalinhas())
 }
 
@@ -38,8 +46,8 @@ export const atualizarGalinhaThunk = (galinha) => async (dispatch) => {
 }
 
 // Remover e salvar
-export const removerGalinhaThunk = (nome) => async (dispatch) => {
-  dispatch(removerGalinha(nome))
+export const removerGalinhaThunk = (id) => async (dispatch) => {
+  dispatch(removerGalinha(id))
   dispatch(salvarGalinhas())
 }
 

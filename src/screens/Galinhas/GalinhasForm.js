@@ -1,7 +1,8 @@
 import { View, StyleSheet, ScrollView } from 'react-native'
 import { Text } from 'react-native-paper'
 import { useForm, Controller } from 'react-hook-form'
-import { layout, typography, colors } from '../../styles/theme'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { layout, typography } from '../../styles/theme'
 
 import Button from '../../components/Button'
 import Input from '../../components/Input'
@@ -10,16 +11,17 @@ import ChoiceButtonGroup from '../../components/ChoiceButtonGroup'
 import NumberInput from '../../components/NumberInput'
 import SelectField from '../../components/SelectField'
 
-import { yupResolver } from '@hookform/resolvers/yup'
 import { galinhaSchema } from '../../schemas/galinhaSchema'
-
 import { useDispatch } from 'react-redux'
-import { adicionarGalinhaThunk } from '../../redux/thunks/galinhasThunk'
+import { adicionarGalinhaThunk, atualizarGalinhaThunk } from '../../redux/thunks/galinhasThunk'
 
-export default function GalinhasForm({ navigation }) {
-  const { control, handleSubmit, watch, formState: { errors } } = useForm({
+export default function GalinhasForm({ route, navigation }) {
+  const galinha = route?.params?.galinha
+  const dispatch = useDispatch()
+
+  const { control, handleSubmit } = useForm({
     resolver: yupResolver(galinhaSchema),
-    defaultValues: {
+    defaultValues: galinha || {
       nome: '',
       saude: '',
       ovosHoje: 0,
@@ -28,16 +30,20 @@ export default function GalinhasForm({ navigation }) {
     },
   })
 
-  const dispatch = useDispatch()
-
   const onSubmit = (data) => {
-    dispatch(adicionarGalinhaThunk(data))
+    if (galinha?.id) {
+      dispatch(atualizarGalinhaThunk({ ...data, id: galinha.id }))
+    } else {
+      dispatch(adicionarGalinhaThunk(data))
+    }
     navigation.goBack()
   }
 
   return (
     <ScrollView contentContainerStyle={[layout.container, styles.container]}>
-      <Text style={[typography.title, styles.title]}>Cadastrar / Atualizar Galinha</Text>
+      <Text style={[typography.title, styles.title]}>
+        {galinha ? 'Editar Galinha' : 'Cadastrar Galinha'}
+      </Text>
 
       <Controller
         control={control}
@@ -99,7 +105,9 @@ export default function GalinhasForm({ navigation }) {
         )}
       />
 
-      <Button onPress={handleSubmit(onSubmit)}>Salvar</Button>
+      <Button onPress={handleSubmit(onSubmit)}>
+        {galinha ? 'Salvar Alterações' : 'Salvar'}
+      </Button>
     </ScrollView>
   )
 }
