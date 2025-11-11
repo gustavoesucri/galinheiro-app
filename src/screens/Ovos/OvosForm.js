@@ -5,14 +5,13 @@ import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useDispatch, useSelector } from 'react-redux'
 import { ovosSchema } from '../../schemas/ovosSchema'
-import { adicionarOvoThunk, atualizarOvoThunk, carregarOvos } from '../../redux/thunks/ovosThunk'
+import { adicionarOvoThunk, atualizarOvoThunk } from '../../redux/thunks/ovosThunk'
 import { carregarGalinhas } from '../../redux/thunks/galinhasThunk'
 import { carregarNinhos } from '../../redux/thunks/ninhosThunk'
 import { layout, typography } from '../../styles/theme'
 import Button from '../../components/Button'
 import DatePickerField from '../../components/DatePickerField'
 import TextArea from '../../components/TextArea'
-import SelectField from '../../components/SelectField'
 import ChoiceButtonGroup from '../../components/ChoiceButtonGroup'
 import { useFocusEffect } from '@react-navigation/native'
 import CustomSelectField from '../../components/CustomSelectField'
@@ -34,17 +33,17 @@ export default function OvosForm({ navigation, route }) {
       cor: 'Branco',
       qualidade: 'Boa',
       observacoes: '',
-    }
+    },
   })
 
-  // RECARREGA DADOS SEMPRE QUE A TELA GANHAR FOCO
+  // Recarrega dados sempre que a tela ganhar foco
   useFocusEffect(
     useCallback(() => {
       const carregarDados = async () => {
         setLoading(true)
         await Promise.all([
           dispatch(carregarGalinhas()),
-          dispatch(carregarNinhos())
+          dispatch(carregarNinhos()),
         ])
         setLoading(false)
       }
@@ -53,7 +52,7 @@ export default function OvosForm({ navigation, route }) {
     }, [dispatch])
   )
 
-  // Se estivermos editando, preenche os valores do form
+  // Preenche valores do form ao editar
   useEffect(() => {
     if (ovo) reset({ ...ovo, data: new Date(ovo.data) })
   }, [ovo])
@@ -83,48 +82,65 @@ export default function OvosForm({ navigation, route }) {
         control={control}
         name="data"
         render={({ field: { value, onChange }, fieldState: { error } }) => (
-          <DatePickerField label="Data da coleta" date={value} onChange={onChange} error={error?.message} />
+          <DatePickerField
+            label="Data da coleta"
+            date={value}
+            onChange={onChange}
+            error={error?.message}
+          />
         )}
       />
 
-         <Controller
-  control={control}
-  name="galinha"
-  render={({ field: { value, onChange }, fieldState: { error } }) => {
-    const opcoesGalinhas = galinhas.map(g => ({
-      label: g.nome,
-      value: g.nome
-    }))
+      <Controller
+        control={control}
+        name="galinha"
+        render={({ field: { value, onChange }, fieldState: { error } }) => {
+          const opcoesGalinhas = galinhas.map(g => ({
+            label: g.nome,
+            value: g.nome,
+          }))
 
-    return (
-      <CustomSelectField
-        key={`galinha-custom-${galinhas.length}`} // opcional
-        label="Galinha"
-        value={value}
-        onValueChange={onChange}
-        options={opcoesGalinhas}
-        placeholder="Selecione uma galinha"
-        zIndex={3000}
-        error={error?.message}
+          return (
+            <CustomSelectField
+              key={`galinha-custom-${galinhas.length}`}
+              label="Galinha"
+              value={value}
+              onValueChange={onChange}
+              options={opcoesGalinhas}
+              placeholder="Selecione uma galinha"
+              zIndex={3000}
+              error={error?.message}
+            />
+          )
+        }}
       />
-    )
-  }}
-/>
 
-          <Controller
-              control={control}
-              name="ninho"
-              render={({ field: { value, onChange } }) => (
-                  <SelectField
-                      key={`ninho-${ninhos.length}`}
-                      label="Ninho (opcional)"
-                      value={value}
-                      onValueChange={onChange}
-                      options={[{ label: 'Nenhum', value: '' }, ...ninhos.map(n => ({ label: n.identificacao, value: n.identificacao }))]}
-                      zIndex={2000}
-                  />
-              )}
-          />
+      <Controller
+        control={control}
+        name="ninho"
+        render={({ field: { value, onChange }, fieldState: { error } }) => {
+          const opcoesNinhos = [
+            { label: 'Nenhum', value: '' },
+            ...ninhos.map(n => ({
+              label: n.identificacao,
+              value: n.identificacao,
+            })),
+          ]
+
+          return (
+            <CustomSelectField
+              key={`ninho-custom-${ninhos.length}`}
+              label="Ninho (opcional)"
+              value={value}
+              onValueChange={onChange}
+              options={opcoesNinhos}
+              placeholder="Selecione um ninho"
+              zIndex={2000}
+              error={error?.message}
+            />
+          )
+        }}
+      />
 
       <Controller
         control={control}
@@ -186,7 +202,12 @@ export default function OvosForm({ navigation, route }) {
         control={control}
         name="observacoes"
         render={({ field: { value, onChange }, fieldState: { error } }) => (
-          <TextArea label="Observações" value={value} onChangeText={onChange} error={error?.message} />
+          <TextArea
+            label="Observações"
+            value={value}
+            onChangeText={onChange}
+            error={error?.message}
+          />
         )}
       />
 

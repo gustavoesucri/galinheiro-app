@@ -6,9 +6,9 @@ import { layout, typography, colors } from '../../styles/theme'
 import Button from '../../components/Button'
 import Input from '../../components/Input'
 import SwitchField from '../../components/SwitchField'
-import SelectField from '../../components/SelectField'
 import DatePickerField from '../../components/DatePickerField'
 import TextArea from '../../components/TextArea'
+import CustomSelectField from '../../components/CustomSelectField'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { ninhosSchema } from '../../schemas/ninhosSchema'
 import { useDispatch, useSelector } from 'react-redux'
@@ -30,7 +30,7 @@ export default function NinhosForm({ navigation }) {
       ultima_limpeza: new Date(),
       observacoes: '',
       galinha: '',
-    }
+    },
   })
 
   useEffect(() => {
@@ -61,13 +61,20 @@ export default function NinhosForm({ navigation }) {
 
   return (
     <ScrollView contentContainerStyle={[layout.container, styles.container]}>
-      <Text style={[typography.title, styles.title]}>Cadastrar / Atualizar Ninho</Text>
+      <Text style={[typography.title, styles.title]}>
+        Cadastrar / Atualizar Ninho
+      </Text>
 
       <Controller
         control={control}
         name="identificacao"
         render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <Input label="Identificação" value={value} onChangeText={onChange} error={error?.message} />
+          <Input
+            label="Identificação"
+            value={value}
+            onChangeText={onChange}
+            error={error?.message}
+          />
         )}
       />
 
@@ -75,7 +82,7 @@ export default function NinhosForm({ navigation }) {
         control={control}
         name="tipo_material"
         render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <SelectField
+          <CustomSelectField
             label="Tipo de Material"
             value={value}
             onValueChange={onChange}
@@ -84,7 +91,9 @@ export default function NinhosForm({ navigation }) {
               { label: 'Serragem', value: 'Serragem' },
               { label: 'Plástico', value: 'Plástico' },
             ]}
+            placeholder="Selecione o material"
             error={error?.message}
+            zIndex={3000}
           />
         )}
       />
@@ -93,7 +102,12 @@ export default function NinhosForm({ navigation }) {
         control={control}
         name="localizacao"
         render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <Input label="Localização" value={value} onChangeText={onChange} error={error?.message} />
+          <Input
+            label="Localização"
+            value={value}
+            onChangeText={onChange}
+            error={error?.message}
+          />
         )}
       />
 
@@ -109,7 +123,12 @@ export default function NinhosForm({ navigation }) {
         control={control}
         name="ultima_limpeza"
         render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <DatePickerField label="Última Limpeza" date={value} onChange={onChange} error={error?.message} />
+          <DatePickerField
+            label="Última Limpeza"
+            date={value}
+            onChange={onChange}
+            error={error?.message}
+          />
         )}
       />
 
@@ -117,13 +136,25 @@ export default function NinhosForm({ navigation }) {
         control={control}
         name="observacoes"
         render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <TextArea label="Observações" value={value} onChangeText={onChange} error={error?.message} />
+          <TextArea
+            label="Observações"
+            value={value}
+            onChangeText={onChange}
+            error={error?.message}
+          />
         )}
       />
 
       <View style={{ marginVertical: 8 }}>
         {loadingGalinhas ? (
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 12 }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingVertical: 12,
+            }}
+          >
             <ActivityIndicator animating size="small" color={colors.accent} />
             <Text style={{ marginLeft: 8 }}>Carregando galinhas...</Text>
           </View>
@@ -131,14 +162,28 @@ export default function NinhosForm({ navigation }) {
           <Controller
             control={control}
             name="galinha"
-            render={({ field: { onChange, value } }) => (
-              <SelectField
-                label="Galinha (opcional)"
-                value={value}
-                onValueChange={onChange}
-                options={[{ label: 'Nenhuma', value: '' }, ...galinhas.map(g => ({ label: g.nome, value: g.nome }))]}
-              />
-            )}
+            render={({ field: { onChange, value }, fieldState: { error } }) => {
+              const opcoesGalinhas = [
+                { label: 'Nenhuma', value: '' },
+                ...galinhas.map(g => ({
+                  label: g.nome,
+                  value: g.nome,
+                })),
+              ]
+
+              return (
+                <CustomSelectField
+                  key={`galinha-custom-${galinhas.length}`}
+                  label="Galinha (opcional)"
+                  value={value}
+                  onValueChange={onChange}
+                  options={opcoesGalinhas}
+                  placeholder="Selecione uma galinha"
+                  error={error?.message}
+                  zIndex={2000}
+                />
+              )
+            }}
           />
         )}
       </View>
