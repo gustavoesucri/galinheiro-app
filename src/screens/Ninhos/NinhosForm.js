@@ -12,13 +12,14 @@ import CustomSelectField from '../../components/CustomSelectField'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { ninhosSchema } from '../../schemas/ninhosSchema'
 import { useDispatch, useSelector } from 'react-redux'
-import { adicionarNinhoThunk } from '../../redux/thunks/ninhosThunk'
+import { adicionarNinhoThunk, atualizarNinhoThunk } from '../../redux/thunks/ninhosThunk'
 import { carregarGalinhas } from '../../redux/thunks/galinhasThunk'
 
-export default function NinhosForm({ navigation }) {
+export default function NinhosForm({ navigation, route }) {
   const dispatch = useDispatch()
   const galinhas = useSelector(state => state.galinhas.lista)
   const [loadingGalinhas, setLoadingGalinhas] = useState(true)
+  const { ninho } = route.params || {}
 
   const { control, handleSubmit, reset } = useForm({
     resolver: yupResolver(ninhosSchema),
@@ -42,27 +43,35 @@ export default function NinhosForm({ navigation }) {
   }, [dispatch])
 
   useEffect(() => {
-    reset({
-      identificacao: '',
-      tipo_material: 'Palha',
-      localizacao: '',
-      ocupado: false,
-      ultima_limpeza: new Date(),
-      observacoes: '',
-      galinha: '',
-    })
-  }, [galinhas, reset])
+    if (ninho) {
+      reset({
+        ...ninho,
+        ultima_limpeza: new Date(ninho.ultima_limpeza),
+      })
+    } else {
+      reset({
+        identificacao: '',
+        tipo_material: 'Palha',
+        localizacao: '',
+        ocupado: false,
+        ultima_limpeza: new Date(),
+        observacoes: '',
+        galinha: '',
+      })
+    }
+  }, [ninho, galinhas, reset])
 
   const onSubmit = (data) => {
-    const ninho = { id: Date.now(), ...data }
-    dispatch(adicionarNinhoThunk(ninho))
+    const novoNinho = ninho ? { ...ninho, ...data } : { id: Date.now(), ...data }
+    if (ninho) dispatch(atualizarNinhoThunk(novoNinho))
+    else dispatch(adicionarNinhoThunk(novoNinho))
     navigation.goBack()
   }
 
   return (
     <ScrollView contentContainerStyle={[layout.container, styles.container]}>
       <Text style={[typography.title, styles.title]}>
-        Cadastrar / Atualizar Ninho
+        {ninho ? 'Editar Ninho' : 'Cadastrar / Atualizar Ninho'}
       </Text>
 
       <Controller
@@ -188,7 +197,9 @@ export default function NinhosForm({ navigation }) {
         )}
       </View>
 
-      <Button onPress={handleSubmit(onSubmit)}>Salvar</Button>
+      <Button onPress={handleSubmit(onSubmit)}>
+        {ninho ? 'Salvar alterações' : 'Salvar'}
+      </Button>
     </ScrollView>
   )
 }

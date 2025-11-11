@@ -4,7 +4,7 @@ import { Card, Text, Button } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
 import { layout, typography, colors } from '../../styles/theme'
-import { carregarNinhos } from '../../redux/thunks/ninhosThunk'
+import { carregarNinhos, removerNinhoThunk } from '../../redux/thunks/ninhosThunk'
 
 export default function NinhosList() {
   const navigation = useNavigation()
@@ -14,6 +14,10 @@ export default function NinhosList() {
   useEffect(() => {
     dispatch(carregarNinhos())
   }, [])
+
+  const deletarNinho = (id) => {
+    dispatch(removerNinhoThunk(id))
+  }
 
   const diasDesdeLimpeza = (data) => {
     if (!data) return 0
@@ -63,17 +67,22 @@ export default function NinhosList() {
                 mode="outlined"
                 textColor={colors.accent}
                 style={{ borderColor: colors.accent }}
-                onPress={() => console.log('Editar ninho', item.id)}
+                onPress={() => navigation.navigate('NinhosForm', { ninho: item })}
               >
-                <Text>Editar</Text>
+                Editar
               </Button>
+              <Button onPress={() => deletarNinho(item.id)}>Deletar</Button>
             </Card.Actions>
           </Card>
         )}
       />
 
-
-      <Button mode="contained" icon="plus" onPress={() => navigation.navigate('NinhosForm')} style={[layout.button, styles.addButton]}>
+      <Button
+        mode="contained"
+        icon="plus"
+        onPress={() => navigation.navigate('NinhosForm')}
+        style={[layout.button, styles.addButton]}
+      >
         <Text>Adicionar Ninho</Text>
       </Button>
     </View>
