@@ -88,7 +88,7 @@ export default function OvosForm({ navigation, route }) {
                       value={value}
                       onValueChange={onChange}
                       options={galinhas.map(g => ({ label: g.nome, value: g.nome }))}
-                      style={{ zIndex: 3000 }}
+                      zIndex={3000}
                   />
               )}
           />
@@ -102,7 +102,7 @@ export default function OvosForm({ navigation, route }) {
                       value={value}
                       onValueChange={onChange}
                       options={[{ label: 'Nenhum', value: '' }, ...ninhos.map(n => ({ label: n.identificacao, value: n.identificacao }))]}
-                      style={{ zIndex: 2000 }}
+                      zIndex={2000}
                   />
               )}
           />
