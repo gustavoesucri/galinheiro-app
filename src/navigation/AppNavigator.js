@@ -5,12 +5,13 @@ import { colors } from '../styles/theme'
 
 // Telas principais
 import DashboardScreen from '../screens/Dashboard/DashboardScreen'
-import OvosList from '../screens/Ovos/OvosList'
+
 
 // Pilhas de CRUD
 import GalinhasStack from './GalinhasStack'
 import NinhosStack from './NinhosStack'
 import GalpoesStack from './GalpoesStack'  // <— agora importamos a Stack
+import OvosStack from './OvosStack'
 
 const Tab = createBottomTabNavigator()
 
@@ -48,8 +49,9 @@ export default function AppNavigator() {
 
       <Tab.Screen
         name="Ovos"
-        component={OvosList}
+        component={OvosStack} // agora é stack
         options={{
+          headerShown: false,
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="egg" size={24} color={color} />
           ),
