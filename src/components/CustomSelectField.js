@@ -23,7 +23,9 @@ export default function CustomSelectField({
   error,
 }) {
   const [open, setOpen] = useState(false)
-  const selectedLabel = options.find(o => o.value === value)?.label || placeholder
+  const selectedLabel =
+  options.find(o => String(o.value) === String(value))?.label || placeholder
+
 
   // LOG PARA DEBUG
   useEffect(() => {

@@ -31,8 +31,15 @@ export default function MedicaoAmbienteForm({ navigation, route }) {
   })
 
   useEffect(() => {
-    if (medicao) reset({ ...medicao, data_medicao: new Date(medicao.data_medicao) })
-  }, [medicao])
+  if (medicao) {
+    reset({
+      ...medicao,
+      data_medicao: new Date(medicao.data_medicao),
+      galpao: medicao.galpao?.id || medicao.galpao, // garante que o valor seja o id
+    })
+  }
+}, [medicao])
+
 
   const onSubmit = (data) => {
     const novaMedicao = medicao ? { ...medicao, ...data } : data
