@@ -1,171 +1,127 @@
 // src/screens/Dashboard/DashboardScreen.js
-import React, { useEffect, useRef } from 'react'
-import {
-  View,
-  Text,
-  ScrollView,
-  Animated,
-  StyleSheet,
-  Dimensions,
-} from 'react-native'
-import { colors, typography } from '../../styles/theme'
+import React from 'react'
+import { View, Text, ScrollView, Dimensions, StyleSheet } from 'react-native'
+import { LineChart, BarChart } from 'react-native-chart-kit'
+import { colors, typography, layout } from '../../styles/theme'
 
-const DashboardScreen = () => {
-  const fadeAnim = useRef(new Animated.Value(0)).current
-  const translateY = useRef(new Animated.Value(20)).current
+// Dados simulados
+const dataOvosSemana = {
+  labels: ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'],
+  datasets: [
+    { data: [30, 45, 28, 80, 99, 43, 50] },
+  ],
+}
 
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 600,
-        useNativeDriver: true,
-      }),
-      Animated.timing(translateY, {
-        toValue: 0,
-        duration: 600,
-        useNativeDriver: true,
-      }),
-    ]).start()
-  }, [])
+const dataGalinhaSaude = {
+  labels: ['Boa', 'Frágil', 'Adoecida', 'Quarentena'],
+  datasets: [{ data: [80, 10, 5, 5] }],
+}
 
+const screenWidth = Dimensions.get('window').width - 32
+
+export default function DashboardScreen() {
   return (
-    <ScrollView contentContainerStyle={styles.scroll}>
-      <Animated.View
-        style={[
-          styles.container,
-          { opacity: fadeAnim, transform: [{ translateY }] },
-        ]}
-      >
-        <Text style={styles.title}>📊 Dashboard do Sistema</Text>
+    <ScrollView style={layout.container}>
+      {/* Título */}
+      <Text style={[typography.title, styles.title]}>
+        📊 Painel de Produção
+      </Text>
 
-        {/* 🐔 Galinhas */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>🐔 Galinhas</Text>
-          <View style={styles.cardRow}>
-            <Card label="Total" value="842" />
-            <Card label="Saúde Boa" value="720" />
-            <Card label="Fragilizadas" value="92" />
-          </View>
-          <View style={styles.cardRow}>
-            <Card label="Adoecidas" value="30" />
-            <Card label="Em Quarentena" value="12" />
-            <Card label="Média Ovos/dia" value="3.8" />
-          </View>
+      {/* Cards Resumo */}
+      <View style={styles.cardRow}>
+        <View style={styles.card}>
+          <Text style={typography.subtitle}>🐔 Galinhas</Text>
+          <Text style={styles.value}>120</Text>
+          <Text style={typography.small}>Total</Text>
         </View>
 
-        {/* 🥚 Ovos */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>🥚 Ovos</Text>
-          <View style={styles.cardRow}>
-            <Card label="Hoje" value="2.540" />
-            <Card label="7 dias" value="17.380" />
-            <Card label="30 dias" value="72.900" />
-          </View>
-          <View style={styles.cardRow}>
-            <Card label="Bons" value="96%" />
-            <Card label="Quebrados" value="3%" />
-            <Card label="Defeituosos" value="1%" />
-          </View>
+        <View style={styles.card}>
+          <Text style={typography.subtitle}>🥚 Ovos Hoje</Text>
+          <Text style={styles.value}>48</Text>
+          <Text style={typography.small}>Produzidos</Text>
         </View>
+      </View>
 
-        {/* 🪶 Ninhos */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>🪶 Ninhos</Text>
-          <View style={styles.cardRow}>
-            <Card label="Total" value="320" />
-            <Card label="Ocupados" value="250" />
-            <Card label="Livres" value="70" />
-          </View>
-        </View>
+      {/* Gráfico de ovos da semana */}
+      <View style={styles.chartCard}>
+        <Text style={typography.subtitle}>📈 Produção Semanal de Ovos</Text>
+        <LineChart
+          data={dataOvosSemana}
+          width={screenWidth}
+          height={200}
+          chartConfig={chartConfig}
+          bezier
+          style={styles.chart}
+        />
+      </View>
 
-        {/* 🏠 Galpões */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>🏠 Galpões</Text>
-          <View style={styles.cardRow}>
-            <Card label="Ativos" value="8" />
-            <Card label="Cap. Galinhas" value="1200" />
-            <Card label="Ocupação" value="85%" />
-          </View>
-        </View>
+      {/* Gráfico de saúde das galinhas */}
+      <View style={styles.chartCard}>
+        <Text style={typography.subtitle}>❤️ Saúde das Galinhas</Text>
+        <BarChart
+          data={dataGalinhaSaude}
+          width={screenWidth}
+          height={220}
+          chartConfig={chartConfig}
+          showValuesOnTopOfBars
+          style={styles.chart}
+        />
+      </View>
 
-        {/* 🌡️ Ambiente */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>🌡️ Ambiente</Text>
-          <View style={styles.cardRow}>
-            <Card label="Temperatura" value="27.4°C" />
-            <Card label="Umidade" value="62%" />
-            <Card label="Luminosidade" value="850 lx" />
-          </View>
-        </View>
-
-        {/* 📈 Insights */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>📈 Insights</Text>
-          <View style={styles.cardRow}>
-            <Card label="Produtividade" value="Alta ⬆️" />
-            <Card label="Tendência" value="+4% semana" />
-            <Card label="Alertas" value="1 galpão > 30°C" highlight />
-          </View>
-        </View>
-      </Animated.View>
+      {/* Alertas */}
+      <View style={styles.alertCard}>
+        <Text style={typography.subtitle}>⚠️ Alertas</Text>
+        <Text style={typography.body}>🌡️ Galpão 3: 31°C — verifique ventilação</Text>
+        <Text style={typography.body}>💧 Galpão 1: Umidade 82% — risco de mofo</Text>
+      </View>
     </ScrollView>
   )
 }
 
-const Card = ({ label, value, highlight }) => (
-  <View
-    style={[
-      styles.card,
-      highlight && { backgroundColor: colors.warning, borderColor: colors.warningDark },
-    ]}
-  >
-    <Text style={styles.cardLabel}>{label}</Text>
-    <Text style={styles.cardValue}>{value}</Text>
-  </View>
-)
+// Configuração visual dos gráficos
+const chartConfig = {
+  backgroundGradientFrom: colors.surface,
+  backgroundGradientTo: colors.surface,
+  color: (opacity = 1) => `rgba(226, 143, 19, ${opacity})`, // usa o dourado
+  labelColor: (opacity = 1) => `rgba(45, 43, 38, ${opacity})`,
+  strokeWidth: 2,
+  barPercentage: 0.6,
+  useShadowColorFromDataset: false,
+}
 
 const styles = StyleSheet.create({
-  scroll: { padding: 16, backgroundColor: colors.background },
-  container: { flex: 1 },
   title: {
-    ...typography.h3,
-    color: colors.textPrimary,
-    textAlign: 'center',
     marginBottom: 16,
-  },
-  section: { marginBottom: 24 },
-  sectionTitle: {
-    ...typography.h4,
-    color: colors.textPrimary,
-    marginBottom: 8,
   },
   cardRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    flexWrap: 'wrap',
   },
   card: {
-    flexBasis: '30%',
-    backgroundColor: colors.surface,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 8,
+    ...layout.card,
+    flex: 1,
+    marginHorizontal: 4,
     alignItems: 'center',
-    marginVertical: 6,
-    elevation: 2,
   },
-  cardLabel: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    marginBottom: 4,
+  value: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: colors.primary,
   },
-  cardValue: {
-    ...typography.bodyBold,
-    color: colors.textPrimary,
+  chartCard: {
+    ...layout.card,
+    alignItems: 'center',
+    marginTop: 12,
+  },
+  chart: {
+    marginTop: 8,
+    borderRadius: 12,
+  },
+  alertCard: {
+    ...layout.card,
+    backgroundColor: '#FFF8E1',
+    borderColor: colors.warning,
+    borderWidth: 1,
+    marginTop: 12,
   },
 })
-
-export default DashboardScreen
