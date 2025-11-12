@@ -9,11 +9,11 @@ import Input from '../../components/Input'
 import SwitchField from '../../components/SwitchField'
 import ChoiceButtonGroup from '../../components/ChoiceButtonGroup'
 import NumberInput from '../../components/NumberInput'
-import SelectField from '../../components/SelectField'
 
 import { galinhaSchema } from '../../schemas/galinhaSchema'
 import { useDispatch } from 'react-redux'
 import { adicionarGalinhaThunk, atualizarGalinhaThunk } from '../../redux/thunks/galinhasThunk'
+import RadioButtonGroup from '../../components/RadioButtonGroup'
 
 export default function GalinhasForm({ route, navigation }) {
   const galinha = route?.params?.galinha
@@ -88,22 +88,21 @@ export default function GalinhasForm({ route, navigation }) {
       />
 
       <Controller
-        control={control}
-        name="local"
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <SelectField
-            label="Local"
-            value={value}
-            onValueChange={onChange}
-            options={[
-              { label: 'Galpão', value: 'galpao' },
-              { label: 'Campo', value: 'campo' },
-              { label: 'Quarentena', value: 'quarentena' },
-            ]}
-            error={error?.message}
-          />
-        )}
-      />
+  control={control}
+  name="local"
+  render={({ field: { value, onChange }, fieldState: { error } }) => (
+    <RadioButtonGroup
+      label="Tipo de ambiente"
+      value={value}
+      onChange={onChange}
+      options={[
+        { label: 'Galpão', value: 'galpao' },
+        { label: 'Campo', value: 'campo' },
+        { label: 'Quarentena', value: 'quarentena' },
+      ]}
+    />
+  )}
+/>
 
       <Button onPress={handleSubmit(onSubmit)}>
         {galinha ? 'Salvar Alterações' : 'Salvar'}
