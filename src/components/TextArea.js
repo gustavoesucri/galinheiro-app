@@ -10,7 +10,7 @@ export default function TextArea({ label, value, onChangeText, error }) {
         style={[styles.input, error && styles.errorInput]}
         value={value}
         onChangeText={onChangeText}
-        placeholder={label}
+        placeholder=""
         multiline
         numberOfLines={4}
         textAlignVertical="top"

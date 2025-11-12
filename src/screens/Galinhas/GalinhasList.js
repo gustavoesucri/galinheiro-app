@@ -6,6 +6,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { layout, typography, colors } from '../../styles/theme'
 import { carregarGalinhas, removerGalinhaThunk } from '../../redux/thunks/galinhasThunk'
 
+const locais = [
+  { label: 'Galpão', value: 'galpao' },
+  { label: 'Campo', value: 'campo' },
+  { label: 'Quarentena', value: 'quarentena' },
+]
+
 export default function GalinhasList() {
   const navigation = useNavigation()
   const dispatch = useDispatch()
@@ -17,6 +23,33 @@ export default function GalinhasList() {
 
   const deletarGalinha = (id) => {
     dispatch(removerGalinhaThunk(id))
+  }
+
+  const renderItem = ({ item }) => {
+    const localLabel = locais.find(l => l.value === item.local)?.label || '(não definido)'
+
+    return (
+      <Card style={layout.card}>
+        <Card.Title title={item.nome || 'Sem nome'} />
+        <Card.Content style={{ gap: 4 }}>
+          <Text style={typography.body}>Saúde: {item.saude || 'Não informada'}</Text>
+          <Text style={typography.body}>Ovos hoje: {item.ovosHoje ?? 0}</Text>
+          <Text style={typography.body}>Quarentena: {item.emQuarentena ? 'Sim' : 'Não'}</Text>
+          <Text style={typography.body}>Local: {localLabel}</Text>
+        </Card.Content>
+        <Card.Actions>
+          <Button
+            mode="outlined"
+            textColor={colors.accent}
+            style={{ borderColor: colors.accent }}
+            onPress={() => navigation.navigate('GalinhasForm', { galinha: item })}
+          >
+            Editar
+          </Button>
+          <Button onPress={() => deletarGalinha(item.id)}>Deletar</Button>
+        </Card.Actions>
+      </Card>
+    )
   }
 
   return (
@@ -31,30 +64,7 @@ export default function GalinhasList() {
             Nenhuma galinha cadastrada ainda 🐔
           </Text>
         }
-        renderItem={({ item }) => (
-          <Card style={layout.card}>
-            <Card.Title title={item.nome || 'Sem nome'} />
-            <Card.Content style={{ gap: 4 }}>
-              <Text style={typography.body}>Saúde: {item.saude || 'Não informada'}</Text>
-              <Text style={typography.body}>Ovos hoje: {item.ovosHoje ?? 0}</Text>
-              <Text style={typography.body}>
-                Quarentena: {item.emQuarentena ? 'Sim' : 'Não'}
-              </Text>
-              <Text style={typography.body}>Local: {item.local || '(não definido)'}</Text>
-            </Card.Content>
-            <Card.Actions>
-              <Button
-                mode="outlined"
-                textColor={colors.accent}
-                style={{ borderColor: colors.accent }}
-                onPress={() => navigation.navigate('GalinhasForm', { galinha: item })}
-              >
-                Editar
-              </Button>
-              <Button onPress={() => deletarGalinha(item.id)}>Deletar</Button>
-            </Card.Actions>
-          </Card>
-        )}
+        renderItem={renderItem}
       />
 
       <Button

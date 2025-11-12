@@ -49,9 +49,6 @@ const getNomeGalpao = (galpaoId) => {
           </Text>
         }
         renderItem={({ item }) => {
-          console.log('📦 item.galpao:', item.galpao)
-          console.log('🧠 medicoes:', medicoes)
-          console.log('🐔 galpoes:', galpoes)
           return (
             <Card style={layout.card}>
               <Card.Title

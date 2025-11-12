@@ -28,9 +28,9 @@ export default function CustomSelectField({
 
 
   // LOG PARA DEBUG
-  useEffect(() => {
-    console.log('CustomSelect: options →', options.map(o => o.label))
-  }, [options])
+  // useEffect(() => {
+  //   console.log('CustomSelect: options →', options.map(o => o.label))
+  // }, [options])
 
   return (
     <>
