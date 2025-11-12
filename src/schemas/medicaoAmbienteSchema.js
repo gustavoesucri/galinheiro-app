@@ -1,7 +1,7 @@
 import * as yup from 'yup'
 
 export const medicaoAmbienteSchema = yup.object({
-  data_medicao: yup.date().required('Informe a data da medição'),
+  data_medicao: yup.date().required('Informe a data e hora da medição'),
   temperatura: yup
     .number()
     .min(-10)

@@ -10,6 +10,7 @@ export default function MedicaoAmbienteList() {
   const navigation = useNavigation()
   const dispatch = useDispatch()
   const medicoes = useSelector((state) => state.medicoesAmbiente.lista)
+  const galpoes = useSelector((state) => state.galpoes.lista)
 
   useEffect(() => {
     dispatch(carregarMedicoes())
@@ -17,6 +18,19 @@ export default function MedicaoAmbienteList() {
 
   const deletar = (id) => {
     dispatch(removerMedicaoThunk(id))
+  }
+
+  const getNomeGalpao = (galpaoId) => {
+    const g = galpoes.find((g) => g.id === galpaoId || g.nome === galpaoId)
+    return g ? g.nome : 'Sem galpão'
+  }
+
+  const formatarDataHora = (dataStr) => {
+    const data = new Date(dataStr)
+    return `${data.toLocaleDateString()} ${data.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+    })}`
   }
 
   return (
@@ -34,7 +48,8 @@ export default function MedicaoAmbienteList() {
         renderItem={({ item }) => (
           <Card style={layout.card}>
             <Card.Title
-              title={`${new Date(item.data_medicao).toLocaleDateString()} - ${item.galpao || 'Sem galpão'}`}
+              title={getNomeGalpao(item.galpao)}
+              subtitle={formatarDataHora(item.data_medicao)}
             />
             <Card.Content style={{ gap: 4 }}>
               <Text style={typography.body}>Temperatura: {item.temperatura} °C</Text>

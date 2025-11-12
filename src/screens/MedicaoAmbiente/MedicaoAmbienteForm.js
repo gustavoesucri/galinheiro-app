@@ -8,10 +8,10 @@ import { layout, typography } from '../../styles/theme'
 import Button from '../../components/Button'
 import NumberInput from '../../components/NumberInput'
 import SwitchField from '../../components/SwitchField'
-import DatePickerField from '../../components/DatePickerField'
 import { adicionarMedicaoThunk, atualizarMedicaoThunk } from '../../redux/thunks/medicaoAmbienteThunk'
 import { medicaoAmbienteSchema } from '../../schemas/medicaoAmbienteSchema'
 import CustomSelectField from '../../components/CustomSelectField'
+import DateTimePickerField from '../../components/DateTimePickerField'
 
 export default function MedicaoAmbienteForm({ navigation, route }) {
   const dispatch = useDispatch()
@@ -48,17 +48,17 @@ export default function MedicaoAmbienteForm({ navigation, route }) {
       </Text>
 
       <Controller
-        control={control}
-        name="data_medicao"
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <DatePickerField
-            label="Data da Medição"
-            date={value}
-            onChange={onChange}
-            error={error?.message}
-          />
-        )}
-      />
+  control={control}
+  name="data_medicao"
+  render={({ field: { onChange, value }, fieldState: { error } }) => (
+    <DateTimePickerField
+      label="Data e Hora da Medição"
+      date={value}
+      onChange={onChange}
+      error={error?.message}
+    />
+  )}
+/>
 
       <Controller
         control={control}
