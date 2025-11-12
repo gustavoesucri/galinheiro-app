@@ -14,6 +14,8 @@ import DatePickerField from '../../components/DatePickerField'
 import TextArea from '../../components/TextArea'
 import ChoiceButtonGroup from '../../components/ChoiceButtonGroup'
 import SegmentedControl from '../../components/SegmentedControl'
+import NumberInput from '../../components/NumberInput'
+import InputFloat from '../../components/InputFloat'
 
 export default function GalpoesForm({ navigation, route }) {
   const dispatch = useDispatch()
@@ -23,9 +25,9 @@ export default function GalpoesForm({ navigation, route }) {
     resolver: yupResolver(galpoesSchema),
     defaultValues: {
       nome: '',
-      capacidade_maxima_galinhas: '',
-      capacidade_maxima_ninhos: '',
-      numero_ninhos_ocupados: '',
+      capacidade_maxima_galinhas: 10,
+      capacidade_maxima_ninhos: 10,
+      numero_ninhos_ocupados: 0,
       area_m2: '',
       tipo_piso: 'terra',
       ventilacao: 'natural',
@@ -63,60 +65,60 @@ export default function GalpoesForm({ navigation, route }) {
       />
 
       <Controller
-        control={control}
-        name="capacidade_maxima_galinhas"
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <Input
-            label="Capacidade máxima de galinhas"
-            value={String(value)}
-            onChangeText={(text) => onChange(Number(text))}
-            keyboardType="numeric"
-            error={error?.message}
-          />
-        )}
-      />
+  control={control}
+  name="capacidade_maxima_galinhas"
+  render={({ field: { onChange, value }, fieldState: { error } }) => (
+    <NumberInput
+      label="Capacidade máxima de galinhas"
+      value={value || 0}
+      onChange={onChange}
+      min={0}
+      max={1000}
+    />
+  )}
+/>
+
+<Controller
+  control={control}
+  name="capacidade_maxima_ninhos"
+  render={({ field: { onChange, value }, fieldState: { error } }) => (
+    <NumberInput
+      label="Capacidade máxima de ninhos"
+      value={value || 0}
+      onChange={onChange}
+      min={0}
+      max={1000}
+    />
+  )}
+/>
+
+<Controller
+  control={control}
+  name="numero_ninhos_ocupados"
+  render={({ field: { onChange, value }, fieldState: { error } }) => (
+    <NumberInput
+      label="Ninhos ocupados"
+      value={value || 0}
+      onChange={onChange}
+      min={0}
+      max={1000}
+    />
+  )}
+/>
 
       <Controller
-        control={control}
-        name="capacidade_maxima_ninhos"
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <Input
-            label="Capacidade máxima de ninhos"
-            value={String(value)}
-            onChangeText={(text) => onChange(Number(text))}
-            keyboardType="numeric"
-            error={error?.message}
-          />
-        )}
-      />
+  control={control}
+  name="area_m2"
+  render={({ field: { onChange, value }, fieldState: { error } }) => (
+    <InputFloat
+      label="Área (m²)"
+      value={value}
+      onChange={onChange}
+      error={error?.message}
+    />
+  )}
+/>
 
-      <Controller
-        control={control}
-        name="numero_ninhos_ocupados"
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <Input
-            label="Ninhos ocupados"
-            value={String(value)}
-            onChangeText={(text) => onChange(Number(text))}
-            keyboardType="numeric"
-            error={error?.message}
-          />
-        )}
-      />
-
-      <Controller
-        control={control}
-        name="area_m2"
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <Input
-            label="Área (m²)"
-            value={String(value)}
-                      onChangeText={(text) => onChange(Number(text))}
-                      keyboardType="numeric"
-                      error={error?.message}
-                  />
-              )}
-          />
 
           <Controller
               control={control}

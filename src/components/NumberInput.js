@@ -1,4 +1,3 @@
-// src/components/NumberInput.js
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { colors, typography } from '../styles/theme'
 
@@ -18,7 +17,10 @@ export default function NumberInput({ label, value, onChange, min = 0, max = 20 
         <TouchableOpacity style={styles.button} onPress={handleDecrease}>
           <Text style={styles.buttonText}>−</Text>
         </TouchableOpacity>
+
+        {/* Aumentei a largura mínima e centralizei o número */}
         <Text style={styles.value}>{value}</Text>
+
         <TouchableOpacity style={styles.button} onPress={handleIncrease}>
           <Text style={styles.buttonText}>+</Text>
         </TouchableOpacity>
@@ -44,6 +46,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   value: {
+    minWidth: 60,          // garante largura mínima suficiente
+    textAlign: 'center',    // centraliza o número
     marginHorizontal: 16,
     fontSize: 16,
     color: colors.textPrimary,
