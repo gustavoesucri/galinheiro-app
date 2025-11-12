@@ -162,11 +162,12 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 40,
   },
-  ticksContainer: {
+  ticksContainer: { // aqui teve que ficar mais ajustado para mobile.
     position: 'relative',
-    width: '100%',
+    width: '96%',
     height: 32,
     marginTop: 4,
+    left: 6,
   },
   tick: {
     position: 'absolute',
