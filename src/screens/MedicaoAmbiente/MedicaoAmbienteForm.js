@@ -106,13 +106,9 @@ export default function MedicaoAmbienteForm({ navigation, route }) {
   render={({ field: { onChange, value }, fieldState: { error } }) => (
     <CustomSliderField
       label="Luminosidade"
-      value={value || 1}
+      value={value ?? 0}
       onValueChange={onChange}
       error={error?.message}
-      logarithmic={true}
-      min={1}
-      max={100000}
-      unit="lux"
     />
   )}
 />
