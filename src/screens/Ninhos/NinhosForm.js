@@ -18,6 +18,7 @@ import { carregarGalinhas } from '../../redux/thunks/galinhasThunk'
 export default function NinhosForm({ navigation, route }) {
   const dispatch = useDispatch()
   const galinhas = useSelector(state => state.galinhas.lista)
+  const galpoes = useSelector((state) => state.galpoes.lista)
   const [loadingGalinhas, setLoadingGalinhas] = useState(true)
   const { ninho } = route.params || {}
 
@@ -108,17 +109,20 @@ export default function NinhosForm({ navigation, route }) {
       />
 
       <Controller
-        control={control}
-        name="localizacao"
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <Input
-            label="Localização"
-            value={value}
-            onChangeText={onChange}
-            error={error?.message}
-          />
-        )}
-      />
+  control={control}
+  name="localizacao"
+  render={({ field: { value, onChange }, fieldState: { error } }) => (
+    <CustomSelectField
+      label="Localização"
+      value={value}
+      onValueChange={onChange}
+      options={galpoes.map((g) => ({ label: g.nome, value: g.id }))}
+      placeholder="Selecione o galpão"
+      error={error?.message}
+      zIndex={2500}
+    />
+  )}
+/>
 
       <Controller
         control={control}

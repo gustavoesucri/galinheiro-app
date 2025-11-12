@@ -10,10 +10,11 @@ export default function NinhosList() {
   const navigation = useNavigation()
   const dispatch = useDispatch()
   const ninhos = useSelector(state => state.ninhos.lista)
+  const galpoes = useSelector(state => state.galpoes.lista)
 
   useEffect(() => {
     dispatch(carregarNinhos())
-  }, [])
+  }, [dispatch])
 
   const deletarNinho = (id) => {
     dispatch(removerNinhoThunk(id))
@@ -33,6 +34,12 @@ export default function NinhosList() {
     return dateObj.toLocaleDateString()
   }
 
+  const getNomeGalpao = (galpaoId) => {
+    if (!galpaoId) return '(sem galpão)'
+    const g = galpoes.find((g) => Number(g.id) === Number(galpaoId))
+    return g ? g.nome : '(sem galpão)'
+  }
+
   return (
     <View style={layout.container}>
       <Text style={[typography.title, styles.title]}>Ninhos</Text>
@@ -50,7 +57,7 @@ export default function NinhosList() {
             <Card.Title title={item.identificacao} />
             <Card.Content style={{ gap: 4 }}>
               <Text style={typography.body}>Material: {item.tipo_material}</Text>
-              <Text style={typography.body}>Localização: {item.localizacao}</Text>
+              <Text style={typography.body}>Localização: {getNomeGalpao(item.localizacao)}</Text>
               <Text style={typography.body}>Ocupado: {item.ocupado ? 'Sim' : 'Não'}</Text>
               <Text style={typography.body}>
                 Última limpeza: {formatDate(item.ultima_limpeza)} ({diasDesdeLimpeza(item.ultima_limpeza)} dias atrás)

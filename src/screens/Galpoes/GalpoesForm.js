@@ -146,7 +146,7 @@ export default function GalpoesForm({ navigation, route }) {
                       options={[
                           { label: 'Natural', value: 'natural' },
                           { label: 'Forçada', value: 'forçada' },
-                          { label: 'Exaustão', value: 'exaustao' },
+                          { label: 'Exaustão', value: 'exaustão' },
                       ]}
                   />
               )}
