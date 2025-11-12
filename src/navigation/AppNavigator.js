@@ -10,8 +10,9 @@ import DashboardScreen from '../screens/Dashboard/DashboardScreen'
 // Pilhas de CRUD
 import GalinhasStack from './GalinhasStack'
 import NinhosStack from './NinhosStack'
-import GalpoesStack from './GalpoesStack'  // <— agora importamos a Stack
+import GalpoesStack from './GalpoesStack'
 import OvosStack from './OvosStack'
+import MedicaoAmbienteStack from './MedicaoAmbienteStack'
 
 const Tab = createBottomTabNavigator()
 
@@ -76,6 +77,16 @@ export default function AppNavigator() {
           headerShown: false,
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="home-variant" size={24} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Medições"
+        component={MedicaoAmbienteStack}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="thermometer" size={24} color={color} />
           ),
         }}
       />

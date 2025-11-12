@@ -1,0 +1,77 @@
+import React, { useEffect } from 'react'
+import { View, FlatList, StyleSheet } from 'react-native'
+import { Card, Text, Button } from 'react-native-paper'
+import { useNavigation } from '@react-navigation/native'
+import { useDispatch, useSelector } from 'react-redux'
+import { carregarMedicoes, removerMedicaoThunk } from '../../redux/thunks/medicaoAmbienteThunk'
+import { layout, typography, colors } from '../../styles/theme'
+
+export default function MedicaoAmbienteList() {
+  const navigation = useNavigation()
+  const dispatch = useDispatch()
+  const medicoes = useSelector((state) => state.medicoesAmbiente.lista)
+
+  useEffect(() => {
+    dispatch(carregarMedicoes())
+  }, [])
+
+  const deletar = (id) => {
+    dispatch(removerMedicaoThunk(id))
+  }
+
+  return (
+    <View style={layout.container}>
+      <Text style={[typography.title, styles.title]}>Medições Ambientais</Text>
+
+      <FlatList
+        data={medicoes}
+        keyExtractor={(item) => item.id?.toString()}
+        ListEmptyComponent={
+          <Text style={{ textAlign: 'center', marginTop: 20, color: colors.textSecondary }}>
+            Nenhuma medição registrada ainda 🌡️
+          </Text>
+        }
+        renderItem={({ item }) => (
+          <Card style={layout.card}>
+            <Card.Title
+              title={`${new Date(item.data_medicao).toLocaleDateString()} - ${item.galpao || 'Sem galpão'}`}
+            />
+            <Card.Content style={{ gap: 4 }}>
+              <Text style={typography.body}>Temperatura: {item.temperatura} °C</Text>
+              <Text style={typography.body}>Umidade: {item.umidade} %</Text>
+              <Text style={typography.body}>Luminosidade: {item.luminosidade} Lux</Text>
+              <Text style={typography.body}>
+                Ventilação ativa: {item.ventilacao_ativa ? 'Sim' : 'Não'}
+              </Text>
+            </Card.Content>
+            <Card.Actions>
+              <Button
+                mode="outlined"
+                textColor={colors.accent}
+                style={{ borderColor: colors.accent }}
+                onPress={() => navigation.navigate('MedicaoAmbienteForm', { medicao: item })}
+              >
+                Editar
+              </Button>
+              <Button onPress={() => deletar(item.id)}>Deletar</Button>
+            </Card.Actions>
+          </Card>
+        )}
+      />
+
+      <Button
+        mode="contained"
+        icon="plus"
+        onPress={() => navigation.navigate('MedicaoAmbienteForm')}
+        style={[layout.button, styles.addButton]}
+      >
+        <Text>Nova Medição</Text>
+      </Button>
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+  addButton: { marginTop: 16 },
+  title: { marginBottom: 12 },
+})
