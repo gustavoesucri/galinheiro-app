@@ -129,7 +129,7 @@ export default function MedicaoAmbienteForm({ navigation, route }) {
       onValueChange={onChange}
       options={galpoes.map((g) => ({
         label: g.nome,
-        value: g.id || g.nome, // usa o id se existir
+        value: g.id
       }))}
       error={error?.message}
     />

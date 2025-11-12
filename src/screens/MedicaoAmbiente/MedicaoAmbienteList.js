@@ -12,6 +12,7 @@ export default function MedicaoAmbienteList() {
   const medicoes = useSelector((state) => state.medicoesAmbiente.lista)
   const galpoes = useSelector((state) => state.galpoes.lista)
 
+
   useEffect(() => {
     dispatch(carregarMedicoes())
   }, [])
@@ -20,10 +21,12 @@ export default function MedicaoAmbienteList() {
     dispatch(removerMedicaoThunk(id))
   }
 
-  const getNomeGalpao = (galpaoId) => {
-    const g = galpoes.find((g) => g.id === galpaoId || g.nome === galpaoId)
-    return g ? g.nome : 'Sem galpão'
-  }
+const getNomeGalpao = (galpaoId) => {
+  if (!galpaoId) return 'Sem galpão'
+  const g = galpoes.find((g) => Number(g.id) === Number(galpaoId))
+  return g ? g.nome : 'Sem galpão'
+}
+
 
   const formatarDataHora = (dataStr) => {
     const data = new Date(dataStr)
@@ -45,33 +48,38 @@ export default function MedicaoAmbienteList() {
             Nenhuma medição registrada ainda 🌡️
           </Text>
         }
-        renderItem={({ item }) => (
-          <Card style={layout.card}>
-            <Card.Title
-              title={getNomeGalpao(item.galpao)}
-              subtitle={formatarDataHora(item.data_medicao)}
-            />
-            <Card.Content style={{ gap: 4 }}>
-              <Text style={typography.body}>Temperatura: {item.temperatura} °C</Text>
-              <Text style={typography.body}>Umidade: {item.umidade} %</Text>
-              <Text style={typography.body}>Luminosidade: {item.luminosidade} Lux</Text>
-              <Text style={typography.body}>
-                Ventilação ativa: {item.ventilacao_ativa ? 'Sim' : 'Não'}
-              </Text>
-            </Card.Content>
-            <Card.Actions>
-              <Button
-                mode="outlined"
-                textColor={colors.accent}
-                style={{ borderColor: colors.accent }}
-                onPress={() => navigation.navigate('MedicaoAmbienteForm', { medicao: item })}
-              >
-                Editar
-              </Button>
-              <Button onPress={() => deletar(item.id)}>Deletar</Button>
-            </Card.Actions>
-          </Card>
-        )}
+        renderItem={({ item }) => {
+          console.log('📦 item.galpao:', item.galpao)
+          console.log('🧠 medicoes:', medicoes)
+          console.log('🐔 galpoes:', galpoes)
+          return (
+            <Card style={layout.card}>
+              <Card.Title
+                title={getNomeGalpao(item.galpao)}
+                subtitle={formatarDataHora(item.data_medicao)}
+              />
+              <Card.Content style={{ gap: 4 }}>
+                <Text style={typography.body}>Temperatura: {item.temperatura} °C</Text>
+                <Text style={typography.body}>Umidade: {item.umidade} %</Text>
+                <Text style={typography.body}>Luminosidade: {item.luminosidade} Lux</Text>
+                <Text style={typography.body}>
+                  Ventilação ativa: {item.ventilacao_ativa ? 'Sim' : 'Não'}
+                </Text>
+              </Card.Content>
+              <Card.Actions>
+                <Button
+                  mode="outlined"
+                  textColor={colors.accent}
+                  style={{ borderColor: colors.accent }}
+                  onPress={() => navigation.navigate('MedicaoAmbienteForm', { medicao: item })}
+                >
+                  Editar
+                </Button>
+                <Button onPress={() => deletar(item.id)}>Deletar</Button>
+              </Card.Actions>
+            </Card>
+          )
+        }}
       />
 
       <Button
