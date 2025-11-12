@@ -12,6 +12,7 @@ import { adicionarMedicaoThunk, atualizarMedicaoThunk } from '../../redux/thunks
 import { medicaoAmbienteSchema } from '../../schemas/medicaoAmbienteSchema'
 import CustomSelectField from '../../components/CustomSelectField'
 import DateTimePickerField from '../../components/DateTimePickerField'
+import CustomSliderField from '../../components/CustomSliderField'
 
 export default function MedicaoAmbienteForm({ navigation, route }) {
   const dispatch = useDispatch()
@@ -99,20 +100,23 @@ export default function MedicaoAmbienteForm({ navigation, route }) {
         )}
       />
 
-      <Controller
-        control={control}
-        name="luminosidade"
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <NumberInput
-            label="Luminosidade (Lux)"
-            value={value}
-            onChange={onChange}
-            min={0}
-            max={2000}
-            error={error?.message}
-          />
-        )}
-      />
+     <Controller
+  control={control}
+  name="luminosidade"
+  render={({ field: { onChange, value }, fieldState: { error } }) => (
+    <CustomSliderField
+      label="Luminosidade"
+      value={value || 1}
+      onValueChange={onChange}
+      error={error?.message}
+      logarithmic={true}
+      min={1}
+      max={100000}
+      unit="lux"
+    />
+  )}
+/>
+
 
       <Controller
         control={control}
