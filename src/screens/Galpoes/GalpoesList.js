@@ -41,12 +41,6 @@ export default function GalpoesList() {
               <Text style={typography.body}>Área (m²): {item.area_m2}</Text>
               <Text style={typography.body}>Piso: {item.tipo_piso}</Text>
               <Text style={typography.body}>Ventilação: {item.ventilacao}</Text>
-              <Text style={typography.body}>
-                Iluminação automática: {item.iluminacao_automatica ? 'Sim' : 'Não'}
-              </Text>
-              <Text style={typography.body}>
-                Aquecimento: {item.possui_aquecimento ? 'Sim' : 'Não'}
-              </Text>
               <Text style={typography.body}>Ativo: {item.ativo ? 'Sim' : 'Não'}</Text>
               <Text style={typography.body}>
                 Última manutenção: {new Date(item.data_ultima_manutencao).toLocaleDateString()}

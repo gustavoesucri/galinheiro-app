@@ -17,8 +17,6 @@ export const galpoesSchema = yup.object().shape({
   area_m2: yup.number().required('Área é obrigatória').min(1, 'Deve ser pelo menos 1 m²'),
   tipo_piso: yup.string().oneOf(['terra','concreto','serragem'], 'Selecione um tipo válido').required(),
   ventilacao: yup.string().oneOf(['natural','forçada','exaustão'], 'Selecione ventilação válida').required(),
-  iluminacao_automatica: yup.boolean(),
-  possui_aquecimento: yup.boolean(),
   ativo: yup.boolean(),
   data_ultima_manutencao: yup.date().required('Data da última manutenção é obrigatória').typeError('Data inválida'),
   observacoes: yup.string().max(500,'Máximo de 500 caracteres').nullable(),
