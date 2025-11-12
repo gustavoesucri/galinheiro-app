@@ -1,32 +1,50 @@
 import React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
-import { MaskedTextInput } from 'react-native-mask-text'
+import { View, Text, StyleSheet, TextInput } from 'react-native'
 import { colors, typography } from '../styles/theme'
 
 export default function InputFloat({
   label,
   value,
   onChange,
-  placeholder = '100,00',
+  placeholder = '0,00',
   style,
   error,
   ...props
 }) {
-  const handleChange = (masked, unmasked) => {
-    // unmasked = string só com números, ex: "12345" -> 123.45
-    const numericValue = parseFloat(unmasked) / 100
-    onChange(isNaN(numericValue) ? '' : numericValue)
+  const formatNumber = (numStr) => {
+    // Mantém só números
+    const digits = numStr.replace(/\D/g, '')
+
+    // Limite máximo: 99999,99 → até 7 dígitos
+    if (digits.length > 7) return value?.toFixed?.(2)?.toString().replace('.', ',') || ''
+
+    // Converte para número e aplica duas casas
+    const numeric = parseFloat(digits) / 100
+    if (isNaN(numeric)) return ''
+
+    // Garante mínimo visual de 0,01 (mas não interfere na digitação)
+    return numeric.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  }
+
+  const handleChange = (text) => {
+    const digits = text.replace(/\D/g, '')
+    const numeric = parseFloat(digits) / 100
+    if (digits.length > 7) return
+    onChange(isNaN(numeric) ? '' : numeric)
   }
 
   return (
     <View style={[styles.container, style]}>
       {label && <Text style={styles.label}>{label}</Text>}
-      <MaskedTextInput
-        mask="99999,99"
+      <TextInput
         keyboardType="numeric"
         placeholder={placeholder}
         placeholderTextColor={colors.textSecondary}
-        value={value ? value.toString().replace('.', ',') : ''}
+        value={
+          value !== undefined && value !== null && value !== ''
+            ? value.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+            : ''
+        }
         onChangeText={handleChange}
         style={[styles.input, error && styles.inputError]}
         {...props}
@@ -37,9 +55,7 @@ export default function InputFloat({
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: 12,
-  },
+  container: { marginBottom: 12 },
   label: {
     fontSize: 14,
     color: colors.textSecondary,
@@ -56,9 +72,7 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     fontSize: 14,
   },
-  inputError: {
-    borderColor: colors.error || 'red',
-  },
+  inputError: { borderColor: colors.error || 'red' },
   errorText: {
     color: colors.error || 'red',
     fontSize: 12,
