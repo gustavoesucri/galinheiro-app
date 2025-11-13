@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react'
-import { View, FlatList, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, FlatList, StyleSheet } from 'react-native'
 import { Card, Text, Button } from 'react-native-paper'
-import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
 import { carregarGalinhas, removerGalinhaThunk } from '../../redux/thunks/galinhasThunk'
-import { EggsList } from '../../components/EggIcons'
+import { EggIcon, EmptyEggSlot } from '../../components/EggIcons'
 import { useTema } from '../../hooks/useTema'
 
 const locais = [
@@ -86,38 +85,37 @@ export default function GalinhasList() {
           <Text style={typography.body}>Quarentena: {item.emQuarentena ? 'Sim' : 'Não'}</Text>
           <Text style={typography.body}>Local: {localLabel}</Text>
 
-          {/* Exibe ovos de hoje como ícones clicáveis */}
-          {hasEggsToday ? (
-            <EggsList
-              galinhaId={item.id}
-              data={new Date()}
-              ovos={ovos}
-              onEggPress={handleEggPress}
-            />
-          ) : (
-            <View style={styles.noEggsContainer}>
-              <TouchableOpacity 
-                onPress={handleAddEgg}
-                activeOpacity={0.6}
-                style={styles.noEggsTextContainer}
-              >
-                <Text style={[typography.small, styles.noEggsText]}>
-                  Nenhum ovo hoje
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity 
-                onPress={handleAddEgg}
-                style={styles.addEggButton}
-                activeOpacity={0.7}
-              >
-                <MaterialCommunityIcons 
-                  name="plus-circle" 
-                  size={24} 
-                  color={botoesClaros ? colors.primaryOrange : colors.primary} 
+          {/* Exibe ovos de hoje como ícones clicáveis + slots vazios */}
+          <View style={styles.eggsSection}>
+            {/* Mensagem quando não há ovos */}
+            {!hasEggsToday && (
+              <Text style={[typography.small, styles.noEggsText]}>
+                Nenhum ovo hoje
+              </Text>
+            )}
+            
+            {/* Linha com ovos e slots vazios juntos */}
+            <View style={styles.eggsRow}>
+              {/* Ovos existentes */}
+              {eggsToday.map(ovo => (
+                <EggIcon
+                  key={ovo.id}
+                  tamanho={ovo.tamanho}
+                  cor={ovo.cor}
+                  qualidade={ovo.qualidade}
+                  onPress={() => handleEggPress(ovo, item.id)}
                 />
-              </TouchableOpacity>
+              ))}
+              
+              {/* Slots vazios (máximo 2 ovos por galinha por dia) */}
+              {Array.from({ length: 2 - eggsToday.length }).map((_, index) => (
+                <EmptyEggSlot
+                  key={`empty-${index}`}
+                  onPress={handleAddEgg}
+                />
+              ))}
             </View>
-          )}
+          </View>
         </Card.Content>
         <Card.Actions>
           <Button
@@ -171,22 +169,17 @@ export default function GalinhasList() {
 const styles = StyleSheet.create({
   addButton: { marginTop: 16 },
   title: { marginBottom: 12 },
-  noEggsContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 6,
+  eggsSection: {
     marginVertical: 8,
-  },
-  noEggsTextContainer: {
-    flex: 1,
   },
   noEggsText: {
     color: '#8a8a8a',
     fontStyle: 'italic',
+    marginBottom: 6,
   },
-  addEggButton: {
-    marginLeft: 8,
-    padding: 4,
+  eggsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
   },
 })
