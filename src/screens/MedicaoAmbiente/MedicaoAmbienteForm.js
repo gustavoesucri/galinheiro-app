@@ -175,10 +175,7 @@ export default function MedicaoAmbienteForm({ navigation, route }) {
                 label="Ventilação Ativa?"
                 value={value}
                 onValueChange={onChange}
-                style={[
-                  styles.switch,
-                  !usaVentilacao && styles.switchDisabled
-                ]}
+                
               />
             </View>
           )}
