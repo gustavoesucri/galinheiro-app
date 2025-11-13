@@ -43,6 +43,7 @@ export const alertasSchema = yup.object({
     .max(8030, 'Máximo 8030 dias')
     .required('Informe a idade máxima'),
   
+  alertaGalpoesInativos: yup.boolean(),
   alertaTemperaturaAlta: yup.boolean(),
   alertaTemperaturaBaixa: yup.boolean(),
   alertaUmidadeAlta: yup.boolean(),

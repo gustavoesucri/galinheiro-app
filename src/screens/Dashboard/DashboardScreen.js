@@ -120,9 +120,14 @@ export default function DashboardScreen({ navigation, route }) {
     medicoes.forEach((m) => {
       const dataMedicao = new Date(m.data_medicao)
       
-      // Buscar nome do galpão
+      // Buscar galpão
       const galpao = galpoes.find(g => String(g.id) === String(m.galpaoId))
       const nomeGalpao = galpao ? galpao.nome : 'Galpão desconhecido'
+      
+      // Se alertaGalpoesInativos está desmarcado, pular medições de galpões inativos
+      if (!configAlertas.alertaGalpoesInativos && galpao && !galpao.ativo) {
+        return // Pula esta medição
+      }
       
       // Apenas alertas da última semana
       if (dataMedicao >= umaSemanaAtras) {
@@ -178,6 +183,14 @@ export default function DashboardScreen({ navigation, route }) {
     // Ninhos sem limpeza há X dias
     if (configAlertas.alertaDiasSemLimpeza) {
       ninhos.forEach((n) => {
+        // Buscar galpão do ninho
+        const galpao = galpoes.find(g => String(g.id) === String(n.galpaoId))
+        
+        // Se alertaGalpoesInativos está desmarcado, pular ninhos de galpões inativos
+        if (!configAlertas.alertaGalpoesInativos && galpao && !galpao.ativo) {
+          return // Pula este ninho
+        }
+        
         const ultimaLimpeza = new Date(n.ultima_limpeza)
         const diasSemLimpeza = Math.floor((hoje - ultimaLimpeza) / (1000 * 60 * 60 * 24))
         
@@ -195,18 +208,31 @@ export default function DashboardScreen({ navigation, route }) {
 
     // Percentual de galinhas adoecidas
     if (configAlertas.alertaGalinhasAdoecidas && galinhas.length > 0) {
-      const galinhasAdoecidas = galinhas.filter(g => 
+      // Filtrar galinhas: se alertaGalpoesInativos desmarcado, considerar só de galpões ativos
+      let galinhasParaContar = galinhas
+      
+      if (!configAlertas.alertaGalpoesInativos) {
+        galinhasParaContar = galinhas.filter(g => {
+          if (g.local !== 'galpao' || !g.galpaoId) return true // Galinhas fora de galpão sempre contam
+          const galpao = galpoes.find(gp => String(gp.id) === String(g.galpaoId))
+          return galpao && galpao.ativo // Só conta se galpão está ativo
+        })
+      }
+      
+      const galinhasAdoecidas = galinhasParaContar.filter(g => 
         g.saude === 'Adoecida' || g.saude === 'adoecida'
       ).length
       
-      const percentualAdoecidas = (galinhasAdoecidas / galinhas.length) * 100
+      const percentualAdoecidas = galinhasParaContar.length > 0 
+        ? (galinhasAdoecidas / galinhasParaContar.length) * 100 
+        : 0
       
-      console.log(`Galinhas adoecidas: ${galinhasAdoecidas}/${galinhas.length} = ${percentualAdoecidas.toFixed(1)}% (limite: ${configAlertas.percentualGalinhasAdoecidas}%)`)
+      console.log(`Galinhas adoecidas: ${galinhasAdoecidas}/${galinhasParaContar.length} = ${percentualAdoecidas.toFixed(1)}% (limite: ${configAlertas.percentualGalinhasAdoecidas}%)`)
       
       if (percentualAdoecidas >= configAlertas.percentualGalinhasAdoecidas) {
         alertas.push({
           tipo: 'galinhas_adoecidas',
-          mensagem: `🐔 ${percentualAdoecidas.toFixed(1)}% das galinhas estão adoecidas (${galinhasAdoecidas}/${galinhas.length})`,
+          mensagem: `🐔 ${percentualAdoecidas.toFixed(1)}% das galinhas estão adoecidas (${galinhasAdoecidas}/${galinhasParaContar.length})`,
           data: hoje,
         })
       }
@@ -215,6 +241,14 @@ export default function DashboardScreen({ navigation, route }) {
     // Galinhas com idade máxima excedida
     if (configAlertas.alertaIdadeMaximaGalinhas && galinhas.length > 0) {
       galinhas.forEach((g) => {
+        // Se alertaGalpoesInativos desmarcado, pular galinhas de galpões inativos
+        if (!configAlertas.alertaGalpoesInativos && g.local === 'galpao' && g.galpaoId) {
+          const galpao = galpoes.find(gp => String(gp.id) === String(g.galpaoId))
+          if (galpao && !galpao.ativo) {
+            return // Pula esta galinha
+          }
+        }
+        
         if (g.data_nascimento) {
           const idadeEmDias = calcularIdadeEmDias(g.data_nascimento)
           

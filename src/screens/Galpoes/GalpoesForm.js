@@ -122,26 +122,6 @@ export default function GalpoesForm({ navigation, route }) {
 
       <Controller
         control={control}
-        name="area_m2"
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <View>
-            <InputFloat
-              label="Área (m²)"
-              value={value}
-              onChangeText={onChange}
-              error={error?.message}
-            />
-            {densidadeAviso && (
-              <Text style={[typography.small, { color: colors.warning || '#f57c00', marginTop: 4 }]}>
-                ⚠️ {densidadeAviso}
-              </Text>
-            )}
-          </View>
-        )}
-      />
-
-      <Controller
-        control={control}
         name="capacidade_maxima_galinhas"
         render={({ field: { onChange, value } }) => (
           <NumberInput
@@ -186,7 +166,19 @@ export default function GalpoesForm({ navigation, route }) {
         control={control}
         name="area_m2"
         render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <InputFloat label="Área (m²)" value={value} onChange={onChange} error={error?.message} fullWidth={false} />
+          <View>
+            <InputFloat
+              label="Área (m²)"
+              value={value}
+              onChange={onChange}
+              error={error?.message}
+            />
+            {densidadeAviso && (
+              <Text style={[typography.small, { color: colors.warning || '#f57c00', marginTop: 4 }]}>
+                ⚠️ {densidadeAviso}
+              </Text>
+            )}
+          </View>
         )}
       />
 

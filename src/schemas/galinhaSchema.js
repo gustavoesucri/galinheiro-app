@@ -15,7 +15,14 @@ export const galinhaSchema = yup.object().shape({
     .string()
     .oneOf(['galpao', 'campo', 'quarentena'], 'Local inválido')
     .required('Local é obrigatório'),
-  galpaoId: yup.string().nullable(),
+  galpaoId: yup
+    .string()
+    .nullable()
+    .when('local', {
+      is: 'galpao',
+      then: (schema) => schema.required('Galpão é obrigatório quando o local é galpão'),
+      otherwise: (schema) => schema.nullable(),
+    }),
   ninhoId: yup.string().nullable(),
   data_nascimento: yup
     .date()

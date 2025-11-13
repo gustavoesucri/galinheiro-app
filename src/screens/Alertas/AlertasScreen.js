@@ -37,6 +37,31 @@ export default function AlertasScreen({ navigation }) {
     <ScrollView contentContainerStyle={[layout.formContainer, styles.container]}>
       <Text style={[typography.title, styles.title]}>⚙️ Configurações de Alertas</Text>
 
+      {/* Galpões Inativos */}
+      <View style={[styles.fieldRow, styles.ventilacaoRow]}>
+        <View style={styles.fieldContent}>
+          <Text style={[typography.label, { color: colors.textPrimary, fontWeight: '600' }]}>
+            Mostrar alertas de galpões inativos
+          </Text>
+          <Text style={[typography.small, { color: colors.textSecondary, marginTop: 4 }]}>
+            Inclui medições, limpeza de ninhos e outras notificações
+          </Text>
+        </View>
+        <View style={styles.checkboxContainer}>
+          <Controller
+            control={control}
+            name="alertaGalpoesInativos"
+            render={({ field: { onChange, value } }) => (
+              <Checkbox
+                status={value ? 'checked' : 'unchecked'}
+                onPress={() => onChange(!value)}
+                color={colors.primary}
+              />
+            )}
+          />
+        </View>
+      </View>
+
       {/* Temperatura Alta */}
       <View style={styles.fieldRow}>
         <View style={styles.fieldContent}>

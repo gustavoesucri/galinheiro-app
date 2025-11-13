@@ -10,6 +10,7 @@ const initialState = {
   idadeMaximaGalinhas: 365,
   
   // Checkboxes para ativar/desativar alertas
+  alertaGalpoesInativos: true,
   alertaTemperaturaAlta: true,
   alertaTemperaturaBaixa: true,
   alertaUmidadeAlta: true,

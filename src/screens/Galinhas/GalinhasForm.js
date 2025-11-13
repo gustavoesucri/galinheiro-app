@@ -223,11 +223,11 @@ export default function GalinhasForm({ route, navigation }) {
             name="galpaoId"
             render={({ field: { onChange, value }, fieldState: { error } }) => (
               <CustomSelectField
-                label="Galpão (opcional)"
+                label="Galpão"
                 value={value}
                 onValueChange={onChange}
                 options={[
-                  { label: 'Nenhum', value: '' },
+                  { label: 'Selecione um galpão', value: '' },
                   ...galpoes.map(g => ({
                     label: g.nome,
                     value: g.id,
