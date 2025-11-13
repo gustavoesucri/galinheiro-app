@@ -29,7 +29,7 @@ export const atualizarOvoThunk = (ovo) => async (dispatch) => {
 
 export const removerOvoThunk = (id) => async (dispatch) => {
   dispatch(removerOvo(id))
-  dispatch(salvarOvos())
+  await dispatch(salvarOvos())
 }
 
 export const limparOvosThunk = () => async (dispatch) => {

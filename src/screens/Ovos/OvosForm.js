@@ -1,16 +1,17 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, ActivityIndicator, View } from 'react-native'
-import { Text } from 'react-native-paper'
+import { Text, Dialog, Portal } from 'react-native-paper'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useDispatch, useSelector } from 'react-redux'
 import { v4 as uuidv4 } from 'uuid'
 import { ovosSchema } from '../../schemas/ovosSchema'
-import { adicionarOvoThunk, atualizarOvoThunk } from '../../redux/thunks/ovosThunk'
+import { adicionarOvoThunk, atualizarOvoThunk, removerOvoThunk } from '../../redux/thunks/ovosThunk'
 import { carregarGalinhas } from '../../redux/thunks/galinhasThunk'
 import { carregarNinhos } from '../../redux/thunks/ninhosThunk'
-import { layout, typography } from '../../styles/theme'
+import { layout, typography, colors } from '../../styles/theme'
 import Button from '../../components/Button'
+import DialogButton from '../../components/DialogButton'
 import Input from '../../components/Input'
 import DatePickerField from '../../components/DatePickerField'
 import TextArea from '../../components/TextArea'
@@ -22,8 +23,11 @@ export default function OvosForm({ navigation, route }) {
   const dispatch = useDispatch()
   const galinhas = useSelector(state => state.galinhas.lista)
   const ninhos = useSelector(state => state.ninhos.lista)
+  const ovos = useSelector(state => state.ovos.lista)
   const { ovo, galinha: prefillGalinha, origin } = route.params || {}
   const [loading, setLoading] = useState(true)
+  const [errorMsg, setErrorMsg] = useState(null)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
 
   const { control, handleSubmit, reset } = useForm({
     resolver: yupResolver(ovosSchema),
@@ -74,10 +78,51 @@ export default function OvosForm({ navigation, route }) {
   }, [ovo, prefillGalinha, reset])
 
   const onSubmit = (data) => {
+    // Validação: máximo 2 ovos por galinha por dia
+    const eggsToday = ovos.filter(o => {
+      // Se estamos editando, não contar o ovo atual
+      if (ovo && o.id === ovo.id) return false
+
+      // Checar se é da mesma galinha
+      if (o.galinhaId !== data.galinhaId) return false
+
+      // Checar se é do mesmo dia
+      const ovoDate = new Date(o.data)
+      const dataDate = new Date(data.data)
+
+      return (
+        ovoDate.getFullYear() === dataDate.getFullYear() &&
+        ovoDate.getMonth() === dataDate.getMonth() &&
+        ovoDate.getDate() === dataDate.getDate()
+      )
+    })
+
+    // Se já tem 2 ovos hoje e não é edição, rejeitar
+    if (!ovo && eggsToday.length >= 2) {
+      setErrorMsg('Esta galinha já pode colocar no máximo 2 ovos por dia!')
+      return
+    }
+
+    setErrorMsg(null)
+
     const novoOvo = ovo ? { ...ovo, ...data } : { id: uuidv4(), ...data }
     if (ovo) dispatch(atualizarOvoThunk(novoOvo))
     else dispatch(adicionarOvoThunk(novoOvo))
     navigation.goBack()
+  }
+
+  const handleDelete = () => {
+    setShowDeleteDialog(true)
+  }
+
+  const confirmDelete = async () => {
+    try {
+      setShowDeleteDialog(false)
+      await dispatch(removerOvoThunk(ovo.id))
+      navigation.goBack()
+    } catch (error) {
+      console.error('Erro ao deletar ovo:', error)
+    }
   }
 
   if (loading) {
@@ -93,6 +138,12 @@ export default function OvosForm({ navigation, route }) {
       <Text style={[typography.title, styles.title]}>
         {ovo ? 'Editar Ovo' : 'Cadastrar Ovo'}
       </Text>
+
+      {errorMsg && (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>⚠️ {errorMsg}</Text>
+        </View>
+      )}
 
       <Controller
         control={control}
@@ -115,6 +166,20 @@ export default function OvosForm({ navigation, route }) {
             label: g.nome,
             value: g.id,
           }))
+
+          // Se vier de GalinhasForm com galinha pré-definida, mostra um campo não editável
+          // Ou se estiver editando um ovo que foi criado a partir de GalinhasList
+          if (ovo?.galinhaId && origin === 'GalinhasListEdit') {
+            const galinhaSelecionada = galinhas.find(g => g.id === ovo.galinhaId)
+            const nomePrefill = galinhaSelecionada?.nome || 'Galinha'
+            return (
+              <Input 
+                label="Galinha" 
+                value={nomePrefill} 
+                editable={false} 
+              />
+            )
+          }
 
           // Se vier de GalinhasForm com galinha pré-definida, mostra um campo não editável
           if (prefillGalinha?.id && origin === 'GalinhasForm') {
@@ -243,6 +308,29 @@ export default function OvosForm({ navigation, route }) {
       <Button onPress={handleSubmit(onSubmit)}>
         {ovo ? 'Salvar alterações' : 'Adicionar Ovo'}
       </Button>
+
+      {ovo && (
+        <DialogButton variant="delete" onPress={handleDelete}>
+          Deletar Ovo
+        </DialogButton>
+      )}
+
+      <Portal>
+        <Dialog visible={showDeleteDialog} onDismiss={() => setShowDeleteDialog(false)}>
+          <Dialog.Title>Deletar Ovo</Dialog.Title>
+          <Dialog.Content>
+            <Text>Tem certeza que deseja remover este ovo?</Text>
+          </Dialog.Content>
+          <Dialog.Actions>
+            <DialogButton variant="delete" onPress={confirmDelete}>
+              Deletar
+            </DialogButton>
+            <DialogButton variant="cancel" onPress={() => setShowDeleteDialog(false)}>
+              Cancelar
+            </DialogButton>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
     </ScrollView>
   )
 }
@@ -250,4 +338,17 @@ export default function OvosForm({ navigation, route }) {
 const styles = StyleSheet.create({
   container: { paddingBottom: 32 },
   title: { marginBottom: 16 },
+  errorContainer: {
+    backgroundColor: '#FFF3CD',
+    borderLeftWidth: 4,
+    borderLeftColor: '#FFB700',
+    padding: 12,
+    borderRadius: 6,
+    marginBottom: 16,
+  },
+  errorText: {
+    color: '#856404',
+    fontSize: 14,
+    fontWeight: '500',
+  },
 })

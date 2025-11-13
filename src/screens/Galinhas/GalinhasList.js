@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
 import { layout, typography, colors } from '../../styles/theme'
 import { carregarGalinhas, removerGalinhaThunk } from '../../redux/thunks/galinhasThunk'
+import { EggsList } from '../../components/EggIcons'
 
 const locais = [
   { label: 'Galpão', value: 'galpao' },
@@ -16,6 +17,7 @@ export default function GalinhasList() {
   const navigation = useNavigation()
   const dispatch = useDispatch()
   const galinhas = useSelector(state => state.galinhas.lista)
+  const ovos = useSelector(state => state.ovos.lista)
 
   useEffect(() => {
     dispatch(carregarGalinhas())
@@ -28,15 +30,31 @@ export default function GalinhasList() {
   const renderItem = ({ item }) => {
     const localLabel = locais.find(l => l.value === item.local)?.label || '(não definido)'
 
+    const handleEggPress = (ovo, galinhaId) => {
+      // Navega para OvosForm com o ovo pré-preenchido
+      // Origin é 'GalinhasListEdit' para indicar que veio da lista de galinhas
+      navigation.navigate('OvosForm', { 
+        ovo: ovo,
+        origin: 'GalinhasListEdit'
+      })
+    }
+
     return (
       <Card style={layout.card}>
         <Card.Title title={item.nome || 'Sem nome'} />
         <Card.Content style={{ gap: 4 }}>
           <Text style={typography.body}>Saúde: {item.saude || 'Não informada'}</Text>
           <Text style={typography.body}>Raça: {item.raca || 'Não informada'}</Text>
-          <Text style={typography.body}>Ovos hoje: {item.ovosHoje ?? 0}</Text>
           <Text style={typography.body}>Quarentena: {item.emQuarentena ? 'Sim' : 'Não'}</Text>
           <Text style={typography.body}>Local: {localLabel}</Text>
+
+          {/* Exibe ovos de hoje como ícones clicáveis */}
+          <EggsList
+            galinhaId={item.id}
+            data={new Date()}
+            ovos={ovos}
+            onEggPress={handleEggPress}
+          />
         </Card.Content>
         <Card.Actions>
           <Button

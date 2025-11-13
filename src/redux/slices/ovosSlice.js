@@ -16,11 +16,12 @@ const ovosSlice = createSlice({
       state.lista.push(action.payload)
     },
     atualizarOvo: (state, action) => {
-      const index = state.lista.findIndex(o => o.id === action.payload.id)
+      const index = state.lista.findIndex(o => String(o.id) === String(action.payload.id))
       if (index !== -1) state.lista[index] = action.payload
     },
     removerOvo: (state, action) => {
-      state.lista = state.lista.filter(o => o.id !== action.payload)
+      const idParaRemover = String(action.payload)
+      state.lista = state.lista.filter(o => String(o.id) !== idParaRemover)
     },
     limparOvos: (state) => {
       state.lista = []
