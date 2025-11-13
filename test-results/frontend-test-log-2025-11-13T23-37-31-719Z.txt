@@ -1,0 +1,91 @@
+FRONTEND TEST RESULTS
+=====================
+
+Timestamp: 2025-11-13T23:37:31.719Z
+Backend URL: http://localhost:3000
+Frontend Path: /home/gustavo-lmde/Desktop/APP-GALINHEIRO/galinheiro-app-frontend
+
+SUMMARY:
+  Total Tests: 6
+  Passed: 6
+  Failed: 0
+
+DETAILED RESULTS:
+=================
+
+🧪 Environment Config
+   Verificar configuração do ambiente
+   ✅ PASSED
+   Details: {
+  "envFileExists": true,
+  "hasBaseUrl": true,
+  "hasTimeout": true
+}
+
+🧪 API Client
+   Verificar cliente da API
+   ✅ PASSED
+   Details: {
+  "apiFileExists": true,
+  "hasAxios": true,
+  "hasInterceptors": false,
+  "hasBaseURL": true
+}
+
+🧪 API Resources
+   Verificar recursos da API
+   ✅ PASSED
+   Details: {
+  "resourcesFileExists": true,
+  "hasList": false,
+  "hasCreate": true,
+  "hasUpdate": false,
+  "hasRemove": false
+}
+
+🧪 Normalizers
+   Verificar normalizers
+   ✅ PASSED
+   Details: {
+  "normalizersFileExists": true,
+  "hasToApi": true,
+  "hasFromApi": true,
+  "hasNormalizeList": true
+}
+
+🧪 Backend Connectivity
+   Verificar conectividade com backend
+   ✅ PASSED
+   Details: {
+  "status": 200,
+  "response": "Hello World!"
+}
+
+🧪 API Endpoints
+   Verificar endpoints da API
+   ✅ PASSED
+   Details: {
+  "endpoints": [
+    {
+      "endpoint": "Galinhas",
+      "url": "/galinhas",
+      "status": 200,
+      "success": true
+    },
+    {
+      "endpoint": "Galpões",
+      "url": "/galpoes",
+      "status": 200,
+      "success": true
+    },
+    {
+      "endpoint": "Dashboard",
+      "url": "/dashboard",
+      "status": 200,
+      "success": true
+    }
+  ],
+  "totalEndpoints": 3,
+  "successfulEndpoints": 3
+}
+

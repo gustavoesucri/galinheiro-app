@@ -1,0 +1,94 @@
+{
+  "timestamp": "2025-11-13T23:37:31.718Z",
+  "backendUrl": "http://localhost:3000",
+  "frontendPath": "/home/gustavo-lmde/Desktop/APP-GALINHEIRO/galinheiro-app-frontend",
+  "summary": {
+    "total": 6,
+    "passed": 6,
+    "failed": 0
+  },
+  "tests": [
+    {
+      "name": "Environment Config",
+      "description": "Verificar configuração do ambiente",
+      "passed": true,
+      "details": {
+        "envFileExists": true,
+        "hasBaseUrl": true,
+        "hasTimeout": true
+      }
+    },
+    {
+      "name": "API Client",
+      "description": "Verificar cliente da API",
+      "passed": true,
+      "details": {
+        "apiFileExists": true,
+        "hasAxios": true,
+        "hasInterceptors": false,
+        "hasBaseURL": true
+      }
+    },
+    {
+      "name": "API Resources",
+      "description": "Verificar recursos da API",
+      "passed": true,
+      "details": {
+        "resourcesFileExists": true,
+        "hasList": false,
+        "hasCreate": true,
+        "hasUpdate": false,
+        "hasRemove": false
+      }
+    },
+    {
+      "name": "Normalizers",
+      "description": "Verificar normalizers",
+      "passed": true,
+      "details": {
+        "normalizersFileExists": true,
+        "hasToApi": true,
+        "hasFromApi": true,
+        "hasNormalizeList": true
+      }
+    },
+    {
+      "name": "Backend Connectivity",
+      "description": "Verificar conectividade com backend",
+      "passed": true,
+      "details": {
+        "status": 200,
+        "response": "Hello World!"
+      }
+    },
+    {
+      "name": "API Endpoints",
+      "description": "Verificar endpoints da API",
+      "passed": true,
+      "details": {
+        "endpoints": [
+          {
+            "endpoint": "Galinhas",
+            "url": "/galinhas",
+            "status": 200,
+            "success": true
+          },
+          {
+            "endpoint": "Galpões",
+            "url": "/galpoes",
+            "status": 200,
+            "success": true
+          },
+          {
+            "endpoint": "Dashboard",
+            "url": "/dashboard",
+            "status": 200,
+            "success": true
+          }
+        ],
+        "totalEndpoints": 3,
+        "successfulEndpoints": 3
+      }
+    }
+  ]
+}
