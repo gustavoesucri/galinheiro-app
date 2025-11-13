@@ -2,6 +2,8 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   lista: [],
+  status: 'idle',
+  error: null,
 }
 
 const ninhosSlice = createSlice({
@@ -24,8 +26,22 @@ const ninhosSlice = createSlice({
     limparNinhos: (state) => {
       state.lista = []
     },
+    setNinhosStatus: (state, action) => {
+      state.status = action.payload
+    },
+    setNinhosError: (state, action) => {
+      state.error = action.payload
+    },
   }
 })
 
-export const { setNinhos, adicionarNinho, atualizarNinho, removerNinho, limparNinhos } = ninhosSlice.actions
+export const {
+  setNinhos,
+  adicionarNinho,
+  atualizarNinho,
+  removerNinho,
+  limparNinhos,
+  setNinhosStatus,
+  setNinhosError,
+} = ninhosSlice.actions
 export default ninhosSlice.reducer

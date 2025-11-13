@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { View, FlatList, StyleSheet } from 'react-native'
+import { View, FlatList, StyleSheet, ActivityIndicator } from 'react-native'
 import { Card, Text } from 'react-native-paper'
 import ButtonPaper from '../../components/ButtonPaper'
 import { useNavigation } from '@react-navigation/native'
@@ -14,6 +14,8 @@ export default function MedicaoAmbienteList() {
   const tema = useTema()
   const { layout, typography, colors } = tema
   const medicoes = useSelector((state) => state.medicoesAmbiente.lista)
+  const medicoesStatus = useSelector((state) => state.medicoesAmbiente.status)
+  const medicoesError = useSelector((state) => state.medicoesAmbiente.error)
   const galpoes = useSelector((state) => state.galpoes.lista)
   const botoesClaros = useSelector(state => state.botaoModo.botoesClaros)
   
@@ -46,9 +48,22 @@ export default function MedicaoAmbienteList() {
     })}`
   }
 
+  if (medicoesStatus === 'loading' && medicoes.length === 0) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    )
+  }
+
   return (
     <View style={{ flex: 1, backgroundColor: colors.background, padding: 16 }}>
       <Text style={[typography.title, styles.title]}>Medições Ambientais</Text>
+      {medicoesError && (
+        <Text style={{ color: colors.error ?? '#d32f2f', marginBottom: 8 }}>
+          {medicoesError}
+        </Text>
+      )}
 
       <FlatList
         data={medicoes}

@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { View, FlatList, StyleSheet } from 'react-native'
+import { View, FlatList, StyleSheet, ActivityIndicator } from 'react-native'
 import { Card, Text } from 'react-native-paper'
 import ButtonPaper from '../../components/ButtonPaper'
 import { useNavigation } from '@react-navigation/native'
@@ -15,6 +15,8 @@ export default function NinhosList() {
   const tema = useTema()
   const { layout, typography, colors } = tema
   const ninhos = useSelector(state => state.ninhos.lista)
+  const ninhosStatus = useSelector(state => state.ninhos.status)
+  const ninhosError = useSelector(state => state.ninhos.error)
   const galpoes = useSelector(state => state.galpoes.lista)
   const galinhas = useSelector(state => state.galinhas.lista)
   const botoesClaros = useSelector(state => state.botaoModo.botoesClaros)
@@ -59,9 +61,22 @@ export default function NinhosList() {
     return galinha ? galinha.nome : '(não adicionada)'
   }
 
+  if (ninhosStatus === 'loading' && ninhos.length === 0) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    )
+  }
+
   return (
     <View style={{ flex: 1, backgroundColor: colors.background, padding: 16 }}>
       <Text style={[typography.title, styles.title]}>Ninhos</Text>
+      {ninhosError && (
+        <Text style={{ color: colors.error ?? '#d32f2f', marginBottom: 8 }}>
+          {ninhosError}
+        </Text>
+      )}
 
       <FlatList
         data={ninhos}

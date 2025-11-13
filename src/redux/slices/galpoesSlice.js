@@ -2,6 +2,8 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   lista: [],
+  status: 'idle',
+  error: null,
 }
 
 const galpoesSlice = createSlice({
@@ -24,8 +26,22 @@ const galpoesSlice = createSlice({
     limparGalpoes: (state) => {
       state.lista = []
     },
+    setGalpoesStatus: (state, action) => {
+      state.status = action.payload
+    },
+    setGalpoesError: (state, action) => {
+      state.error = action.payload
+    },
   },
 })
 
-export const { setGalpoes, adicionarGalpao, atualizarGalpao, removerGalpao, limparGalpoes } = galpoesSlice.actions
+export const {
+  setGalpoes,
+  adicionarGalpao,
+  atualizarGalpao,
+  removerGalpao,
+  limparGalpoes,
+  setGalpoesStatus,
+  setGalpoesError,
+} = galpoesSlice.actions
 export default galpoesSlice.reducer

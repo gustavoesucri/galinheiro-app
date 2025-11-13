@@ -10,7 +10,7 @@ export const alertasSchema = yup.object({
   temperaturaBaixa: yup
     .number()
     .min(-20, 'Temperatura mínima é -20°C')
-    .max(50, 'Temperatura máxima é 50°C')
+    .max(65, 'Temperatura máxima é 65°C')
     .required('Informe a temperatura baixa'),
   
   umidadeAlta: yup

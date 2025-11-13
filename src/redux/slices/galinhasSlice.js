@@ -2,6 +2,8 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   lista: [],
+  status: 'idle',
+  error: null,
 }
 
 const galinhasSlice = createSlice({
@@ -24,8 +26,22 @@ const galinhasSlice = createSlice({
     limparGalinhas: (state) => {
       state.lista = []
     },
+    setGalinhasStatus: (state, action) => {
+      state.status = action.payload
+    },
+    setGalinhasError: (state, action) => {
+      state.error = action.payload
+    },
   },
 })
 
-export const { setGalinhas, adicionarGalinha, atualizarGalinha, removerGalinha, limparGalinhas } = galinhasSlice.actions
+export const {
+  setGalinhas,
+  adicionarGalinha,
+  atualizarGalinha,
+  removerGalinha,
+  limparGalinhas,
+  setGalinhasStatus,
+  setGalinhasError,
+} = galinhasSlice.actions
 export default galinhasSlice.reducer

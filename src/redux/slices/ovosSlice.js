@@ -3,6 +3,8 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   lista: [],
+  status: 'idle',
+  error: null,
 }
 
 const ovosSlice = createSlice({
@@ -26,8 +28,22 @@ const ovosSlice = createSlice({
     limparOvos: (state) => {
       state.lista = []
     },
+    setOvosStatus: (state, action) => {
+      state.status = action.payload
+    },
+    setOvosError: (state, action) => {
+      state.error = action.payload
+    },
   }
 })
 
-export const { setOvos, adicionarOvo, atualizarOvo, removerOvo, limparOvos } = ovosSlice.actions
+export const {
+  setOvos,
+  adicionarOvo,
+  atualizarOvo,
+  removerOvo,
+  limparOvos,
+  setOvosStatus,
+  setOvosError,
+} = ovosSlice.actions
 export default ovosSlice.reducer

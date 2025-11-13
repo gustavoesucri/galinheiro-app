@@ -4,7 +4,6 @@ import { Text, Dialog, Portal } from 'react-native-paper'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useDispatch, useSelector } from 'react-redux'
-import { v4 as uuidv4 } from 'uuid'
 import { ovosSchema } from '../../schemas/ovosSchema'
 import { adicionarOvoThunk, atualizarOvoThunk, removerOvoThunk } from '../../redux/thunks/ovosThunk'
 import { carregarGalinhas } from '../../redux/thunks/galinhasThunk'
@@ -130,7 +129,7 @@ export default function OvosForm({ navigation, route }) {
 
     setErrorMsg(null)
 
-    const novoOvo = ovo ? { ...ovo, ...data } : { id: uuidv4(), ...data }
+  const novoOvo = ovo ? { ...ovo, ...data } : { ...data }
     if (ovo) dispatch(atualizarOvoThunk(novoOvo))
     else dispatch(adicionarOvoThunk(novoOvo))
     navigation.goBack()

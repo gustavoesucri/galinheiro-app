@@ -2,6 +2,8 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   lista: [],
+  status: 'idle',
+  error: null,
 }
 
 const medicaoAmbienteSlice = createSlice({
@@ -24,10 +26,23 @@ const medicaoAmbienteSlice = createSlice({
     limparMedicoes: (state) => {
       state.lista = []
     },
+    setMedicoesStatus: (state, action) => {
+      state.status = action.payload
+    },
+    setMedicoesError: (state, action) => {
+      state.error = action.payload
+    },
   },
 })
 
-export const { setMedicoes, adicionarMedicao, atualizarMedicao, removerMedicao, limparMedicoes } =
-  medicaoAmbienteSlice.actions
+export const {
+  setMedicoes,
+  adicionarMedicao,
+  atualizarMedicao,
+  removerMedicao,
+  limparMedicoes,
+  setMedicoesStatus,
+  setMedicoesError,
+} = medicaoAmbienteSlice.actions
 
 export default medicaoAmbienteSlice.reducer

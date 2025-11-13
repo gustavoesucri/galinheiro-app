@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, FlatList, StyleSheet, Alert } from 'react-native'
+import { View, FlatList, StyleSheet, Alert, ActivityIndicator } from 'react-native'
 import { Card, Text, Dialog, Portal } from 'react-native-paper'
 import ButtonPaper from '../../components/ButtonPaper'
 import DialogButton from '../../components/DialogButton'
@@ -15,6 +15,8 @@ export default function GalpoesList() {
   const tema = useTema()
   const { layout, typography, colors } = tema
   const galpoes = useSelector(state => state.galpoes.lista)
+  const galpoesStatus = useSelector(state => state.galpoes.status)
+  const galpoesError = useSelector(state => state.galpoes.error)
   const ninhos = useSelector(state => state.ninhos.lista)
   const botoesClaros = useSelector(state => state.botaoModo.botoesClaros)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
@@ -53,9 +55,22 @@ export default function GalpoesList() {
     return ninhos.filter(n => String(n.galpaoId) === String(galpaoId)).length
   }
 
+  if (galpoesStatus === 'loading' && galpoes.length === 0) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    )
+  }
+
   return (
     <View style={{ flex: 1, backgroundColor: colors.background, padding: 16 }}>
       <Text style={[typography.title, styles.title]}>Galpões</Text>
+      {galpoesError && (
+        <Text style={{ color: colors.error ?? '#d32f2f', marginBottom: 8 }}>
+          {galpoesError}
+        </Text>
+      )}
 
       <FlatList
         data={galpoes}

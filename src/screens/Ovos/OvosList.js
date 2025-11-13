@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { View, FlatList, StyleSheet } from 'react-native'
+import { View, FlatList, StyleSheet, ActivityIndicator } from 'react-native'
 import { Card, Text } from 'react-native-paper'
 import ButtonPaper from '../../components/ButtonPaper'
 import { useNavigation } from '@react-navigation/native'
@@ -15,6 +15,8 @@ export default function OvosList() {
   const tema = useTema()
   const { layout, typography, colors } = tema
   const ovos = useSelector(state => state.ovos.lista)
+  const ovosStatus = useSelector(state => state.ovos.status)
+  const ovosError = useSelector(state => state.ovos.error)
   const galinhas = useSelector(state => state.galinhas.lista)
   const ninhos = useSelector(state => state.ninhos.lista)
   const botoesClaros = useSelector(state => state.botaoModo.botoesClaros)
@@ -41,9 +43,22 @@ export default function OvosList() {
     return ninho ? ninho.identificacao : '(não registrado)'
   }
 
+  if (ovosStatus === 'loading' && ovos.length === 0) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    )
+  }
+
   return (
     <View style={{ flex: 1, backgroundColor: colors.background, padding: 16 }}>
       <Text style={[typography.title, styles.title]}>Ovos</Text>
+      {ovosError && (
+        <Text style={{ color: colors.error ?? '#d32f2f', marginBottom: 8 }}>
+          {ovosError}
+        </Text>
+      )}
 
       <FlatList
         data={ovos}
