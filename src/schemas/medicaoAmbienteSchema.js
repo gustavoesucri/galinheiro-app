@@ -18,5 +18,6 @@ export const medicaoAmbienteSchema = yup.object({
     .max(100000)
     .required('Informe a luminosidade'),
   ventilacao_ativa: yup.boolean().required(),
+  usa_ventilacao: yup.boolean().required(),
   galpao: yup.string().required('Selecione o galpão medido'),
 })

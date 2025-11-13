@@ -23,17 +23,17 @@ export default function MedicaoAmbienteList() {
 
   useEffect(() => {
     dispatch(carregarMedicoes())
-  }, [])
+  }, [dispatch])
 
   const deletar = (id) => {
     dispatch(removerMedicaoThunk(id))
   }
 
-const getNomeGalpao = (galpaoId) => {
-  if (!galpaoId) return 'Sem galpão'
-  const g = galpoes.find((g) => Number(g.id) === Number(galpaoId))
-  return g ? g.nome : 'Sem galpão'
-}
+  const getNomeGalpao = (galpaoId) => {
+    if (!galpaoId) return 'Sem galpão'
+    const g = galpoes.find((gal) => String(gal.id) === String(galpaoId))
+    return g ? g.nome : 'Sem galpão'
+  }
 
 
   const formatarDataHora = (dataStr) => {

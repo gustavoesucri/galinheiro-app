@@ -6,6 +6,7 @@ import ovosReducer from './slices/ovosSlice'
 import medicoesAmbienteReducer from './slices/medicaoAmbienteSlice'
 import temaReducer from './slices/temaSlice'
 import botaoModoReducer from './slices/botaoModoSlice'
+import alertasReducer from './slices/alertasSlice'
 
 const rootReducer = combineReducers({
   galinhas: galinhasReducer,
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   medicoesAmbiente: medicoesAmbienteReducer,
   tema: temaReducer,
   botaoModo: botaoModoReducer,
+  alertas: alertasReducer,
 })
 
 export const store = configureStore({

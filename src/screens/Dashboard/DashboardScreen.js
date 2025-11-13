@@ -1,6 +1,6 @@
 // src/screens/Dashboard/DashboardScreen.js
 import React, { useEffect, useRef, useMemo } from 'react'
-import { View, Text, ScrollView, Dimensions, StyleSheet, Animated, Easing } from 'react-native'
+import { View, Text, ScrollView, Dimensions, StyleSheet, Animated, Easing, TouchableOpacity } from 'react-native'
 import { LineChart, BarChart } from 'react-native-chart-kit'
 import { useSelector, useDispatch } from 'react-redux'
 import { useTema } from '../../hooks/useTema'
@@ -12,7 +12,7 @@ import { carregarMedicoes } from '../../redux/thunks/medicaoAmbienteThunk'
 
 const screenWidth = Dimensions.get('window').width - 32
 
-export default function DashboardScreen() {
+export default function DashboardScreen({ navigation }) {
   const dispatch = useDispatch()
   const tema = useTema()
   const { colors, typography, layout } = tema
@@ -24,6 +24,7 @@ export default function DashboardScreen() {
   const ninhos = useSelector(state => state.ninhos.lista)
   const medicoes = useSelector(state => state.medicoesAmbiente.lista)
   const botoesClaros = useSelector(state => state.botaoModo.botoesClaros)
+  const configAlertas = useSelector(state => state.alertas)
   
   // Cor dos gráficos - laranja fixo ou cor do tema
   const chartColor = botoesClaros ? tema.colors.primaryOrange : tema.colors.primary
@@ -76,6 +77,116 @@ export default function DashboardScreen() {
     if (data instanceof Date) return data.toISOString().split('T')[0]
     return null
   }
+
+  // Calcular alertas ativos baseados nas configurações
+  const alertasAtivos = useMemo(() => {
+    const alertas = []
+    const hoje = new Date()
+    const umaSemanaAtras = new Date(hoje.getTime() - 7 * 24 * 60 * 60 * 1000)
+
+    console.log('Config Alertas:', configAlertas)
+    console.log('Medicoes:', medicoes.length)
+    console.log('Ninhos:', ninhos.length)
+    console.log('Galinhas:', galinhas.length)
+
+    medicoes.forEach((m) => {
+      const dataMedicao = new Date(m.data_medicao)
+      
+      // Buscar nome do galpão
+      const galpao = galpoes.find(g => String(g.id) === String(m.galpao))
+      const nomeGalpao = galpao ? galpao.nome : 'Galpão desconhecido'
+      
+      // Apenas alertas da última semana
+      if (dataMedicao >= umaSemanaAtras) {
+        // Temperatura alta
+        if (configAlertas.alertaTemperaturaAlta && m.temperatura > configAlertas.temperaturaAlta) {
+          alertas.push({
+            tipo: 'temperatura_alta',
+            mensagem: `🌡️ Temperatura alta em ${nomeGalpao}: ${m.temperatura}°C`,
+            data: dataMedicao,
+          })
+        }
+        
+        // Temperatura baixa
+        if (configAlertas.alertaTemperaturaBaixa && m.temperatura < configAlertas.temperaturaBaixa) {
+          alertas.push({
+            tipo: 'temperatura_baixa',
+            mensagem: `🌡️ Temperatura baixa em ${nomeGalpao}: ${m.temperatura}°C`,
+            data: dataMedicao,
+          })
+        }
+        
+        // Umidade alta
+        if (configAlertas.alertaUmidadeAlta && m.umidade > configAlertas.umidadeAlta) {
+          alertas.push({
+            tipo: 'umidade_alta',
+            mensagem: `💧 Umidade alta em ${nomeGalpao}: ${m.umidade}%`,
+            data: dataMedicao,
+          })
+        }
+        
+        // Umidade baixa
+        if (configAlertas.alertaUmidadeBaixa && m.umidade < configAlertas.umidadeBaixa) {
+          console.log('Umidade baixa detectada:', m.umidade, '<', configAlertas.umidadeBaixa)
+          alertas.push({
+            tipo: 'umidade_baixa',
+            mensagem: `💧 Umidade baixa em ${nomeGalpao}: ${m.umidade}%`,
+            data: dataMedicao,
+          })
+        }
+        
+        // Ventilação desativada (quando o galpão usa ventilação)
+        if (configAlertas.alertaVentilacaoDesativada && m.usa_ventilacao && !m.ventilacao_ativa) {
+          console.log('Ventilação desativada:', m)
+          alertas.push({
+            tipo: 'ventilacao_desativada',
+            mensagem: `🌬️ Ventilação desativada em ${nomeGalpao}`,
+            data: dataMedicao,
+          })
+        }
+      }
+    })
+
+    // Ninhos sem limpeza há X dias
+    if (configAlertas.alertaDiasSemLimpeza) {
+      ninhos.forEach((n) => {
+        const ultimaLimpeza = new Date(n.ultima_limpeza)
+        const diasSemLimpeza = Math.floor((hoje - ultimaLimpeza) / (1000 * 60 * 60 * 24))
+        
+        console.log(`Ninho ${n.identificacao}: ${diasSemLimpeza} dias sem limpeza (limite: ${configAlertas.diasSemLimpeza})`)
+        
+        if (diasSemLimpeza >= configAlertas.diasSemLimpeza) {
+          alertas.push({
+            tipo: 'limpeza_ninho',
+            mensagem: `🪺 Ninho "${n.identificacao}" há ${diasSemLimpeza} dias sem limpeza`,
+            data: hoje,
+          })
+        }
+      })
+    }
+
+    // Percentual de galinhas adoecidas
+    if (configAlertas.alertaGalinhasAdoecidas && galinhas.length > 0) {
+      const galinhasAdoecidas = galinhas.filter(g => 
+        g.saude === 'Adoecida' || g.saude === 'adoecida'
+      ).length
+      
+      const percentualAdoecidas = (galinhasAdoecidas / galinhas.length) * 100
+      
+      console.log(`Galinhas adoecidas: ${galinhasAdoecidas}/${galinhas.length} = ${percentualAdoecidas.toFixed(1)}% (limite: ${configAlertas.percentualGalinhasAdoecidas}%)`)
+      
+      if (percentualAdoecidas >= configAlertas.percentualGalinhasAdoecidas) {
+        alertas.push({
+          tipo: 'galinhas_adoecidas',
+          mensagem: `🐔 ${percentualAdoecidas.toFixed(1)}% das galinhas estão adoecidas (${galinhasAdoecidas}/${galinhas.length})`,
+          data: hoje,
+        })
+      }
+    }
+
+    console.log('Total de alertas:', alertas.length)
+    return alertas
+  }, [medicoes, ninhos, galinhas, galpoes, configAlertas])
 
   // Dados derivados para métricas
   const metricas = useMemo(() => {
@@ -281,19 +392,23 @@ export default function DashboardScreen() {
         )}
 
         {/* Alertas */}
-        {medicoes.some(m => m.temperatura > 30 || m.umidade > 80) && (
-          <View style={[layout.card, styles.alertCard]}>
-            <Text style={[typography.subtitle, { color: colors.error }]}>⚠️ Alertas</Text>
-            {medicoes
-              .filter(m => m.temperatura > 30 || m.umidade > 80)
-              .slice(0, 3)
-              .map((m, idx) => (
+        {alertasAtivos.length > 0 && (
+          <TouchableOpacity 
+            activeOpacity={0.7}
+            onPress={() => navigation.navigate('Alertas')}
+          >
+            <View style={[layout.card, styles.alertCard, { borderLeftColor: colors.error }]}>
+              <Text style={[typography.subtitle, { color: colors.error }]}>⚠️ Alertas ({alertasAtivos.length})</Text>
+              {alertasAtivos.map((alerta, idx) => (
                 <Text key={idx} style={[typography.body, { color: colors.error, marginTop: 4 }]}>
-                  {m.temperatura > 30 && `🌡️ Temperatura alta: ${m.temperatura}°C`}
-                  {m.umidade > 80 && `💧 Umidade alta: ${m.umidade}%`}
+                  {alerta.mensagem}
                 </Text>
               ))}
-          </View>
+              <Text style={[typography.small, { color: colors.textSecondary, marginTop: 8 }]}>
+                Toque para configurar alertas
+              </Text>
+            </View>
+          </TouchableOpacity>
         )}
       </Animated.View>
     </ScrollView>

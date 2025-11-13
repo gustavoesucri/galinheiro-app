@@ -23,6 +23,10 @@ import MedicaoAmbienteStack from './MedicaoAmbienteStack'
 // Componentes
 import TemaToggleButton from '../components/TemaToggleButton'
 import BotaoModoToggleButton from '../components/BotaoModoToggleButton'
+import AlertaIconButton from '../components/AlertaIconButton'
+
+// Telas especiais
+import AlertasScreen from '../screens/Alertas/AlertasScreen'
 
 const Tab = createBottomTabNavigator()
 
@@ -37,6 +41,7 @@ export default function AppNavigator() {
         headerTintColor: tema.colors.textPrimary,
         headerRight: () => (
           <View style={{ flexDirection: 'row' }}>
+            <AlertaIconButton />
             <BotaoModoToggleButton />
             <TemaToggleButton />
           </View>
@@ -52,6 +57,17 @@ export default function AppNavigator() {
         options={{
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="view-dashboard" size={24} color={color} />
+          ),
+        }}
+      />
+
+      <Tab.Screen
+        name="Alertas"
+        component={AlertasScreen}
+        options={{
+          tabBarButton: () => null, // Esconde da barra de navegação (acessível apenas pelo header/dashboard)
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="alert-circle" size={24} color={color} />
           ),
         }}
       />
