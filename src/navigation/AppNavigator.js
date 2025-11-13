@@ -1,11 +1,16 @@
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
-import { colors } from '../styles/theme'
+import { useSelector } from 'react-redux'
+import { useTema } from '../hooks/useTema'
+
+// Temas
+import * as theme1 from '../styles/theme'
+import * as theme2 from '../styles/theme2'
+import * as theme3 from '../styles/theme3'
 
 // Telas principais
 import DashboardScreen from '../screens/Dashboard/DashboardScreen'
-
 
 // Pilhas de CRUD
 import GalinhasStack from './GalinhasStack'
@@ -14,17 +19,24 @@ import GalpoesStack from './GalpoesStack'
 import OvosStack from './OvosStack'
 import MedicaoAmbienteStack from './MedicaoAmbienteStack'
 
+// Componentes
+import TemaToggleButton from '../components/TemaToggleButton'
+
 const Tab = createBottomTabNavigator()
 
 export default function AppNavigator() {
+  const tema = useTema()
+  const temaSelecionado = useSelector(state => state.tema.ativo)
+
   return (
     <Tab.Navigator
       screenOptions={{
-        headerStyle: { backgroundColor: colors.primary },
-        headerTintColor: '#fff',
-        tabBarActiveTintColor: colors.primary,
+        headerStyle: { backgroundColor: tema.colors.primary },
+        headerTintColor: tema.colors.surface,
+        headerRight: () => <TemaToggleButton />,
+        tabBarActiveTintColor: tema.colors.primary,
         tabBarInactiveTintColor: '#8a8a8a',
-        tabBarStyle: { backgroundColor: colors.surface, borderTopWidth: 0.5 },
+        tabBarStyle: { backgroundColor: tema.colors.surface, borderTopWidth: 0.5 },
       }}
     >
       <Tab.Screen

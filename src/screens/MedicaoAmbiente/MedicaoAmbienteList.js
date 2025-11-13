@@ -4,11 +4,13 @@ import { Card, Text, Button } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
 import { carregarMedicoes, removerMedicaoThunk } from '../../redux/thunks/medicaoAmbienteThunk'
-import { layout, typography, colors } from '../../styles/theme'
+import { useTema } from '../../hooks/useTema'
 
 export default function MedicaoAmbienteList() {
   const navigation = useNavigation()
   const dispatch = useDispatch()
+  const tema = useTema()
+  const { layout, typography, colors } = tema
   const medicoes = useSelector((state) => state.medicoesAmbiente.lista)
   const galpoes = useSelector((state) => state.galpoes.lista)
 

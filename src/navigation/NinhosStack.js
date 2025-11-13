@@ -2,12 +2,16 @@ import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 import NinhosList from '../screens/Ninhos/NinhosList'
 import NinhosForm from '../screens/Ninhos/NinhosForm'
+import { useTema } from '../hooks/useTema'
+import { getStackScreenOptions } from './navigationOptions'
 
 const Stack = createStackNavigator()
 
 export default function NinhosStack() {
+  const tema = useTema()
+
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={getStackScreenOptions(tema)}>
       <Stack.Screen
         name="NinhosList"
         component={NinhosList}

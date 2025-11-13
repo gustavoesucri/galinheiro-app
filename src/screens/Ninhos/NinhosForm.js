@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
 import { Text, ActivityIndicator } from 'react-native-paper'
 import { useForm, Controller } from 'react-hook-form'
-import { layout, typography, colors } from '../../styles/theme'
+import { useTema } from '../../hooks/useTema'
 import Button from '../../components/Button'
 import Input from '../../components/Input'
 import SwitchField from '../../components/SwitchField'
@@ -16,6 +16,8 @@ import { adicionarNinhoThunk, atualizarNinhoThunk } from '../../redux/thunks/nin
 import { carregarGalinhas } from '../../redux/thunks/galinhasThunk'
 
 export default function NinhosForm({ navigation, route }) {
+  const tema = useTema()
+  const { layout, typography, colors } = tema
   const dispatch = useDispatch()
   const galinhas = useSelector(state => state.galinhas.lista)
   const galpoes = useSelector((state) => state.galpoes.lista)

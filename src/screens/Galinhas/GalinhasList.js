@@ -3,9 +3,9 @@ import { View, FlatList, StyleSheet } from 'react-native'
 import { Card, Text, Button } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
-import { layout, typography, colors } from '../../styles/theme'
 import { carregarGalinhas, removerGalinhaThunk } from '../../redux/thunks/galinhasThunk'
 import { EggsList } from '../../components/EggIcons'
+import { useTema } from '../../hooks/useTema'
 
 const locais = [
   { label: 'Galpão', value: 'galpao' },
@@ -18,6 +18,8 @@ export default function GalinhasList() {
   const dispatch = useDispatch()
   const galinhas = useSelector(state => state.galinhas.lista)
   const ovos = useSelector(state => state.ovos.lista)
+  const tema = useTema()
+  const { layout, typography, colors } = tema
 
   useEffect(() => {
     dispatch(carregarGalinhas())

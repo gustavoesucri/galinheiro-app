@@ -2,7 +2,7 @@ import { View, StyleSheet, ScrollView } from 'react-native'
 import { Text } from 'react-native-paper'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { layout, typography } from '../../styles/theme'
+import { useTema } from '../../hooks/useTema'
 
 import Button from '../../components/Button'
 import Input from '../../components/Input'
@@ -16,6 +16,8 @@ import { adicionarGalinhaThunk, atualizarGalinhaThunk } from '../../redux/thunks
 import RadioButtonGroup from '../../components/RadioButtonGroup'
 
 export default function GalinhasForm({ route, navigation }) {
+  const tema = useTema()
+  const { layout, typography } = tema
   const galinha = route?.params?.galinha
   const dispatch = useDispatch()
 

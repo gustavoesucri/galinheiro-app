@@ -3,12 +3,14 @@ import { View, FlatList, StyleSheet } from 'react-native'
 import { Card, Text, Button } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
-import { layout, typography, colors } from '../../styles/theme'
 import { carregarOvos, removerOvoThunk } from '../../redux/thunks/ovosThunk'
+import { useTema } from '../../hooks/useTema'
 
 export default function OvosList() {
   const navigation = useNavigation()
   const dispatch = useDispatch()
+  const tema = useTema()
+  const { layout, typography, colors } = tema
   const ovos = useSelector(state => state.ovos.lista)
   const galinhas = useSelector(state => state.galinhas.lista)
 

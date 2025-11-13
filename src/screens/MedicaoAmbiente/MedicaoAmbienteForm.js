@@ -4,7 +4,7 @@ import { Text } from 'react-native-paper'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useDispatch, useSelector } from 'react-redux'
-import { layout, typography } from '../../styles/theme'
+import { useTema } from '../../hooks/useTema'
 import Button from '../../components/Button'
 import NumberInput from '../../components/NumberInput'
 import SwitchField from '../../components/SwitchField'
@@ -15,6 +15,8 @@ import DateTimePickerField from '../../components/DateTimePickerField'
 import CustomSliderField from '../../components/CustomSliderField'
 
 export default function MedicaoAmbienteForm({ navigation, route }) {
+  const tema = useTema()
+  const { layout, typography } = tema
   const dispatch = useDispatch()
   const { medicao } = route.params || {}
   const galpoes = useSelector((state) => state.galpoes.lista)

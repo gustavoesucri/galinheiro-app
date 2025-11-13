@@ -3,12 +3,14 @@ import { View, FlatList, StyleSheet } from 'react-native'
 import { Card, Text, Button } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
-import { layout, typography, colors } from '../../styles/theme'
 import { carregarNinhos, removerNinhoThunk } from '../../redux/thunks/ninhosThunk'
+import { useTema } from '../../hooks/useTema'
 
 export default function NinhosList() {
   const navigation = useNavigation()
   const dispatch = useDispatch()
+  const tema = useTema()
+  const { layout, typography, colors } = tema
   const ninhos = useSelector(state => state.ninhos.lista)
   const galpoes = useSelector(state => state.galpoes.lista)
 

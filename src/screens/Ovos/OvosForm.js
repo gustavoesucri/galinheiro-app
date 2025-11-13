@@ -9,7 +9,7 @@ import { ovosSchema } from '../../schemas/ovosSchema'
 import { adicionarOvoThunk, atualizarOvoThunk, removerOvoThunk } from '../../redux/thunks/ovosThunk'
 import { carregarGalinhas } from '../../redux/thunks/galinhasThunk'
 import { carregarNinhos } from '../../redux/thunks/ninhosThunk'
-import { layout, typography, colors } from '../../styles/theme'
+import { useTema } from '../../hooks/useTema'
 import Button from '../../components/Button'
 import DialogButton from '../../components/DialogButton'
 import Input from '../../components/Input'
@@ -20,6 +20,8 @@ import { useFocusEffect } from '@react-navigation/native'
 import CustomSelectField from '../../components/CustomSelectField'
 
 export default function OvosForm({ navigation, route }) {
+  const tema = useTema()
+  const { layout, typography, colors } = tema
   const dispatch = useDispatch()
   const galinhas = useSelector(state => state.galinhas.lista)
   const ninhos = useSelector(state => state.ninhos.lista)

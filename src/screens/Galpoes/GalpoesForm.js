@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useDispatch } from 'react-redux'
 import { galpoesSchema } from '../../schemas/galpoesSchema'
 import { adicionarGalpaoThunk, atualizarGalpaoThunk } from '../../redux/thunks/galpoesThunk'
-import { layout, typography } from '../../styles/theme'
+import { useTema } from '../../hooks/useTema'
 import Button from '../../components/Button'
 import Input from '../../components/Input'
 import DatePickerField from '../../components/DatePickerField'
@@ -18,6 +18,8 @@ import InputFloat from '../../components/InputFloat'
 import SwitchField from '../../components/SwitchField'
 
 export default function GalpoesForm({ navigation, route }) {
+  const tema = useTema()
+  const { layout, typography } = tema
   const dispatch = useDispatch()
   const { galpao } = route.params || {}
 

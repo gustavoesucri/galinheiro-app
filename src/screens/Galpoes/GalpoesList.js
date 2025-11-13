@@ -4,11 +4,13 @@ import { Card, Text, Button } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
 import { carregarGalpoes, removerGalpaoThunk } from '../../redux/thunks/galpoesThunk'
-import { layout, typography, colors } from '../../styles/theme'
+import { useTema } from '../../hooks/useTema'
 
 export default function GalpoesList() {
   const navigation = useNavigation()
   const dispatch = useDispatch()
+  const tema = useTema()
+  const { layout, typography, colors } = tema
   const galpoes = useSelector(state => state.galpoes.lista)
 
   useEffect(() => {
