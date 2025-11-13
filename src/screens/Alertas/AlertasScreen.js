@@ -256,6 +256,38 @@ export default function AlertasScreen({ navigation }) {
         </View>
       </View>
 
+      {/* Idade Máxima das Galinhas */}
+      <View style={styles.fieldRow}>
+        <View style={styles.fieldContent}>
+          <Controller
+            control={control}
+            name="idadeMaximaGalinhas"
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
+              <NumberInput
+                label="Idade máxima das galinhas (dias)"
+                value={value}
+                onChange={onChange}
+                min={1}
+                max={8030}
+              />
+            )}
+          />
+        </View>
+        <View style={styles.checkboxContainer}>
+          <Controller
+            control={control}
+            name="alertaIdadeMaximaGalinhas"
+            render={({ field: { onChange, value } }) => (
+              <Checkbox
+                status={value ? 'checked' : 'unchecked'}
+                onPress={() => onChange(!value)}
+                color={colors.primary}
+              />
+            )}
+          />
+        </View>
+      </View>
+
       <Button onPress={handleSubmit(onSubmit)} style={styles.button}>
         Salvar Configurações
       </Button>

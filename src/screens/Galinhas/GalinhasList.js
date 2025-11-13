@@ -1,12 +1,14 @@
-import React, { useEffect } from 'react'
-import { View, FlatList, StyleSheet } from 'react-native'
-import { Card, Text } from 'react-native-paper'
+import React, { useEffect, useState } from 'react'
+import { View, FlatList, StyleSheet, TextInput } from 'react-native'
+import { Card, Text, IconButton } from 'react-native-paper'
 import ButtonPaper from '../../components/ButtonPaper'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
 import { carregarGalinhas, removerGalinhaThunk } from '../../redux/thunks/galinhasThunk'
 import { EggIcon, EmptyEggSlot } from '../../components/EggIcons'
 import { useTema } from '../../hooks/useTema'
+import CustomSelectField from '../../components/CustomSelectField'
+import NumberInput from '../../components/NumberInput'
 
 const locais = [
   { label: 'Galpão', value: 'galpao' },
@@ -23,6 +25,16 @@ export default function GalinhasList() {
   const tema = useTema()
   const { layout, typography, colors } = tema
   
+  // Estados de filtro
+  const [filtroNome, setFiltroNome] = useState('')
+  const [filtroSaude, setFiltroSaude] = useState('')
+  const [filtroRaca, setFiltroRaca] = useState('')
+  const [filtroQuarentena, setFiltroQuarentena] = useState('')
+  const [filtroLocal, setFiltroLocal] = useState('')
+  const [filtroIdadeMin, setFiltroIdadeMin] = useState(0)
+  const [filtroIdadeMax, setFiltroIdadeMax] = useState(365)
+  const [mostrarFiltros, setMostrarFiltros] = useState(false)
+  
   // Cor para botão Deletar - laranja fixo ou cor do tema
   const deleteColor = botoesClaros ? tema.colors.primaryOrange : tema.colors.primary
   // Texto: preto no laranja fixo, branco/preto conforme o tema nos outros
@@ -32,12 +44,74 @@ export default function GalinhasList() {
     dispatch(carregarGalinhas())
   }, [dispatch])
 
+  // Função para calcular idade em dias
+  const calcularIdadeEmDias = (dataNascimento) => {
+    if (!dataNascimento) return null
+    const hoje = new Date()
+    const nascimento = new Date(dataNascimento)
+    const diffTime = Math.abs(hoje - nascimento)
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+    return diffDays
+  }
+
+  // Aplicar filtros
+  const galinhasFiltradas = galinhas.filter(galinha => {
+    // Filtro por nome
+    if (filtroNome && !galinha.nome?.toLowerCase().includes(filtroNome.toLowerCase())) {
+      return false
+    }
+
+    // Filtro por saúde
+    if (filtroSaude && galinha.saude !== filtroSaude) {
+      return false
+    }
+
+    // Filtro por raça
+    if (filtroRaca && !galinha.raca?.toLowerCase().includes(filtroRaca.toLowerCase())) {
+      return false
+    }
+
+    // Filtro por quarentena
+    if (filtroQuarentena) {
+      const emQuarentena = filtroQuarentena === 'sim'
+      if (galinha.emQuarentena !== emQuarentena) {
+        return false
+      }
+    }
+
+    // Filtro por local
+    if (filtroLocal && galinha.local !== filtroLocal) {
+      return false
+    }
+
+    // Filtro por idade
+    const idade = calcularIdadeEmDias(galinha.data_nascimento)
+    if (idade !== null) {
+      if (idade < filtroIdadeMin || idade > filtroIdadeMax) {
+        return false
+      }
+    }
+
+    return true
+  })
+
+  const limparFiltros = () => {
+    setFiltroNome('')
+    setFiltroSaude('')
+    setFiltroRaca('')
+    setFiltroQuarentena('')
+    setFiltroLocal('')
+    setFiltroIdadeMin(0)
+    setFiltroIdadeMax(365)
+  }
+
   const deletarGalinha = (id) => {
     dispatch(removerGalinhaThunk(id))
   }
 
   const renderItem = ({ item }) => {
     const localLabel = locais.find(l => l.value === item.local)?.label || '(não definido)'
+    const idadeEmDias = calcularIdadeEmDias(item.data_nascimento)
 
     const handleEggPress = (ovo, galinhaId) => {
       // Navega para OvosForm com o ovo pré-preenchido
@@ -86,6 +160,11 @@ export default function GalinhasList() {
           <Text style={typography.body}>Raça: {item.raca || 'Não informada'}</Text>
           <Text style={typography.body}>Quarentena: {item.emQuarentena ? 'Sim' : 'Não'}</Text>
           <Text style={typography.body}>Local: {localLabel}</Text>
+          {idadeEmDias !== null && (
+            <Text style={typography.body}>
+              Idade: {idadeEmDias} dias
+            </Text>
+          )}
 
           {/* Exibe ovos de hoje como ícones clicáveis + slots vazios */}
           <View style={styles.eggsSection}>
@@ -143,14 +222,150 @@ export default function GalinhasList() {
 
   return (
     <View style={layout.container}>
-      <Text style={[typography.title, styles.title]}>Galinhas</Text>
+      <View style={styles.header}>
+        <Text style={[typography.title, styles.title]}>Galinhas</Text>
+        <IconButton
+          icon={mostrarFiltros ? 'filter-off' : 'filter'}
+          iconColor={colors.primary}
+          size={24}
+          onPress={() => setMostrarFiltros(!mostrarFiltros)}
+        />
+      </View>
+
+      {/* Painel de Filtros */}
+      {mostrarFiltros && (
+        <View style={[layout.card, styles.filterPanel]}>
+          <Text style={[typography.subtitle, { marginBottom: 12 }]}>Filtros</Text>
+
+          {/* Filtro por nome */}
+          <TextInput
+            style={[styles.input, { 
+              backgroundColor: colors.surface, 
+              color: colors.textPrimary,
+              borderColor: colors.border 
+            }]}
+            placeholder="Buscar por nome..."
+            placeholderTextColor={colors.textSecondary}
+            value={filtroNome}
+            onChangeText={setFiltroNome}
+          />
+
+          {/* Filtro por saúde */}
+          <CustomSelectField
+            label="Estado de Saúde"
+            value={filtroSaude}
+            onValueChange={setFiltroSaude}
+            options={[
+              { label: 'Todos', value: '' },
+              { label: 'Boa', value: 'Boa' },
+              { label: 'Fragilizada', value: 'Fragilizada' },
+              { label: 'Adoecida', value: 'Adoecida' },
+            ]}
+            placeholder="Selecione o estado"
+            zIndex={3000}
+          />
+
+          {/* Filtro por raça */}
+          <TextInput
+            style={[styles.input, { 
+              backgroundColor: colors.surface, 
+              color: colors.textPrimary,
+              borderColor: colors.border 
+            }]}
+            placeholder="Buscar por raça..."
+            placeholderTextColor={colors.textSecondary}
+            value={filtroRaca}
+            onChangeText={setFiltroRaca}
+          />
+
+          {/* Filtro por quarentena */}
+          <CustomSelectField
+            label="Quarentena"
+            value={filtroQuarentena}
+            onValueChange={setFiltroQuarentena}
+            options={[
+              { label: 'Todos', value: '' },
+              { label: 'Sim', value: 'sim' },
+              { label: 'Não', value: 'nao' },
+            ]}
+            placeholder="Selecione"
+            zIndex={2000}
+          />
+
+          {/* Filtro por local */}
+          <CustomSelectField
+            label="Tipo de Ambiente"
+            value={filtroLocal}
+            onValueChange={setFiltroLocal}
+            options={[
+              { label: 'Todos', value: '' },
+              { label: 'Galpão', value: 'galpao' },
+              { label: 'Campo', value: 'campo' },
+              { label: 'Quarentena', value: 'quarentena' },
+            ]}
+            placeholder="Selecione o ambiente"
+            zIndex={1000}
+          />
+
+          {/* Filtro por idade */}
+          <Text style={[typography.label, { marginTop: 8, marginBottom: 4 }]}>
+            Idade (dias)
+          </Text>
+          <View style={styles.idadeRow}>
+            <View style={{ flex: 1 }}>
+              <NumberInput
+                label="Mínimo"
+                value={filtroIdadeMin}
+                onChange={setFiltroIdadeMin}
+                min={0}
+                max={3650}
+              />
+            </View>
+            <View style={{ flex: 1 }}>
+              <NumberInput
+                label="Máximo"
+                value={filtroIdadeMax}
+                onChange={setFiltroIdadeMax}
+                min={0}
+                max={3650}
+              />
+            </View>
+          </View>
+
+          {/* Botões de ação dos filtros */}
+          <View style={styles.filterButtons}>
+            <ButtonPaper
+              mode="outlined"
+              onPress={limparFiltros}
+              style={{ flex: 1 }}
+              textColor={colors.accent}
+            >
+              Limpar Filtros
+            </ButtonPaper>
+            <ButtonPaper
+              mode="contained"
+              onPress={() => setMostrarFiltros(false)}
+              style={{ flex: 1 }}
+            >
+              Aplicar Filtros
+            </ButtonPaper>
+          </View>
+
+          <Text style={[typography.small, { marginTop: 8, color: colors.textSecondary }]}>
+            Mostrando {galinhasFiltradas.length} de {galinhas.length} galinhas
+          </Text>
+        </View>
+      )}
 
       <FlatList
-        data={galinhas}
+        data={galinhasFiltradas}
         keyExtractor={(item) => item.id?.toString() ?? Math.random().toString()}
         ListEmptyComponent={
           <Text style={{ textAlign: 'center', marginTop: 20, color: colors.textSecondary }}>
-            Nenhuma galinha cadastrada ainda 🐔
+            {galinhas.length === 0 
+              ? 'Nenhuma galinha cadastrada ainda 🐔'
+              : 'Nenhuma galinha encontrada com esses filtros 🔍'
+            }
           </Text>
         }
         renderItem={renderItem}
@@ -170,7 +385,35 @@ export default function GalinhasList() {
 
 const styles = StyleSheet.create({
   addButton: { marginTop: 16 },
-  title: { marginBottom: 12 },
+  title: { marginBottom: 0 },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  filterPanel: {
+    marginBottom: 12,
+    padding: 16,
+  },
+  input: {
+    height: 48,
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    marginBottom: 12,
+    fontSize: 14,
+  },
+  idadeRow: {
+    flexDirection: 'row',
+    gap: 12,
+    marginBottom: 8,
+  },
+  filterButtons: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 12,
+  },
   eggsSection: {
     marginVertical: 8,
   },

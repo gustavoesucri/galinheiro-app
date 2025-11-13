@@ -78,6 +78,15 @@ export default function DashboardScreen({ navigation }) {
     return null
   }
 
+  // Calcular idade em dias
+  const calcularIdadeEmDias = (dataNascimento) => {
+    if (!dataNascimento) return 0
+    const hoje = new Date()
+    const nascimento = new Date(dataNascimento)
+    const diffMs = hoje - nascimento
+    return Math.floor(diffMs / (1000 * 60 * 60 * 24))
+  }
+
   // Calcular alertas ativos baseados nas configurações
   const alertasAtivos = useMemo(() => {
     const alertas = []
@@ -182,6 +191,23 @@ export default function DashboardScreen({ navigation }) {
           data: hoje,
         })
       }
+    }
+
+    // Galinhas com idade máxima excedida
+    if (configAlertas.alertaIdadeMaximaGalinhas && galinhas.length > 0) {
+      galinhas.forEach((g) => {
+        if (g.data_nascimento) {
+          const idadeEmDias = calcularIdadeEmDias(g.data_nascimento)
+          
+          if (idadeEmDias >= configAlertas.idadeMaximaGalinhas) {
+            alertas.push({
+              tipo: 'idade_maxima',
+              mensagem: `🐔 Galinha "${g.nome}" com ${idadeEmDias} dias (limite: ${configAlertas.idadeMaximaGalinhas})`,
+              data: hoje,
+            })
+          }
+        }
+      })
     }
 
     console.log('Total de alertas:', alertas.length)

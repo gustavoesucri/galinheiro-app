@@ -9,6 +9,7 @@ import Input from '../../components/Input'
 import SwitchField from '../../components/SwitchField'
 import ChoiceButtonGroup from '../../components/ChoiceButtonGroup'
 import AddEggButton from '../../components/AddEggButton'
+import DatePickerField from '../../components/DatePickerField'
 
 import { galinhaSchema } from '../../schemas/galinhaSchema'
 import { useDispatch } from 'react-redux'
@@ -29,6 +30,7 @@ export default function GalinhasForm({ route, navigation }) {
       raca: '',
       emQuarentena: false,
       local: 'galpao',
+      data_nascimento: new Date(),
     },
   })
 
@@ -79,6 +81,21 @@ export default function GalinhasForm({ route, navigation }) {
         name="raca"
         render={({ field: { onChange, value }, fieldState: { error } }) => (
           <Input label="Raça" value={value} onChangeText={onChange} error={error?.message} />
+        )}
+      />
+
+      {/* Data de nascimento */}
+      <Controller
+        control={control}
+        name="data_nascimento"
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
+          <DatePickerField
+            label="Data de Nascimento"
+            date={value ? new Date(value) : new Date()}
+            onChange={onChange}
+            error={error?.message}
+            fullWidth={false}
+          />
         )}
       />
 

@@ -7,6 +7,7 @@ const initialState = {
   umidadeBaixa: 40,
   diasSemLimpeza: 7,
   percentualGalinhasAdoecidas: 5,
+  idadeMaximaGalinhas: 365,
   
   // Checkboxes para ativar/desativar alertas
   alertaTemperaturaAlta: true,
@@ -16,6 +17,7 @@ const initialState = {
   alertaDiasSemLimpeza: true,
   alertaVentilacaoDesativada: true,
   alertaGalinhasAdoecidas: true,
+  alertaIdadeMaximaGalinhas: true,
 }
 
 const alertasSlice = createSlice({

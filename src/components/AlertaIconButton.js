@@ -53,7 +53,20 @@ export default function AlertaIconButton() {
       alertasGalinhas = percentualAdoecidas >= configAlertas.percentualGalinhasAdoecidas
     }
 
-    return alertasMedicoes || alertasNinhos || alertasGalinhas
+    // Verificar alertas de idade máxima das galinhas
+    let alertasIdade = false
+    if (configAlertas.alertaIdadeMaximaGalinhas && galinhas.length > 0) {
+      alertasIdade = galinhas.some((g) => {
+        if (g.data_nascimento) {
+          const nascimento = new Date(g.data_nascimento)
+          const idadeEmDias = Math.floor((hoje - nascimento) / (1000 * 60 * 60 * 24))
+          return idadeEmDias >= configAlertas.idadeMaximaGalinhas
+        }
+        return false
+      })
+    }
+
+    return alertasMedicoes || alertasNinhos || alertasGalinhas || alertasIdade
   }, [medicoes, ninhos, galinhas, configAlertas])
 
   return (

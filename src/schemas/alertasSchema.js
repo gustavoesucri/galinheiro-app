@@ -37,6 +37,12 @@ export const alertasSchema = yup.object({
     .max(100, 'Máximo 100%')
     .required('Informe o percentual'),
   
+  idadeMaximaGalinhas: yup
+    .number()
+    .min(1, 'Mínimo 1 dia')
+    .max(8030, 'Máximo 8030 dias')
+    .required('Informe a idade máxima'),
+  
   alertaTemperaturaAlta: yup.boolean(),
   alertaTemperaturaBaixa: yup.boolean(),
   alertaUmidadeAlta: yup.boolean(),
@@ -44,4 +50,5 @@ export const alertasSchema = yup.object({
   alertaDiasSemLimpeza: yup.boolean(),
   alertaVentilacaoDesativada: yup.boolean(),
   alertaGalinhasAdoecidas: yup.boolean(),
+  alertaIdadeMaximaGalinhas: yup.boolean(),
 })

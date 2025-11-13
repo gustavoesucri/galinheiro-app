@@ -14,4 +14,5 @@ export const galinhaSchema = yup.object().shape({
     .string()
     .oneOf(['galpao', 'campo', 'quarentena'], 'Local inválido')
     .required('Local é obrigatório'),
+  data_nascimento: yup.date().required('Data de nascimento é obrigatória'),
 })
