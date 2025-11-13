@@ -63,9 +63,11 @@ export default function NinhosForm({ navigation, route }) {
   }, [ninho, galinhas, reset])
 
   const onSubmit = (data) => {
-    const novoNinho = ninho ? { ...ninho, ...data } : { id: Date.now(), ...data }
-    if (ninho) dispatch(atualizarNinhoThunk(novoNinho))
-    else dispatch(adicionarNinhoThunk(novoNinho))
+    if (ninho) {
+      dispatch(atualizarNinhoThunk({ ...ninho, ...data }))
+    } else {
+      dispatch(adicionarNinhoThunk(data))
+    }
     navigation.goBack()
   }
 

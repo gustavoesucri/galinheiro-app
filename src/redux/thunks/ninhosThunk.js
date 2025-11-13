@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { v4 as uuidv4 } from 'uuid'
 import { setNinhos, adicionarNinho, atualizarNinho, removerNinho, limparNinhos } from '../slices/ninhosSlice'
 
 const NINHOS_KEY = '@NINHOS'
@@ -27,7 +28,8 @@ export const salvarNinhos = () => async (dispatch, getState) => {
 
 // Adicionar e salvar
 export const adicionarNinhoThunk = (ninho) => async (dispatch) => {
-  dispatch(adicionarNinho(ninho))
+  const ninhoComId = { ...ninho, id: uuidv4() }
+  dispatch(adicionarNinho(ninhoComId))
   dispatch(salvarNinhos())
 }
 

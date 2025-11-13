@@ -1,4 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { v4 as uuidv4 } from 'uuid'
 import { setGalpoes, adicionarGalpao, atualizarGalpao, removerGalpao, limparGalpoes } from '../slices/galpoesSlice'
 
 const GALPOES_KEY = '@GALPOES'
@@ -25,7 +26,8 @@ export const salvarGalpoes = () => async (dispatch, getState) => {
 
 // Adicionar e salvar
 export const adicionarGalpaoThunk = (galpao) => async (dispatch) => {
-  dispatch(adicionarGalpao(galpao))
+  const galpaoComId = { ...galpao, id: uuidv4() }
+  dispatch(adicionarGalpao(galpaoComId))
   dispatch(salvarGalpoes())
 }
 

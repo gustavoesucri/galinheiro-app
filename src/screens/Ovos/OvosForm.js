@@ -4,12 +4,14 @@ import { Text } from 'react-native-paper'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useDispatch, useSelector } from 'react-redux'
+import { v4 as uuidv4 } from 'uuid'
 import { ovosSchema } from '../../schemas/ovosSchema'
 import { adicionarOvoThunk, atualizarOvoThunk } from '../../redux/thunks/ovosThunk'
 import { carregarGalinhas } from '../../redux/thunks/galinhasThunk'
 import { carregarNinhos } from '../../redux/thunks/ninhosThunk'
 import { layout, typography } from '../../styles/theme'
 import Button from '../../components/Button'
+import Input from '../../components/Input'
 import DatePickerField from '../../components/DatePickerField'
 import TextArea from '../../components/TextArea'
 import ChoiceButtonGroup from '../../components/ChoiceButtonGroup'
@@ -20,14 +22,15 @@ export default function OvosForm({ navigation, route }) {
   const dispatch = useDispatch()
   const galinhas = useSelector(state => state.galinhas.lista)
   const ninhos = useSelector(state => state.ninhos.lista)
-  const { ovo } = route.params || {}
+  const { ovo, galinha: prefillGalinha, origin } = route.params || {}
   const [loading, setLoading] = useState(true)
 
   const { control, handleSubmit, reset } = useForm({
     resolver: yupResolver(ovosSchema),
     defaultValues: {
       data: new Date(),
-      galinha: '',
+      // se vier de GalinhasForm, preenche o ID da galinha; caso contrário, vazio
+      galinhaId: prefillGalinha?.id || '',
       ninho: '',
       tamanho: 'Médio',
       cor: 'Branco',
@@ -54,11 +57,24 @@ export default function OvosForm({ navigation, route }) {
 
   // Preenche valores do form ao editar
   useEffect(() => {
-    if (ovo) reset({ ...ovo, data: new Date(ovo.data) })
-  }, [ovo])
+    if (ovo) {
+      reset({ ...ovo, data: new Date(ovo.data) })
+    } else if (prefillGalinha?.id) {
+      // Se vier com galinha pré-preenchida (vindo de GalinhasForm)
+      reset({
+        data: new Date(),
+        galinhaId: prefillGalinha.id,
+        ninho: '',
+        tamanho: 'Médio',
+        cor: 'Branco',
+        qualidade: 'Boa',
+        observacoes: '',
+      })
+    }
+  }, [ovo, prefillGalinha, reset])
 
   const onSubmit = (data) => {
-    const novoOvo = ovo ? { ...ovo, ...data } : { id: Date.now(), ...data }
+    const novoOvo = ovo ? { ...ovo, ...data } : { id: uuidv4(), ...data }
     if (ovo) dispatch(atualizarOvoThunk(novoOvo))
     else dispatch(adicionarOvoThunk(novoOvo))
     navigation.goBack()
@@ -93,12 +109,25 @@ export default function OvosForm({ navigation, route }) {
 
       <Controller
         control={control}
-        name="galinha"
+        name="galinhaId"
         render={({ field: { value, onChange }, fieldState: { error } }) => {
           const opcoesGalinhas = galinhas.map(g => ({
             label: g.nome,
-            value: g.nome,
+            value: g.id,
           }))
+
+          // Se vier de GalinhasForm com galinha pré-definida, mostra um campo não editável
+          if (prefillGalinha?.id && origin === 'GalinhasForm') {
+            const galinhaSelecionada = galinhas.find(g => g.id === prefillGalinha.id)
+            const nomePrefill = galinhaSelecionada?.nome || prefillGalinha.nome
+            return (
+              <Input 
+                label="Galinha" 
+                value={nomePrefill} 
+                editable={false} 
+              />
+            )
+          }
 
           return (
             <CustomSelectField

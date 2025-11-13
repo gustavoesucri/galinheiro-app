@@ -33,6 +33,7 @@ export default function GalinhasList() {
         <Card.Title title={item.nome || 'Sem nome'} />
         <Card.Content style={{ gap: 4 }}>
           <Text style={typography.body}>Saúde: {item.saude || 'Não informada'}</Text>
+          <Text style={typography.body}>Raça: {item.raca || 'Não informada'}</Text>
           <Text style={typography.body}>Ovos hoje: {item.ovosHoje ?? 0}</Text>
           <Text style={typography.body}>Quarentena: {item.emQuarentena ? 'Sim' : 'Não'}</Text>
           <Text style={typography.body}>Local: {localLabel}</Text>

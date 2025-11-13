@@ -8,7 +8,7 @@ import Button from '../../components/Button'
 import Input from '../../components/Input'
 import SwitchField from '../../components/SwitchField'
 import ChoiceButtonGroup from '../../components/ChoiceButtonGroup'
-import NumberInput from '../../components/NumberInput'
+import AddEggButton from '../../components/AddEggButton'
 
 import { galinhaSchema } from '../../schemas/galinhaSchema'
 import { useDispatch } from 'react-redux'
@@ -24,7 +24,7 @@ export default function GalinhasForm({ route, navigation }) {
     defaultValues: galinha || {
       nome: '',
       saude: '',
-      ovosHoje: 0,
+      raca: '',
       emQuarentena: false,
       local: 'galpao',
     },
@@ -71,13 +71,27 @@ export default function GalinhasForm({ route, navigation }) {
         )}
       />
 
+      {/* Campo raça (opcional) */}
       <Controller
         control={control}
-        name="ovosHoje"
-        render={({ field: { value, onChange }, fieldState: { error } }) => (
-          <NumberInput label="Ovos postos hoje" value={value || 0} onChange={onChange} min={0} max={2} error={error?.message} />
+        name="raca"
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
+          <Input label="Raça" value={value} onChangeText={onChange} error={error?.message} />
         )}
       />
+
+      {/* Botão para adicionar ovo: abre OvosForm com a galinha pré-preenchida (imutável lá) */}
+      {/* Este botão só aparece/funciona se a galinha foi salva (tem id) */}
+      {galinha?.id && (
+        <AddEggButton
+          onPress={() => {
+            navigation.navigate('OvosForm', { 
+              galinha: galinha,
+              origin: 'GalinhasForm' 
+            })
+          }}
+        />
+      )}
 
       <Controller
         control={control}

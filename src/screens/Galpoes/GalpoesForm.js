@@ -47,9 +47,11 @@ export default function GalpoesForm({ navigation, route }) {
   }, [galpao])
 
   const onSubmit = (data) => {
-    const novoGalpao = galpao ? { ...galpao, ...data } : { id: Date.now(), ...data }
-    if (galpao) dispatch(atualizarGalpaoThunk(novoGalpao))
-    else dispatch(adicionarGalpaoThunk(novoGalpao))
+    if (galpao) {
+      dispatch(atualizarGalpaoThunk({ ...galpao, ...data }))
+    } else {
+      dispatch(adicionarGalpaoThunk(data))
+    }
     navigation.goBack()
   }
 

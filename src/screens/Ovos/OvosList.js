@@ -5,13 +5,21 @@ import { useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
 import { layout, typography, colors } from '../../styles/theme'
 import { carregarOvos, removerOvoThunk } from '../../redux/thunks/ovosThunk'
+import AddEggButton from '../../components/AddEggButton'
 
 export default function OvosList() {
   const navigation = useNavigation()
   const dispatch = useDispatch()
   const ovos = useSelector(state => state.ovos.lista)
+  const galinhas = useSelector(state => state.galinhas.lista)
 
-  useEffect(() => { dispatch(carregarOvos()) }, [])
+  useEffect(() => { 
+    dispatch(carregarOvos()) 
+  }, [dispatch])
+
+  const obterNomeGalinha = (galinhaId) => {
+    return galinhas.find(g => g.id === galinhaId)?.nome || 'Galinha desconhecida'
+  }
 
   return (
     <View style={layout.container}>
@@ -27,7 +35,7 @@ export default function OvosList() {
         }
         renderItem={({ item }) => (
           <Card style={layout.card}>
-            <Card.Title title={`Ovo - ${item.galinha}`} />
+            <Card.Title title={`Ovo - ${obterNomeGalinha(item.galinhaId)}`} />
             <Card.Content style={{ gap: 4 }}>
               <Text style={typography.body}>Data: {new Date(item.data).toLocaleDateString()}</Text>
               <Text style={typography.body}>Ninho: {item.ninho || '(não registrado)'}</Text>
@@ -43,29 +51,20 @@ export default function OvosList() {
                 style={{ borderColor: colors.accent }}
                 onPress={() => navigation.navigate('OvosForm', { ovo: item })}
               >
-                <Text>Editar</Text>
+                Editar
               </Button>
-              <Button
-                mode="outlined"
-                textColor={colors.error}
-                style={{ borderColor: colors.error }}
-                onPress={() => dispatch(removerOvoThunk(item.id))}
-              >
-                <Text>Remover</Text>
+              <Button onPress={() => dispatch(removerOvoThunk(item.id))}>
+                Remover
               </Button>
             </Card.Actions>
           </Card>
         )}
       />
 
-      <Button
-        mode="contained"
-        icon="plus"
+      <AddEggButton
         onPress={() => navigation.navigate('OvosForm')}
-        style={[layout.button, styles.addButton]}
-      >
-        <Text>Adicionar Ovo</Text>
-      </Button>
+        style={styles.addButton}
+      />
     </View>
   )
 }

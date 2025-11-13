@@ -7,12 +7,8 @@ export const galinhaSchema = yup.object().shape({
     .string()
     .oneOf(['Boa', 'Fragilizada', 'Adoecida'], 'Estado de saúde inválido')
     .required('Estado de saúde é obrigatório'),
-  ovosHoje: yup
-    .number()
-    .typeError('Ovos deve ser um número')
-    .min(0, 'Não pode ser menor que 0')
-    .max(2, 'Não pode ser maior que 2')
-    .required('Ovos postos hoje é obrigatório'),
+  // ovosHoje removido: o controle de adição de ovos passa a ser feito via OvosForm
+  raca: yup.string().optional(),
   emQuarentena: yup.boolean().required(),
   local: yup
     .string()
