@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ScrollView, StyleSheet, View } from 'react-native'
+import { ScrollView, StyleSheet, View, Alert } from 'react-native'
 import { Text } from 'react-native-paper'
 import { useForm, Controller, useWatch } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -89,19 +89,24 @@ export default function GalpoesForm({ navigation, route }) {
     }
   }, [galpao, reset])
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     // Validação final de nome único
     if (nomeErro) {
-      alert(nomeErro)
+      Alert.alert('Erro de Validação', nomeErro)
       return
     }
     
-    if (galpao) {
-      dispatch(atualizarGalpaoThunk({ ...galpao, ...data }))
-    } else {
-      dispatch(adicionarGalpaoThunk(data))
+    try {
+      if (galpao) {
+        await dispatch(atualizarGalpaoThunk({ ...galpao, ...data }))
+      } else {
+        await dispatch(adicionarGalpaoThunk(data))
+      }
+      navigation.goBack()
+    } catch (error) {
+      const mensagem = error.response?.data?.message || error.message || 'Erro ao salvar galpão'
+      Alert.alert('Erro', mensagem)
     }
-    navigation.goBack()
   }
 
   return (
