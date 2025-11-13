@@ -122,7 +122,10 @@ export default function GalinhasForm({ route, navigation }) {
   }
 
   return (
-    <ScrollView contentContainerStyle={[layout.formContainer, styles.container]}>
+    <ScrollView 
+      contentContainerStyle={[layout.formContainer, styles.container]}
+      style={{ flex: 1, backgroundColor: colors.background }}
+    >
       <Text style={[typography.title, styles.title]}>
         {galinha ? 'Editar Galinha' : 'Cadastrar Galinha'}
       </Text>

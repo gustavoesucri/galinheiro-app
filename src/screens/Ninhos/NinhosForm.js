@@ -145,7 +145,10 @@ export default function NinhosForm({ navigation, route }) {
   }
 
   return (
-    <ScrollView contentContainerStyle={[layout.formContainer, styles.container]}>
+    <ScrollView 
+      contentContainerStyle={[layout.formContainer, styles.container]}
+      style={{ flex: 1, backgroundColor: colors.background }}
+    >
       <Text style={[typography.title, styles.title]}>
         {ninho ? 'Editar Ninho' : 'Cadastrar / Atualizar Ninho'}
       </Text>
