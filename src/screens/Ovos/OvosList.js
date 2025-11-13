@@ -5,6 +5,8 @@ import ButtonPaper from '../../components/ButtonPaper'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
 import { carregarOvos, removerOvoThunk } from '../../redux/thunks/ovosThunk'
+import { carregarGalinhas } from '../../redux/thunks/galinhasThunk'
+import { carregarNinhos } from '../../redux/thunks/ninhosThunk'
 import { useTema } from '../../hooks/useTema'
 
 export default function OvosList() {
@@ -14,6 +16,7 @@ export default function OvosList() {
   const { layout, typography, colors } = tema
   const ovos = useSelector(state => state.ovos.lista)
   const galinhas = useSelector(state => state.galinhas.lista)
+  const ninhos = useSelector(state => state.ninhos.lista)
   const botoesClaros = useSelector(state => state.botaoModo.botoesClaros)
   
   // Cor para botão Remover - laranja fixo ou cor do tema
@@ -21,11 +24,20 @@ export default function OvosList() {
   const removeTextColor = botoesClaros ? tema.colors.black : tema.colors.textOnPrimary
 
   useEffect(() => { 
-    dispatch(carregarOvos()) 
+    dispatch(carregarOvos())
+    dispatch(carregarGalinhas())
+    dispatch(carregarNinhos())
   }, [dispatch])
 
   const obterNomeGalinha = (galinhaId) => {
-    return galinhas.find(g => g.id === galinhaId)?.nome || 'Galinha desconhecida'
+    const galinha = galinhas.find(g => String(g.id) === String(galinhaId))
+    return galinha ? galinha.nome : 'Galinha desconhecida'
+  }
+
+  const obterNomeNinho = (ninhoId) => {
+    if (!ninhoId) return '(não registrado)'
+    const ninho = ninhos.find(n => String(n.id) === String(ninhoId))
+    return ninho ? ninho.identificacao : '(não registrado)'
   }
 
   return (
@@ -45,7 +57,7 @@ export default function OvosList() {
             <Card.Title title={`Ovo - ${obterNomeGalinha(item.galinhaId)}`} />
             <Card.Content style={{ gap: 4 }}>
               <Text style={typography.body}>Data: {new Date(item.data).toLocaleDateString()}</Text>
-              <Text style={typography.body}>Ninho: {item.ninho || '(não registrado)'}</Text>
+              <Text style={typography.body}>Ninho: {obterNomeNinho(item.ninhoId)}</Text>
               <Text style={typography.body}>Tamanho: {item.tamanho}</Text>
               <Text style={typography.body}>Cor: {item.cor}</Text>
               <Text style={typography.body}>Qualidade: {item.qualidade}</Text>

@@ -30,8 +30,8 @@ export default function MedicaoAmbienteForm({ navigation, route }) {
       umidade: 50.0,
       luminosidade: 300,
       ventilacao_ativa: false,
-      usa_ventilacao: true,
-      galpao: '',
+      usa_ventilacao: false,
+      galpaoId: '',
     },
   })
 
@@ -49,14 +49,18 @@ export default function MedicaoAmbienteForm({ navigation, route }) {
   }, [usaVentilacao, setValue])
 
   useEffect(() => {
-  if (medicao) {
-    reset({
-      ...medicao,
-      data_medicao: new Date(medicao.data_medicao),
-      galpao: medicao.galpao?.id || medicao.galpao, // garante que o valor seja o id
-    })
-  }
-}, [medicao])
+    if (medicao) {
+      reset({
+        data_medicao: medicao.data_medicao ? new Date(medicao.data_medicao) : new Date(),
+        temperatura: medicao.temperatura !== undefined ? medicao.temperatura : 25.0,
+        umidade: medicao.umidade !== undefined ? medicao.umidade : 50.0,
+        luminosidade: medicao.luminosidade !== undefined ? medicao.luminosidade : 300,
+        ventilacao_ativa: medicao.ventilacao_ativa || false,
+        usa_ventilacao: medicao.usa_ventilacao || false,
+        galpaoId: medicao.galpaoId || '',
+      })
+    }
+  }, [medicao, reset])
 
 
   const onSubmit = (data) => {
@@ -165,7 +169,7 @@ export default function MedicaoAmbienteForm({ navigation, route }) {
 
       <Controller
   control={control}
-  name="galpao"
+  name="galpaoId"
   render={({ field: { onChange, value }, fieldState: { error } }) => (
     <CustomSelectField
       label="Galpão"

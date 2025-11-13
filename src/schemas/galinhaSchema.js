@@ -9,10 +9,12 @@ export const galinhaSchema = yup.object().shape({
     .required('Estado de saúde é obrigatório'),
   // ovosHoje removido: o controle de adição de ovos passa a ser feito via OvosForm
   raca: yup.string().optional(),
-  emQuarentena: yup.boolean().required(),
+  emQuarentena: yup.boolean().required('Quarentena é obrigatória'),
   local: yup
     .string()
     .oneOf(['galpao', 'campo', 'quarentena'], 'Local inválido')
     .required('Local é obrigatório'),
-  data_nascimento: yup.date().required('Data de nascimento é obrigatória'),
+  galpaoId: yup.string().nullable(),
+  ninhoId: yup.string().nullable(),
+  data_nascimento: yup.date().required('Data de nascimento é obrigatória').typeError('Data inválida'),
 })

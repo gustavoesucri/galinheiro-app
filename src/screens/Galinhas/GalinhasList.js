@@ -5,6 +5,8 @@ import ButtonPaper from '../../components/ButtonPaper'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
 import { carregarGalinhas, removerGalinhaThunk } from '../../redux/thunks/galinhasThunk'
+import { carregarGalpoes } from '../../redux/thunks/galpoesThunk'
+import { carregarNinhos } from '../../redux/thunks/ninhosThunk'
 import { EggIcon, EmptyEggSlot } from '../../components/EggIcons'
 import { useTema } from '../../hooks/useTema'
 import CustomSelectField from '../../components/CustomSelectField'
@@ -21,6 +23,8 @@ export default function GalinhasList() {
   const dispatch = useDispatch()
   const galinhas = useSelector(state => state.galinhas.lista)
   const ovos = useSelector(state => state.ovos.lista)
+  const galpoes = useSelector(state => state.galpoes.lista)
+  const ninhos = useSelector(state => state.ninhos.lista)
   const botoesClaros = useSelector(state => state.botaoModo.botoesClaros)
   const tema = useTema()
   const { layout, typography, colors } = tema
@@ -53,6 +57,8 @@ export default function GalinhasList() {
 
   useEffect(() => {
     dispatch(carregarGalinhas())
+    dispatch(carregarGalpoes())
+    dispatch(carregarNinhos())
   }, [dispatch])
 
   // Função para calcular idade em dias
@@ -63,6 +69,20 @@ export default function GalinhasList() {
     const diffTime = Math.abs(hoje - nascimento)
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
     return diffDays
+  }
+
+  // Função para buscar nome do galpão
+  const getNomeGalpao = (galpaoId) => {
+    if (!galpaoId) return null
+    const galpao = galpoes.find(g => String(g.id) === String(galpaoId))
+    return galpao ? galpao.nome : null
+  }
+
+  // Função para buscar identificação do ninho
+  const getNomeNinho = (ninhoId) => {
+    if (!ninhoId) return null
+    const ninho = ninhos.find(n => String(n.id) === String(ninhoId))
+    return ninho ? ninho.identificacao : null
   }
 
   // Aplicar filtros
@@ -204,6 +224,12 @@ export default function GalinhasList() {
           <Text style={typography.body}>Raça: {item.raca || 'Não informada'}</Text>
           <Text style={typography.body}>Quarentena: {item.emQuarentena ? 'Sim' : 'Não'}</Text>
           <Text style={typography.body}>Local: {localLabel}</Text>
+          {item.local === 'galpao' && item.galpaoId && (
+            <Text style={typography.body}>Galpão: {getNomeGalpao(item.galpaoId) || '(não encontrado)'}</Text>
+          )}
+          {item.local === 'galpao' && item.ninhoId && (
+            <Text style={typography.body}>Ninho: {getNomeNinho(item.ninhoId) || '(não encontrado)'}</Text>
+          )}
           {idadeEmDias !== null && (
             <Text style={typography.body}>
               Idade: {idadeEmDias} dias

@@ -42,11 +42,19 @@ export default function GalpoesForm({ navigation, route }) {
   useEffect(() => {
     if (galpao) {
       reset({
-        ...galpao,
-        data_ultima_manutencao: new Date(galpao.data_ultima_manutencao),
+        nome: galpao.nome || '',
+        capacidade_maxima_galinhas: galpao.capacidade_maxima_galinhas || 10,
+        capacidade_maxima_ninhos: galpao.capacidade_maxima_ninhos || 10,
+        numero_ninhos_ocupados: galpao.numero_ninhos_ocupados || 0,
+        area_m2: galpao.area_m2 || '',
+        tipo_piso: galpao.tipo_piso || 'terra',
+        ventilacao: galpao.ventilacao || 'natural',
+        ativo: galpao.ativo !== undefined ? galpao.ativo : true,
+        data_ultima_manutencao: galpao.data_ultima_manutencao ? new Date(galpao.data_ultima_manutencao) : new Date(),
+        observacoes: galpao.observacoes || '',
       })
     }
-  }, [galpao])
+  }, [galpao, reset])
 
   const onSubmit = (data) => {
     if (galpao) {

@@ -121,7 +121,7 @@ export default function DashboardScreen({ navigation, route }) {
       const dataMedicao = new Date(m.data_medicao)
       
       // Buscar nome do galpão
-      const galpao = galpoes.find(g => String(g.id) === String(m.galpao))
+      const galpao = galpoes.find(g => String(g.id) === String(m.galpaoId))
       const nomeGalpao = galpao ? galpao.nome : 'Galpão desconhecido'
       
       // Apenas alertas da última semana

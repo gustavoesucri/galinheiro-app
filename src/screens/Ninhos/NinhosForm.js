@@ -14,6 +14,7 @@ import { ninhosSchema } from '../../schemas/ninhosSchema'
 import { useDispatch, useSelector } from 'react-redux'
 import { adicionarNinhoThunk, atualizarNinhoThunk } from '../../redux/thunks/ninhosThunk'
 import { carregarGalinhas } from '../../redux/thunks/galinhasThunk'
+import { carregarGalpoes } from '../../redux/thunks/galpoesThunk'
 
 export default function NinhosForm({ navigation, route }) {
   const tema = useTema()
@@ -29,37 +30,45 @@ export default function NinhosForm({ navigation, route }) {
     defaultValues: {
       identificacao: '',
       tipo_material: 'Palha',
-      localizacao: '',
       ocupado: false,
       ultima_limpeza: new Date(),
       observacoes: '',
-      galinha: '',
+      galpaoId: '',
+      galinhaId: '',
     },
   })
 
   useEffect(() => {
-    const fetchGalinhas = async () => {
-      await dispatch(carregarGalinhas())
+    const fetchData = async () => {
+      await Promise.all([
+        dispatch(carregarGalinhas()),
+        dispatch(carregarGalpoes())
+      ])
       setLoadingGalinhas(false)
     }
-    fetchGalinhas()
+    fetchData()
   }, [dispatch])
 
   useEffect(() => {
     if (ninho) {
       reset({
-        ...ninho,
-        ultima_limpeza: new Date(ninho.ultima_limpeza),
+        identificacao: ninho.identificacao || '',
+        tipo_material: ninho.tipo_material || 'Palha',
+        galpaoId: ninho.galpaoId || '',
+        ocupado: ninho.ocupado || false,
+        ultima_limpeza: ninho.ultima_limpeza ? new Date(ninho.ultima_limpeza) : new Date(),
+        observacoes: ninho.observacoes || '',
+        galinhaId: ninho.galinhaId || '',
       })
     } else {
       reset({
         identificacao: '',
         tipo_material: 'Palha',
-        localizacao: '',
         ocupado: false,
         ultima_limpeza: new Date(),
         observacoes: '',
-        galinha: '',
+        galpaoId: '',
+        galinhaId: '',
       })
     }
   }, [ninho, galinhas, reset])
@@ -113,20 +122,20 @@ export default function NinhosForm({ navigation, route }) {
       />
 
       <Controller
-  control={control}
-  name="localizacao"
-  render={({ field: { value, onChange }, fieldState: { error } }) => (
-    <CustomSelectField
-      label="Localização"
-      value={value}
-      onValueChange={onChange}
-      options={galpoes.map((g) => ({ label: g.nome, value: g.id }))}
-      placeholder="Selecione o galpão"
-      error={error?.message}
-      zIndex={2500}
-    />
-  )}
-/>
+        control={control}
+        name="galpaoId"
+        render={({ field: { value, onChange }, fieldState: { error } }) => (
+          <CustomSelectField
+            label="Galpão"
+            value={value}
+            onValueChange={onChange}
+            options={galpoes.map((g) => ({ label: g.nome, value: g.id }))}
+            placeholder="Selecione o galpão"
+            error={error?.message}
+            zIndex={2500}
+          />
+        )}
+      />
 
       <Controller
         control={control}
@@ -177,32 +186,34 @@ export default function NinhosForm({ navigation, route }) {
             <Text style={{ marginLeft: 8 }}>Carregando galinhas...</Text>
           </View>
         ) : (
-          <Controller
-            control={control}
-            name="galinha"
-            render={({ field: { onChange, value }, fieldState: { error } }) => {
-              const opcoesGalinhas = [
-                { label: 'Nenhuma', value: '' },
-                ...galinhas.map(g => ({
-                  label: g.nome,
-                  value: g.nome,
-                })),
-              ]
+          <>
+            <Controller
+              control={control}
+              name="galinhaId"
+              render={({ field: { onChange, value }, fieldState: { error } }) => {
+                const opcoesGalinhas = [
+                  { label: 'Nenhuma', value: '' },
+                  ...galinhas.map(g => ({
+                    label: g.nome,
+                    value: g.id,
+                  })),
+                ]
 
-              return (
-                <CustomSelectField
-                  key={`galinha-custom-${galinhas.length}`}
-                  label="Galinha (opcional)"
-                  value={value}
-                  onValueChange={onChange}
-                  options={opcoesGalinhas}
-                  placeholder="Selecione uma galinha"
-                  error={error?.message}
-                  zIndex={2000}
-                />
-              )
-            }}
-          />
+                return (
+                  <CustomSelectField
+                    key={`galinha-custom-${galinhas.length}`}
+                    label="Galinha (opcional)"
+                    value={value}
+                    onValueChange={onChange}
+                    options={opcoesGalinhas}
+                    placeholder="Selecione uma galinha"
+                    error={error?.message}
+                    zIndex={2000}
+                  />
+                )
+              }}
+            />
+          </>
         )}
       </View>
 

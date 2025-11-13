@@ -5,6 +5,7 @@ import ButtonPaper from '../../components/ButtonPaper'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
 import { carregarMedicoes, removerMedicaoThunk } from '../../redux/thunks/medicaoAmbienteThunk'
+import { carregarGalpoes } from '../../redux/thunks/galpoesThunk'
 import { useTema } from '../../hooks/useTema'
 
 export default function MedicaoAmbienteList() {
@@ -23,6 +24,7 @@ export default function MedicaoAmbienteList() {
 
   useEffect(() => {
     dispatch(carregarMedicoes())
+    dispatch(carregarGalpoes())
   }, [dispatch])
 
   const deletar = (id) => {
@@ -60,7 +62,7 @@ export default function MedicaoAmbienteList() {
           return (
             <Card style={layout.card}>
               <Card.Title
-                title={getNomeGalpao(item.galpao)}
+                title={getNomeGalpao(item.galpaoId)}
                 subtitle={formatarDataHora(item.data_medicao)}
               />
               <Card.Content style={{ gap: 4 }}>

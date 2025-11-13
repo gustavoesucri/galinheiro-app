@@ -9,15 +9,14 @@ export const ninhosSchema = yup.object().shape({
     .string()
     .oneOf(['Palha', 'Serragem', 'Plástico'], 'Selecione um tipo válido')
     .required('Tipo de material é obrigatório'),
-  localizacao: yup
+  galpaoId: yup
     .string()
-    .required('Localização é obrigatória')
-    .max(100, 'Máximo de 100 caracteres'),
+    .required('Selecione o galpão'),
   ocupado: yup.boolean(),
   ultima_limpeza: yup
     .date()
     .required('Data da última limpeza é obrigatória')
     .typeError('Data inválida'),
   observacoes: yup.string().max(500, 'Máximo de 500 caracteres').nullable(),
-  galinha: yup.string().nullable(),
+  galinhaId: yup.string().nullable(),
 })

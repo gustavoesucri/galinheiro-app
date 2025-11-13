@@ -37,7 +37,7 @@ export default function OvosForm({ navigation, route }) {
       data: new Date(),
       // se vier de GalinhasForm, preenche o ID da galinha; caso contrário, vazio
       galinhaId: prefillGalinha?.id || '',
-      ninho: '',
+      ninhoId: '',
       tamanho: 'Médio',
       cor: 'Branco',
       qualidade: 'Boa',
@@ -64,13 +64,21 @@ export default function OvosForm({ navigation, route }) {
   // Preenche valores do form ao editar
   useEffect(() => {
     if (ovo) {
-      reset({ ...ovo, data: new Date(ovo.data) })
+      reset({
+        data: ovo.data ? new Date(ovo.data) : new Date(),
+        galinhaId: ovo.galinhaId || '',
+        ninhoId: ovo.ninhoId || '',
+        tamanho: ovo.tamanho || 'Médio',
+        cor: ovo.cor || 'Branco',
+        qualidade: ovo.qualidade || 'Boa',
+        observacoes: ovo.observacoes || '',
+      })
     } else if (prefillGalinha?.id) {
       // Se vier com galinha pré-preenchida (vindo de GalinhasForm)
       reset({
         data: new Date(),
         galinhaId: prefillGalinha.id,
-        ninho: '',
+        ninhoId: '',
         tamanho: 'Médio',
         cor: 'Branco',
         qualidade: 'Boa',
@@ -217,13 +225,13 @@ export default function OvosForm({ navigation, route }) {
 
       <Controller
         control={control}
-        name="ninho"
+        name="ninhoId"
         render={({ field: { value, onChange }, fieldState: { error } }) => {
           const opcoesNinhos = [
             { label: 'Nenhum', value: '' },
             ...ninhos.map(n => ({
               label: n.identificacao,
-              value: n.identificacao,
+              value: n.id,
             })),
           ]
 

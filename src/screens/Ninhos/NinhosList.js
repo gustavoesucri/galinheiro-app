@@ -5,6 +5,8 @@ import ButtonPaper from '../../components/ButtonPaper'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
 import { carregarNinhos, removerNinhoThunk } from '../../redux/thunks/ninhosThunk'
+import { carregarGalpoes } from '../../redux/thunks/galpoesThunk'
+import { carregarGalinhas } from '../../redux/thunks/galinhasThunk'
 import { useTema } from '../../hooks/useTema'
 
 export default function NinhosList() {
@@ -14,6 +16,7 @@ export default function NinhosList() {
   const { layout, typography, colors } = tema
   const ninhos = useSelector(state => state.ninhos.lista)
   const galpoes = useSelector(state => state.galpoes.lista)
+  const galinhas = useSelector(state => state.galinhas.lista)
   const botoesClaros = useSelector(state => state.botaoModo.botoesClaros)
   
   // Cor para botão Deletar - laranja fixo ou cor do tema
@@ -22,6 +25,8 @@ export default function NinhosList() {
 
   useEffect(() => {
     dispatch(carregarNinhos())
+    dispatch(carregarGalpoes())
+    dispatch(carregarGalinhas())
   }, [dispatch])
 
   const deletarNinho = (id) => {
@@ -44,8 +49,14 @@ export default function NinhosList() {
 
   const getNomeGalpao = (galpaoId) => {
     if (!galpaoId) return '(sem galpão)'
-    const g = galpoes.find((g) => Number(g.id) === Number(galpaoId))
+    const g = galpoes.find((g) => String(g.id) === String(galpaoId))
     return g ? g.nome : '(sem galpão)'
+  }
+
+  const getNomeGalinha = (galinhaId) => {
+    if (!galinhaId) return '(não adicionada)'
+    const galinha = galinhas.find((g) => String(g.id) === String(galinhaId))
+    return galinha ? galinha.nome : '(não adicionada)'
   }
 
   return (
@@ -65,13 +76,13 @@ export default function NinhosList() {
             <Card.Title title={item.identificacao} />
             <Card.Content style={{ gap: 4 }}>
               <Text style={typography.body}>Material: {item.tipo_material}</Text>
-              <Text style={typography.body}>Localização: {getNomeGalpao(item.localizacao)}</Text>
+              <Text style={typography.body}>Galpão: {getNomeGalpao(item.galpaoId)}</Text>
               <Text style={typography.body}>Ocupado: {item.ocupado ? 'Sim' : 'Não'}</Text>
               <Text style={typography.body}>
                 Última limpeza: {formatDate(item.ultima_limpeza)} ({diasDesdeLimpeza(item.ultima_limpeza)} dias atrás)
               </Text>
               <Text style={typography.body}>
-                Galinha: {item.galinha ? item.galinha : '(não adicionada)'}
+                Galinha: {getNomeGalinha(item.galinhaId)}
               </Text>
               <Text style={typography.body}>
                 Observações: {item.observacoes ? item.observacoes : '(sem observações)'}
