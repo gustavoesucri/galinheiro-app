@@ -35,6 +35,17 @@ export default function GalinhasList() {
   const [filtroIdadeMax, setFiltroIdadeMax] = useState(365)
   const [mostrarFiltros, setMostrarFiltros] = useState(false)
   
+  // Filtros aplicados (só mudam ao clicar em "Aplicar Filtros")
+  const [filtrosAplicados, setFiltrosAplicados] = useState({
+    nome: '',
+    saude: '',
+    raca: '',
+    quarentena: '',
+    local: '',
+    idadeMin: 0,
+    idadeMax: 365,
+  })
+  
   // Cor para botão Deletar - laranja fixo ou cor do tema
   const deleteColor = botoesClaros ? tema.colors.primaryOrange : tema.colors.primary
   // Texto: preto no laranja fixo, branco/preto conforme o tema nos outros
@@ -57,37 +68,37 @@ export default function GalinhasList() {
   // Aplicar filtros
   const galinhasFiltradas = galinhas.filter(galinha => {
     // Filtro por nome
-    if (filtroNome && !galinha.nome?.toLowerCase().includes(filtroNome.toLowerCase())) {
+    if (filtrosAplicados.nome && !galinha.nome?.toLowerCase().includes(filtrosAplicados.nome.toLowerCase())) {
       return false
     }
 
     // Filtro por saúde
-    if (filtroSaude && galinha.saude !== filtroSaude) {
+    if (filtrosAplicados.saude && galinha.saude !== filtrosAplicados.saude) {
       return false
     }
 
     // Filtro por raça
-    if (filtroRaca && !galinha.raca?.toLowerCase().includes(filtroRaca.toLowerCase())) {
+    if (filtrosAplicados.raca && !galinha.raca?.toLowerCase().includes(filtrosAplicados.raca.toLowerCase())) {
       return false
     }
 
     // Filtro por quarentena
-    if (filtroQuarentena) {
-      const emQuarentena = filtroQuarentena === 'sim'
+    if (filtrosAplicados.quarentena) {
+      const emQuarentena = filtrosAplicados.quarentena === 'sim'
       if (galinha.emQuarentena !== emQuarentena) {
         return false
       }
     }
 
     // Filtro por local
-    if (filtroLocal && galinha.local !== filtroLocal) {
+    if (filtrosAplicados.local && galinha.local !== filtrosAplicados.local) {
       return false
     }
 
     // Filtro por idade
     const idade = calcularIdadeEmDias(galinha.data_nascimento)
     if (idade !== null) {
-      if (idade < filtroIdadeMin || idade > filtroIdadeMax) {
+      if (idade < filtrosAplicados.idadeMin || idade > filtrosAplicados.idadeMax) {
         return false
       }
     }
@@ -103,7 +114,40 @@ export default function GalinhasList() {
     setFiltroLocal('')
     setFiltroIdadeMin(0)
     setFiltroIdadeMax(365)
+    // Aplica filtros limpos imediatamente
+    setFiltrosAplicados({
+      nome: '',
+      saude: '',
+      raca: '',
+      quarentena: '',
+      local: '',
+      idadeMin: 0,
+      idadeMax: 365,
+    })
   }
+
+  const aplicarFiltros = () => {
+    setFiltrosAplicados({
+      nome: filtroNome,
+      saude: filtroSaude,
+      raca: filtroRaca,
+      quarentena: filtroQuarentena,
+      local: filtroLocal,
+      idadeMin: filtroIdadeMin,
+      idadeMax: filtroIdadeMax,
+    })
+    setMostrarFiltros(false)
+  }
+
+  // Verificar se há filtros ativos
+  const temFiltrosAtivos = 
+    filtrosAplicados.nome !== '' ||
+    filtrosAplicados.saude !== '' ||
+    filtrosAplicados.raca !== '' ||
+    filtrosAplicados.quarentena !== '' ||
+    filtrosAplicados.local !== '' ||
+    filtrosAplicados.idadeMin !== 0 ||
+    filtrosAplicados.idadeMax !== 365
 
   const deletarGalinha = (id) => {
     dispatch(removerGalinhaThunk(id))
@@ -224,13 +268,25 @@ export default function GalinhasList() {
     <View style={layout.container}>
       <View style={styles.header}>
         <Text style={[typography.title, styles.title]}>Galinhas</Text>
-        <IconButton
-          icon={mostrarFiltros ? 'filter-off' : 'filter'}
-          iconColor={colors.primary}
-          size={24}
-          onPress={() => setMostrarFiltros(!mostrarFiltros)}
-        />
+        <View style={styles.filterContainer}>
+          {temFiltrosAtivos && (
+            <Text style={[typography.small, { color: colors.accent, marginRight: 8 }]}>
+              Filtro ativo
+            </Text>
+          )}
+          <IconButton
+            icon={mostrarFiltros ? 'filter-off' : 'filter'}
+            iconColor={colors.primary}
+            size={24}
+            onPress={() => setMostrarFiltros(!mostrarFiltros)}
+          />
+        </View>
       </View>
+
+      {/* Contador de resultados */}
+      <Text style={[typography.body, styles.contador, { color: colors.textSecondary }]}>
+        Mostrando {galinhasFiltradas.length} de {galinhas.length} galinhas
+      </Text>
 
       {/* Painel de Filtros */}
       {mostrarFiltros && (
@@ -344,16 +400,12 @@ export default function GalinhasList() {
             </ButtonPaper>
             <ButtonPaper
               mode="contained"
-              onPress={() => setMostrarFiltros(false)}
+              onPress={aplicarFiltros}
               style={{ flex: 1 }}
             >
               Aplicar Filtros
             </ButtonPaper>
           </View>
-
-          <Text style={[typography.small, { marginTop: 8, color: colors.textSecondary }]}>
-            Mostrando {galinhasFiltradas.length} de {galinhas.length} galinhas
-          </Text>
         </View>
       )}
 
@@ -390,7 +442,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 4,
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  contador: {
+    textAlign: 'center',
+    marginBottom: 12,
   },
   filterPanel: {
     marginBottom: 12,

@@ -71,7 +71,10 @@ export default function AlertaIconButton() {
 
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate('Alertas')}
+      onPress={() => navigation.navigate('MainTabs', {
+        screen: 'Dashboard',
+        params: { scrollToAlertas: true }
+      })}
       style={styles.container}
     >
       <View>

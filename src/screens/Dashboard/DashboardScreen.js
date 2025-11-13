@@ -12,7 +12,7 @@ import { carregarMedicoes } from '../../redux/thunks/medicaoAmbienteThunk'
 
 const screenWidth = Dimensions.get('window').width - 32
 
-export default function DashboardScreen({ navigation }) {
+export default function DashboardScreen({ navigation, route }) {
   const dispatch = useDispatch()
   const tema = useTema()
   const { colors, typography, layout } = tema
@@ -29,6 +29,10 @@ export default function DashboardScreen({ navigation }) {
   // Cor dos gráficos - laranja fixo ou cor do tema
   const chartColor = botoesClaros ? tema.colors.primaryOrange : tema.colors.primary
 
+  // Refs para scroll
+  const scrollViewRef = useRef(null)
+  const alertasYPosition = useRef(0)
+
   // Carregar dados ao montar
   useEffect(() => {
     dispatch(carregarGalinhas())
@@ -37,6 +41,21 @@ export default function DashboardScreen({ navigation }) {
     dispatch(carregarNinhos())
     dispatch(carregarMedicoes())
   }, [dispatch])
+
+  // Scroll para alertas quando navegado via parâmetro
+  useEffect(() => {
+    if (route?.params?.scrollToAlertas && alertasYPosition.current > 0) {
+      setTimeout(() => {
+        scrollViewRef.current?.scrollTo({ 
+          y: alertasYPosition.current - 20, 
+          animated: false 
+        })
+      }, 100)
+      
+      // Limpa o parâmetro após o scroll
+      navigation.setParams({ scrollToAlertas: false })
+    }
+  }, [route?.params?.scrollToAlertas, alertasYPosition.current])
 
   // Animações
   const fadeAnim = useRef(new Animated.Value(0)).current
@@ -326,7 +345,10 @@ export default function DashboardScreen({ navigation }) {
 
   // Render
   return (
-    <ScrollView style={[layout.container, { backgroundColor: colors.background }]}>
+    <ScrollView 
+      ref={scrollViewRef}
+      style={[layout.container, { backgroundColor: colors.background }]}
+    >
       <Animated.View
         style={[
           styles.animatedContainer,
@@ -422,17 +444,21 @@ export default function DashboardScreen({ navigation }) {
           <TouchableOpacity 
             activeOpacity={0.7}
             onPress={() => navigation.navigate('Alertas')}
+            onLayout={(event) => {
+              const { y } = event.nativeEvent.layout
+              alertasYPosition.current = y
+            }}
           >
             <View style={[layout.card, styles.alertCard, { borderLeftColor: colors.error }]}>
               <Text style={[typography.subtitle, { color: colors.error }]}>⚠️ Alertas ({alertasAtivos.length})</Text>
+              <Text style={[typography.small, { color: colors.textSecondary, marginTop: 8 }]}>
+                Toque para configurar alertas
+              </Text>
               {alertasAtivos.map((alerta, idx) => (
                 <Text key={idx} style={[typography.body, { color: colors.error, marginTop: 4 }]}>
                   {alerta.mensagem}
                 </Text>
               ))}
-              <Text style={[typography.small, { color: colors.textSecondary, marginTop: 8 }]}>
-                Toque para configurar alertas
-              </Text>
             </View>
           </TouchableOpacity>
         )}

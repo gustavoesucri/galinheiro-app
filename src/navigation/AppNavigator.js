@@ -1,6 +1,7 @@
 import React from 'react'
 import { View } from 'react-native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useSelector } from 'react-redux'
 import { useTema } from '../hooks/useTema'
@@ -29,10 +30,10 @@ import AlertaIconButton from '../components/AlertaIconButton'
 import AlertasScreen from '../screens/Alertas/AlertasScreen'
 
 const Tab = createBottomTabNavigator()
+const Stack = createNativeStackNavigator()
 
-export default function AppNavigator() {
+function MainTabs() {
   const tema = useTema()
-  const temaSelecionado = useSelector(state => state.tema.ativo)
 
   return (
     <Tab.Navigator
@@ -62,17 +63,6 @@ export default function AppNavigator() {
       />
 
       <Tab.Screen
-        name="Alertas"
-        component={AlertasScreen}
-        options={{
-          tabBarButton: () => null, // Esconde da barra de navegação (acessível apenas pelo header/dashboard)
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="alert-circle" size={24} color={color} />
-          ),
-        }}
-      />
-
-      <Tab.Screen
         name="Galinhas"
         component={GalinhasStack}
         options={{
@@ -85,7 +75,7 @@ export default function AppNavigator() {
 
       <Tab.Screen
         name="Ovos"
-        component={OvosStack} // agora é stack
+        component={OvosStack}
         options={{
           headerShown: false,
           tabBarIcon: ({ color }) => (
@@ -107,7 +97,7 @@ export default function AppNavigator() {
 
       <Tab.Screen
         name="Galpões"
-        component={GalpoesStack} // <— agora é a Stack
+        component={GalpoesStack}
         options={{
           headerShown: false,
           tabBarIcon: ({ color }) => (
@@ -115,6 +105,7 @@ export default function AppNavigator() {
           ),
         }}
       />
+      
       <Tab.Screen
         name="Medições"
         component={MedicaoAmbienteStack}
@@ -126,5 +117,37 @@ export default function AppNavigator() {
         }}
       />
     </Tab.Navigator>
+  )
+}
+
+export default function AppNavigator() {
+  const tema = useTema()
+  const temaSelecionado = useSelector(state => state.tema.ativo)
+
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: { backgroundColor: tema.colors.primary },
+        headerTintColor: tema.colors.textPrimary,
+        headerRight: () => (
+          <View style={{ flexDirection: 'row' }}>
+            <AlertaIconButton />
+            <BotaoModoToggleButton />
+            <TemaToggleButton />
+          </View>
+        ),
+      }}
+    >
+      <Stack.Screen 
+        name="MainTabs" 
+        component={MainTabs}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen 
+        name="Alertas" 
+        component={AlertasScreen}
+        options={{ title: '⚙️ Configurações de Alertas' }}
+      />
+    </Stack.Navigator>
   )
 }
