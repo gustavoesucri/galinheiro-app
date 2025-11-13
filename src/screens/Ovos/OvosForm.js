@@ -341,7 +341,7 @@ export default function OvosForm({ navigation, route }) {
   )
 }
 
-const styles = StyleSheet.Create({
+const styles = StyleSheet.create({
   container: { paddingBottom: 32 },
   title: { marginBottom: 16 },
   errorContainer: {

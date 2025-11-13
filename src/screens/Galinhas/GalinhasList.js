@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
-import { View, FlatList, StyleSheet } from 'react-native'
+import { View, FlatList, StyleSheet, TouchableOpacity } from 'react-native'
 import { Card, Text, Button } from 'react-native-paper'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
 import { carregarGalinhas, removerGalinhaThunk } from '../../redux/thunks/galinhasThunk'
@@ -46,6 +47,36 @@ export default function GalinhasList() {
       })
     }
 
+    const handleAddEgg = () => {
+      // Navega para OvosForm com galinha pré-preenchida para adicionar novo ovo
+      navigation.navigate('OvosForm', {
+        galinha: item, // Passa a galinha completa
+        origin: 'GalinhasListAdd'
+      })
+    }
+
+    // Verifica se há ovos hoje para esta galinha (com validação de data)
+    const today = new Date()
+    const eggsToday = ovos.filter(ovo => {
+      if (ovo.galinhaId !== item.id) return false
+      
+      try {
+        const ovoDate = new Date(ovo.data)
+        // Verifica se a data é válida
+        if (isNaN(ovoDate.getTime())) return false
+        
+        return (
+          ovoDate.getFullYear() === today.getFullYear() &&
+          ovoDate.getMonth() === today.getMonth() &&
+          ovoDate.getDate() === today.getDate()
+        )
+      } catch (error) {
+        return false
+      }
+    })
+
+    const hasEggsToday = eggsToday.length > 0
+
     return (
       <Card style={layout.card}>
         <Card.Title title={item.nome || 'Sem nome'} />
@@ -56,12 +87,37 @@ export default function GalinhasList() {
           <Text style={typography.body}>Local: {localLabel}</Text>
 
           {/* Exibe ovos de hoje como ícones clicáveis */}
-          <EggsList
-            galinhaId={item.id}
-            data={new Date()}
-            ovos={ovos}
-            onEggPress={handleEggPress}
-          />
+          {hasEggsToday ? (
+            <EggsList
+              galinhaId={item.id}
+              data={new Date()}
+              ovos={ovos}
+              onEggPress={handleEggPress}
+            />
+          ) : (
+            <View style={styles.noEggsContainer}>
+              <TouchableOpacity 
+                onPress={handleAddEgg}
+                activeOpacity={0.6}
+                style={styles.noEggsTextContainer}
+              >
+                <Text style={[typography.small, styles.noEggsText]}>
+                  Nenhum ovo hoje
+                </Text>
+              </TouchableOpacity>
+              <TouchableOpacity 
+                onPress={handleAddEgg}
+                style={styles.addEggButton}
+                activeOpacity={0.7}
+              >
+                <MaterialCommunityIcons 
+                  name="plus-circle" 
+                  size={24} 
+                  color={botoesClaros ? colors.primaryOrange : colors.primary} 
+                />
+              </TouchableOpacity>
+            </View>
+          )}
         </Card.Content>
         <Card.Actions>
           <Button
@@ -115,4 +171,22 @@ export default function GalinhasList() {
 const styles = StyleSheet.create({
   addButton: { marginTop: 16 },
   title: { marginBottom: 12 },
+  noEggsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 6,
+    marginVertical: 8,
+  },
+  noEggsTextContainer: {
+    flex: 1,
+  },
+  noEggsText: {
+    color: '#8a8a8a',
+    fontStyle: 'italic',
+  },
+  addEggButton: {
+    marginLeft: 8,
+    padding: 4,
+  },
 })
