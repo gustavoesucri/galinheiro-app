@@ -1,19 +1,18 @@
 import React from 'react'
-import { Button } from 'react-native-paper'
-import { colors, layout } from '../styles/theme'
+import ButtonPaper from './ButtonPaper'
+import { useTema } from '../hooks/useTema'
 
 export default function AddEggButton({ onPress, style }) {
+  const tema = useTema()
+  
   return (
-    <Button
+    <ButtonPaper
       mode="contained"
       icon="plus"
-      buttonColor={colors.primary}
-      textColor={colors.textPrimary}
-      iconColor={colors.textPrimary}
       onPress={onPress}
-      style={[layout.button, style]}
+      style={[tema.layout.button, { borderWidth: 0.5, borderColor: tema.colors.border }, style]}
     >
       Adicionar Ovo
-    </Button>
+    </ButtonPaper>
   )
 }

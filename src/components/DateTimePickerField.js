@@ -3,9 +3,11 @@ import React, { useState } from 'react'
 import { View, TouchableOpacity, StyleSheet } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { Text } from 'react-native-paper'
-import { colors, typography } from '../styles/theme'
+import { useTema } from '../hooks/useTema'
 
 export default function DateTimePickerField({ label, date, onChange, error, fullWidth = true }) {
+  const tema = useTema()
+  const { colors, typography } = tema
   const [show, setShow] = useState(false)
 
   const handleChange = (_, selectedDate) => {
@@ -15,10 +17,20 @@ export default function DateTimePickerField({ label, date, onChange, error, full
 
   return (
     <View style={[styles.container, !fullWidth && styles.containerCompact]}>
-      <Text style={typography.label}>{label}</Text>
+      <Text style={[typography.label, { color: colors.textPrimary }]}>{label}</Text>
 
-      <TouchableOpacity onPress={() => setShow(true)} style={[styles.field, !fullWidth && styles.fieldCompact]}>
-        <Text style={typography.body}>
+      <TouchableOpacity 
+        onPress={() => setShow(true)} 
+        style={[
+          styles.field, 
+          !fullWidth && styles.fieldCompact,
+          { 
+            backgroundColor: colors.surface,
+            borderColor: colors.border
+          }
+        ]}
+      >
+        <Text style={[typography.body, { color: colors.textPrimary }]}>
           {date
             ? `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {
                 hour: '2-digit',
@@ -37,7 +49,7 @@ export default function DateTimePickerField({ label, date, onChange, error, full
         />
       )}
 
-      {error && <Text style={styles.error}>{error}</Text>}
+      {error && <Text style={[styles.error, { color: colors.error }]}>{error}</Text>}
     </View>
   )
 }
@@ -49,17 +61,14 @@ const styles = StyleSheet.create({
   },
   field: {
     borderWidth: 1,
-    borderColor: colors.border,
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 12,
-    backgroundColor: colors.surface,
   },
   fieldCompact: {
     maxWidth: 200,
   },
   error: {
-    color: colors.error,
     marginTop: 4,
     fontSize: 12,
   },

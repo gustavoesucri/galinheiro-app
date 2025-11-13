@@ -6,9 +6,9 @@ import BotaoModoToggleButton from '../components/BotaoModoToggleButton'
 export const getStackScreenOptions = (tema) => {
   return {
     headerStyle: { backgroundColor: tema.colors.primary },
-    headerTintColor: tema.colors.surface,
+    headerTintColor: tema.colors.textPrimary,
     headerTitleStyle: {
-      color: tema.colors.surface,
+      color: tema.colors.textPrimary,
     },
     headerRight: () => (
       <View style={{ flexDirection: 'row' }}>

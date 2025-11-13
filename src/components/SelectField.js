@@ -9,7 +9,7 @@ import {
   Dimensions,
 } from 'react-native'
 import DropDownPicker from 'react-native-dropdown-picker'
-import { colors, typography } from '../styles/theme'
+import { useTema } from '../hooks/useTema'
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 
@@ -21,6 +21,8 @@ export default function SelectField({
   style,
   zIndex: propZIndex = 1,
 }) {
+  const tema = useTema()
+  const { colors, typography } = tema
   const [open, setOpen] = useState(false)
   const [items, setItems] = useState(options)
 
@@ -43,7 +45,7 @@ export default function SelectField({
 
       {/* O campo em si */}
       <View style={[styles.container, style, { zIndex: propZIndex }]}>
-        {label && <Text style={styles.label}>{label}</Text>}
+        {label && <Text style={[styles.label, { color: colors.textSecondary }, typography.body]}>{label}</Text>}
 
         <DropDownPicker
           open={open}
@@ -55,10 +57,14 @@ export default function SelectField({
             onValueChange(val)
           }}
           setItems={setItems}
-          style={styles.dropdown}
+          style={[styles.dropdown, { backgroundColor: colors.surface, borderColor: colors.border }]}
           dropDownContainerStyle={[
             styles.dropdownContainer,
-            { zIndex: propZIndex + 1000 },
+            { 
+              zIndex: propZIndex + 1000,
+              backgroundColor: colors.surface,
+              borderColor: colors.border
+            },
           ]}
           textStyle={[styles.text, { color: colors.accent }]}
           labelStyle={{ color: colors.textPrimary }}
@@ -78,25 +84,17 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    color: colors.textSecondary,
     marginBottom: 4,
-    ...typography.body,
   },
   dropdown: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
     borderRadius: 8,
     height: 50,
   },
   dropdownContainer: {
-    backgroundColor: colors.surface,
-    borderColor: colors.border,
     borderRadius: 8,
     maxHeight: 200,
   },
-  text: {
-    color: colors.textPrimary,
-  },
+  text: {},
   overlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'transparent',

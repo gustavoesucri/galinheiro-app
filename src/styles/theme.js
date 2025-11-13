@@ -84,8 +84,5 @@ export const layout = {
     borderRadius: 10,
     paddingVertical: 10,
     paddingHorizontal: 16,
-    backgroundColor: colors.primary,
-    borderWidth: 2,
-    borderColor: colors.border, // borda branca ao redor do botão
   },
 }

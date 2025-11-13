@@ -1,9 +1,12 @@
 import React from 'react'
-import { TouchableOpacity } from 'react-native'
+import { TouchableOpacity, Image } from 'react-native'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useDispatch, useSelector } from 'react-redux'
 import { alternarTema } from '../redux/slices/temaSlice'
 import { useTema } from '../hooks/useTema'
+
+// Importar o ícone personalizado de laranja
+const orangeIcon = require('../../assets/assets/icons/OrangeIcons/orange64.png')
 
 export default function TemaToggleButton() {
   const dispatch = useDispatch()
@@ -16,11 +19,11 @@ export default function TemaToggleButton() {
 
   const getIconName = () => {
     switch (temaSelecionado) {
-      case 'tema1': return 'fruit-citrus'
+      case 'tema1': return 'orange'
       case 'tema2': return 'leaf'
       case 'tema3': return 'weather-night'
       case 'dark': return 'moon-waning-crescent'
-      default: return 'fruit-citrus'
+      default: return 'orange'
     }
   }
 
@@ -29,11 +32,22 @@ export default function TemaToggleButton() {
       onPress={handleToggleTema}
       style={{ paddingRight: 16, paddingLeft: 8 }}
     >
-      <MaterialCommunityIcons
-        name={getIconName()}
-        size={24}
-        color={tema.colors.surface}
-      />
+      {temaSelecionado === 'tema1' ? (
+        <Image
+          source={orangeIcon}
+          style={{
+            width: 24,
+            height: 24,
+          }}
+          resizeMode="contain"
+        />
+      ) : (
+        <MaterialCommunityIcons
+          name={getIconName()}
+          size={24}
+          color={tema.colors.textPrimary}
+        />
+      )}
     </TouchableOpacity>
   )
 }

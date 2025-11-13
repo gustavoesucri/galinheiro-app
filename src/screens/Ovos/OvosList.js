@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { View, FlatList, StyleSheet } from 'react-native'
-import { Card, Text, Button } from 'react-native-paper'
+import { Card, Text } from 'react-native-paper'
+import ButtonPaper from '../../components/ButtonPaper'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
 import { carregarOvos, removerOvoThunk } from '../../redux/thunks/ovosThunk'
@@ -51,35 +52,35 @@ export default function OvosList() {
               <Text style={typography.body}>Observações: {item.observacoes || '(sem observações)'}</Text>
             </Card.Content>
             <Card.Actions>
-              <Button
+              <ButtonPaper
                 mode="outlined"
                 textColor={colors.accent}
                 style={{ borderColor: colors.accent }}
                 onPress={() => navigation.navigate('OvosForm', { ovo: item })}
               >
                 Editar
-              </Button>
-              <Button
+              </ButtonPaper>
+              <ButtonPaper
                 mode="contained"
                 buttonColor={removeColor}
                 textColor={removeTextColor}
                 onPress={() => dispatch(removerOvoThunk(item.id))}
               >
                 Remover
-              </Button>
+              </ButtonPaper>
             </Card.Actions>
           </Card>
         )}
       />
 
-      <Button
+      <ButtonPaper
         mode="contained"
         icon="plus"
         onPress={() => navigation.navigate('OvosForm')}
         style={[layout.button, styles.addButton]}
       >
         <Text>Adicionar Ovo</Text>
-      </Button>
+      </ButtonPaper>
     </View>
   )
 }

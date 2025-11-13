@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { View, FlatList, StyleSheet } from 'react-native'
-import { Card, Text, Button } from 'react-native-paper'
+import { Card, Text } from 'react-native-paper'
+import ButtonPaper from '../../components/ButtonPaper'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
 import { carregarNinhos, removerNinhoThunk } from '../../redux/thunks/ninhosThunk'
@@ -77,35 +78,35 @@ export default function NinhosList() {
               </Text>
             </Card.Content>
             <Card.Actions>
-              <Button
+              <ButtonPaper
                 mode="outlined"
                 textColor={colors.accent}
                 style={{ borderColor: colors.accent }}
                 onPress={() => navigation.navigate('NinhosForm', { ninho: item })}
               >
                 Editar
-              </Button>
-              <Button
+              </ButtonPaper>
+              <ButtonPaper
                 mode="contained"
                 buttonColor={deleteColor}
                 textColor={deleteTextColor}
                 onPress={() => deletarNinho(item.id)}
               >
                 Deletar
-              </Button>
+              </ButtonPaper>
             </Card.Actions>
           </Card>
         )}
       />
 
-      <Button
+      <ButtonPaper
         mode="contained"
         icon="plus"
         onPress={() => navigation.navigate('NinhosForm')}
         style={[layout.button, styles.addButton]}
       >
         <Text>Adicionar Ninho</Text>
-      </Button>
+      </ButtonPaper>
     </View>
   )
 }

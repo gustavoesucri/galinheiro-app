@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { View, FlatList, StyleSheet } from 'react-native'
-import { Card, Text, Button } from 'react-native-paper'
+import { Card, Text } from 'react-native-paper'
+import ButtonPaper from '../../components/ButtonPaper'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
 import { carregarMedicoes, removerMedicaoThunk } from '../../redux/thunks/medicaoAmbienteThunk'
@@ -71,36 +72,36 @@ const getNomeGalpao = (galpaoId) => {
                 </Text>
               </Card.Content>
               <Card.Actions>
-                <Button
+                <ButtonPaper
                   mode="outlined"
                   textColor={colors.accent}
                   style={{ borderColor: colors.accent }}
                   onPress={() => navigation.navigate('MedicaoAmbienteForm', { medicao: item })}
                 >
                   Editar
-                </Button>
-                <Button
+                </ButtonPaper>
+                <ButtonPaper
                   mode="contained"
                   buttonColor={deleteColor}
                   textColor={deleteTextColor}
                   onPress={() => deletar(item.id)}
                 >
                   Deletar
-                </Button>
+                </ButtonPaper>
               </Card.Actions>
             </Card>
           )
         }}
       />
 
-      <Button
+      <ButtonPaper
         mode="contained"
         icon="plus"
         onPress={() => navigation.navigate('MedicaoAmbienteForm')}
         style={[layout.button, styles.addButton]}
       >
         <Text>Nova Medição</Text>
-      </Button>
+      </ButtonPaper>
     </View>
   )
 }

@@ -10,10 +10,13 @@ export default function NumberSpinner({ value, onChange, label, step = 0.1, min 
   const intervalRef = useRef(null)
   const valueRef = useRef(value)
   const botoesClaros = useSelector(state => state.botaoModo.botoesClaros)
+  const temaSelecionado = useSelector(state => state.tema.ativo)
   const tema = useTema()
   
-  // Cor dinâmica - laranja fixo ou cor do tema
-  const spinnerColor = botoesClaros ? tema.colors.primaryOrange : tema.colors.primary
+  // Cor dinâmica - textPrimary no dark theme (cinza clarinho), senão cor normal
+  const spinnerColor = temaSelecionado === 'dark' 
+    ? tema.colors.textPrimary 
+    : (botoesClaros ? tema.colors.primaryOrange : tema.colors.primary)
 
   // Atualiza a ref sempre que value muda
   useEffect(() => {
@@ -60,7 +63,7 @@ export default function NumberSpinner({ value, onChange, label, step = 0.1, min 
 
   return (
     <View style={styles.container}>
-      {label && <Text style={tema.typography.label}>{label}</Text>}
+      {label && <Text style={[tema.typography.label, { color: tema.colors.textPrimary }]}>{label}</Text>}
 
       <View style={styles.spinner}>
         <TouchableOpacity
@@ -73,14 +76,18 @@ export default function NumberSpinner({ value, onChange, label, step = 0.1, min 
           onPressOut={handlePressOut}
           activeOpacity={0.7}
         >
-          <MaterialCommunityIcons name="minus" size={20} color={spinnerColor} />
+          <MaterialCommunityIcons 
+            name="minus" 
+            size={20} 
+            color={isPressed === 'decrease' ? tema.colors.textOnPrimary : spinnerColor} 
+          />
         </TouchableOpacity>
 
         <View style={[
           styles.valueContainer,
           { borderColor: spinnerColor, backgroundColor: tema.colors.surface }
         ]}>
-          <Text style={[styles.value, { color: spinnerColor }]}>{value.toFixed(1)}</Text>
+          <Text style={[styles.value, { color: tema.colors.textPrimary }]}>{value.toFixed(1)}</Text>
         </View>
 
         <TouchableOpacity
@@ -93,7 +100,11 @@ export default function NumberSpinner({ value, onChange, label, step = 0.1, min 
           onPressOut={handlePressOut}
           activeOpacity={0.7}
         >
-          <MaterialCommunityIcons name="plus" size={20} color={spinnerColor} />
+          <MaterialCommunityIcons 
+            name="plus" 
+            size={20} 
+            color={isPressed === 'increase' ? tema.colors.textOnPrimary : spinnerColor} 
+          />
         </TouchableOpacity>
       </View>
     </View>

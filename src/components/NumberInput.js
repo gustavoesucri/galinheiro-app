@@ -1,7 +1,10 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
-import { colors, typography } from '../styles/theme'
+import { useTema } from '../hooks/useTema'
 
 export default function NumberInput({ label, value, onChange, min = 0, max = 20 }) {
+  const tema = useTema()
+  const { colors, typography } = tema
+  
   const handleIncrease = () => {
     if (value < max) onChange(value + 1)
   }
@@ -12,17 +15,35 @@ export default function NumberInput({ label, value, onChange, min = 0, max = 20 
 
   return (
     <View style={styles.container}>
-      <Text style={typography.body}>{label}</Text>
+      <Text style={[typography.body, { color: colors.textPrimary }]}>{label}</Text>
       <View style={styles.controls}>
-        <TouchableOpacity style={styles.button} onPress={handleDecrease}>
-          <Text style={styles.buttonText}>−</Text>
+        <TouchableOpacity 
+          style={[
+            styles.button, 
+            { 
+              backgroundColor: colors.surface, 
+              borderColor: colors.border 
+            }
+          ]} 
+          onPress={handleDecrease}
+        >
+          <Text style={[styles.buttonText, { color: colors.textPrimary }]}>−</Text>
         </TouchableOpacity>
 
         {/* Aumentei a largura mínima e centralizei o número */}
-        <Text style={styles.value}>{value}</Text>
+        <Text style={[styles.value, { color: colors.textPrimary }]}>{value}</Text>
 
-        <TouchableOpacity style={styles.button} onPress={handleIncrease}>
-          <Text style={styles.buttonText}>+</Text>
+        <TouchableOpacity 
+          style={[
+            styles.button, 
+            { 
+              backgroundColor: colors.surface, 
+              borderColor: colors.border 
+            }
+          ]} 
+          onPress={handleIncrease}
+        >
+          <Text style={[styles.buttonText, { color: colors.textPrimary }]}>+</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -33,16 +54,13 @@ const styles = StyleSheet.create({
   container: { marginBottom: 16 },
   controls: { flexDirection: 'row', alignItems: 'center' },
   button: {
-    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: colors.border,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 8,
   },
   buttonText: {
     fontSize: 20,
-    color: colors.textPrimary,
     fontWeight: 'bold',
   },
   value: {
@@ -50,6 +68,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',    // centraliza o número
     marginHorizontal: 16,
     fontSize: 16,
-    color: colors.textPrimary,
   },
 })

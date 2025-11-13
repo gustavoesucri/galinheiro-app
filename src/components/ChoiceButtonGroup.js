@@ -2,17 +2,28 @@ import React from 'react'
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native'
 import { useSelector } from 'react-redux'
 import { useTema } from '../hooks/useTema'
-import { colors, typography } from '../styles/theme'
 
 export default function ChoiceButtonGroup({ label, options = [], value, onChange, style }) {
   const botoesClaros = useSelector(state => state.botaoModo.botoesClaros)
+  const temaSelecionado = useSelector(state => state.tema.ativo)
   const tema = useTema()
+  const { colors, typography } = tema
   
   const selectedColor = botoesClaros ? tema.colors.primaryOrange : tema.colors.primary
+  
+  // Texto selecionado: preto no laranja, textPrimary no dark, textOnPrimary nos outros
+  let selectedTextColor
+  if (botoesClaros) {
+    selectedTextColor = tema.colors.black
+  } else if (temaSelecionado === 'dark') {
+    selectedTextColor = tema.colors.textPrimary // #E1E1E1
+  } else {
+    selectedTextColor = tema.colors.textOnPrimary
+  }
 
   return (
     <View style={[styles.container, style]}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && <Text style={[styles.label, { color: colors.textSecondary }, typography.body]}>{label}</Text>}
       <View style={styles.buttonsContainer}>
         {options.map((option) => {
           const selected = value === option.value
@@ -21,11 +32,18 @@ export default function ChoiceButtonGroup({ label, options = [], value, onChange
               key={option.value}
               style={[
                 styles.button,
-                selected && { backgroundColor: selectedColor, borderColor: selectedColor },
+                { 
+                  backgroundColor: selected ? selectedColor : colors.surface,
+                  borderColor: selected ? selectedColor : colors.border
+                },
               ]}
               onPress={() => onChange(option.value)}
             >
-              <Text style={[styles.buttonText, selected && { color: tema.colors.white, fontWeight: 'bold' }]}>
+              <Text style={[
+                styles.buttonText, 
+                { color: selected ? selectedTextColor : colors.textPrimary },
+                selected && { fontWeight: 'bold' }
+              ]}>
                 {option.label}
               </Text>
             </TouchableOpacity>
@@ -42,9 +60,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    color: colors.textSecondary,
     marginBottom: 4,
-    ...typography.body,
   },
   buttonsContainer: {
     flexDirection: 'row',
@@ -55,13 +71,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     marginHorizontal: 4,
     borderWidth: 1,
-    borderColor: colors.border,
     borderRadius: 8,
-    backgroundColor: colors.surface,
     alignItems: 'center',
   },
   buttonText: {
-    color: colors.textPrimary,
     fontSize: 14,
   },
 })

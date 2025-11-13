@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { View, FlatList, StyleSheet } from 'react-native'
-import { Card, Text, Button } from 'react-native-paper'
+import { Card, Text } from 'react-native-paper'
+import ButtonPaper from '../../components/ButtonPaper'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
 import { carregarGalpoes, removerGalpaoThunk } from '../../redux/thunks/galpoesThunk'
@@ -57,35 +58,35 @@ export default function GalpoesList() {
               </Text>
             </Card.Content>
             <Card.Actions>
-              <Button
+              <ButtonPaper
                 mode="outlined"
                 textColor={colors.accent}
                 style={{ borderColor: colors.accent }}
                 onPress={() => navigation.navigate('GalpoesForm', { galpao: item })}
               >
                 Editar
-              </Button>
-              <Button
+              </ButtonPaper>
+              <ButtonPaper
                 mode="contained"
                 buttonColor={deleteColor}
                 textColor={deleteTextColor}
                 onPress={() => deletarGalpao(item.id)}
               >
                 Deletar
-              </Button>
+              </ButtonPaper>
             </Card.Actions>
           </Card>
         )}
       />
 
-      <Button
+      <ButtonPaper
         mode="contained"
         icon="plus"
         onPress={() => navigation.navigate('GalpoesForm')}
         style={[layout.button, styles.addButton]}
       >
         <Text>Adicionar Galpão</Text>
-      </Button>
+      </ButtonPaper>
     </View>
   )
 }

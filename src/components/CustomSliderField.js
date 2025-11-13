@@ -2,7 +2,7 @@
 import React, { useMemo } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import Slider from '@react-native-community/slider'
-import { colors, typography } from '../styles/theme'
+import { useTema } from '../hooks/useTema'
 
 export default function CustomSliderField({
   label,
@@ -13,6 +13,8 @@ export default function CustomSliderField({
   unit = 'lux',
   error,
 }) {
+  const tema = useTema()
+  const { colors, typography } = tema
   // posição alvo do "1 lux" no slider (0–1 range)
   const splitPos = 0.2 // <-- 1/5 do slider
   const splitPoint = 1 // valor real (1 lux)
@@ -106,10 +108,10 @@ const getThumbColor = (lux) => {
 
   return (
     <View style={styles.container}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && <Text style={[styles.label, { color: colors.textPrimary }]}>{label}</Text>}
 
       <View style={styles.valueContainer}>
-        <Text style={styles.valueText}>
+        <Text style={[styles.valueText, { color: colors.textPrimary }]}>
           {value < 1 ? value.toFixed(1) : Math.round(value).toLocaleString()} {unit}
         </Text>
       </View>
@@ -129,13 +131,13 @@ const getThumbColor = (lux) => {
       <View style={styles.ticksContainer}>
         {ticks.map((t) => (
           <View key={t.label} style={[styles.tick, { left: `${t.position}%` }]}>
-            <View style={styles.tickMark} />
-            <Text style={styles.tickLabel}>{t.label}</Text>
+            <View style={[styles.tickMark, { backgroundColor: colors.border }]} />
+            <Text style={[styles.tickLabel, { color: colors.textPrimary }]}>{t.label}</Text>
           </View>
         ))}
       </View>
 
-      {error && <Text style={styles.error}>{error}</Text>}
+      {error && <Text style={[styles.error, { color: colors.error }]}>{error}</Text>}
     </View>
   )
 }
@@ -145,8 +147,6 @@ const styles = StyleSheet.create({
     marginBottom: 28,
   },
   label: {
-    ...typography.body,
-    color: colors.textPrimary,
     marginBottom: 8,
   },
   valueContainer: {
@@ -155,8 +155,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   valueText: {
-    ...typography.bodyBold,
-    color: colors.textPrimary,
+    fontWeight: '600',
   },
   slider: {
     width: '100%',
@@ -177,16 +176,13 @@ const styles = StyleSheet.create({
   tickMark: {
     width: 1.5,
     height: 8,
-    backgroundColor: colors.border,
     marginBottom: 2,
   },
   tickLabel: {
     fontSize: 10,
-    color: colors.textSecondary,
   },
   error: {
     fontSize: 12,
-    color: 'red',
     marginTop: 4,
   },
 })

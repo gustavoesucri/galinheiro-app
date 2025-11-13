@@ -9,7 +9,7 @@ import {
   StyleSheet,
   Dimensions,
 } from 'react-native'
-import { colors, typography } from '../styles/theme'
+import { useTema } from '../hooks/useTema'
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 
@@ -22,6 +22,8 @@ export default function CustomSelectField({
   zIndex = 1,
   error,
 }) {
+  const tema = useTema()
+  const { colors, typography } = tema
   const [open, setOpen] = useState(false)
   const selectedLabel =
   options.find(o => String(o.value) === String(value))?.label || placeholder
@@ -41,19 +43,19 @@ export default function CustomSelectField({
           activeOpacity={1}
           onPress={() => setOpen(false)}
         >
-          <View style={[styles.modalContent, { zIndex: zIndex + 1000 }]}>
+          <View style={[styles.modalContent, { zIndex: zIndex + 1000, backgroundColor: colors.surface }]}>
             <FlatList
               data={options}
               keyExtractor={item => item.value}
               renderItem={({ item }) => (
                 <TouchableOpacity
-                  style={styles.option}
+                  style={[styles.option, { borderBottomColor: colors.border }]}
                   onPress={() => {
                     onValueChange(item.value)
                     setOpen(false)
                   }}
                 >
-                  <Text style={styles.optionText}>{item.label}</Text>
+                  <Text style={[styles.optionText, typography.body, { color: colors.textPrimary }]}>{item.label}</Text>
                 </TouchableOpacity>
               )}
               style={styles.list}
@@ -64,16 +66,26 @@ export default function CustomSelectField({
 
       {/* CAMPO VISÍVEL */}
       <View style={{ zIndex, marginBottom: 16 }}>
-        {label && <Text style={styles.label}>{label}</Text>}
+        {label && <Text style={[styles.label, typography.body, { color: colors.textPrimary }]}>{label}</Text>}
         <TouchableOpacity
-          style={[styles.field, error && styles.fieldError]}
+          style={[
+            styles.field, 
+            { 
+              borderColor: error ? colors.error : colors.border,
+              backgroundColor: colors.surface
+            }
+          ]}
           onPress={() => setOpen(true)}
         >
-          <Text style={[styles.fieldText, !value && styles.placeholder]}>
+          <Text style={[
+            styles.fieldText, 
+            typography.body,
+            { color: value ? colors.textPrimary : colors.textSecondary }
+          ]}>
             {selectedLabel}
           </Text>
         </TouchableOpacity>
-        {error && <Text style={styles.error}>{error}</Text>}
+        {error && <Text style={[styles.error, { color: colors.error }]}>{error}</Text>}
       </View>
     </>
   )
@@ -83,31 +95,17 @@ const styles = StyleSheet.create({
   field: {
     height: 50,
     borderWidth: 1,
-    borderColor: colors.border,
     borderRadius: 8,
     justifyContent: 'center',
     paddingHorizontal: 12,
-    backgroundColor: colors.surface,
   },
-  fieldText: {
-    ...typography.body,
-    color: colors.textPrimary,
-  },
-  placeholder: {
-    color: colors.textSecondary,
-  },
-  fieldError: {
-    borderColor: 'red',
-  },
+  fieldText: {},
   label: {
     fontSize: 14,
-    color: colors.textSecondary,
     marginBottom: 4,
-    ...typography.body,
   },
   error: {
     fontSize: 12,
-    color: 'red',
     marginTop: 4,
   },
   modalOverlay: {
@@ -117,7 +115,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: colors.surface,
     borderRadius: 12,
     maxHeight: SCREEN_HEIGHT * 0.6,
     width: '90%',
@@ -129,10 +126,6 @@ const styles = StyleSheet.create({
   option: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
   },
-  optionText: {
-    ...typography.body,
-    color: colors.textPrimary,
-  },
+  optionText: {},
 })

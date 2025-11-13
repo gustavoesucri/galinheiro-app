@@ -1,6 +1,6 @@
 import React from 'react'
 import { StyleSheet } from 'react-native'
-import { Button } from 'react-native-paper'
+import ButtonPaper from './ButtonPaper'
 import { useSelector } from 'react-redux'
 import { useTema } from '../hooks/useTema'
 
@@ -17,7 +17,7 @@ const DialogButton = ({ onPress, children, variant = 'primary' }) => {
   const deleteTextColor = botoesClaros ? tema.colors.black : tema.colors.textOnPrimary
 
   return (
-    <Button
+    <ButtonPaper
       mode={isCancel ? 'outlined' : 'contained'}
       labelStyle={styles.label}
       style={[
@@ -25,11 +25,11 @@ const DialogButton = ({ onPress, children, variant = 'primary' }) => {
         isCancel && { borderColor: tema.colors.accent },
         isDelete && { backgroundColor: deleteColor },
       ]}
-      textColor={isCancel ? tema.colors.accent : (isDelete ? deleteTextColor : tema.colors.white)}
+      textColor={isCancel ? tema.colors.accent : (isDelete ? deleteTextColor : tema.colors.textOnPrimary)}
       onPress={onPress}
     >
       {children}
-    </Button>
+    </ButtonPaper>
   )
 }
 

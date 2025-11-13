@@ -1,6 +1,6 @@
 import React from 'react'
 import { View, Text, StyleSheet, TextInput } from 'react-native'
-import { colors, typography } from '../styles/theme'
+import { useTema } from '../hooks/useTema'
 
 export default function InputFloat({
   label,
@@ -12,6 +12,9 @@ export default function InputFloat({
   fullWidth = true,
   ...props
 }) {
+  const tema = useTema()
+  const { colors, typography } = tema
+  
   const formatNumber = (numStr) => {
     // Mantém só números
     const digits = numStr.replace(/\D/g, '')
@@ -36,7 +39,7 @@ export default function InputFloat({
 
   return (
     <View style={[styles.container, !fullWidth && styles.containerCompact, style]}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && <Text style={[styles.label, { color: colors.textSecondary }, typography.body]}>{label}</Text>}
       <TextInput
         keyboardType="numeric"
         placeholder={placeholder}
@@ -47,10 +50,19 @@ export default function InputFloat({
             : ''
         }
         onChangeText={handleChange}
-        style={[styles.input, !fullWidth && styles.inputCompact, error && styles.inputError]}
+        style={[
+          styles.input, 
+          !fullWidth && styles.inputCompact, 
+          error && styles.inputError,
+          {
+            backgroundColor: colors.surface,
+            borderColor: error ? colors.error : colors.border,
+            color: colors.textPrimary
+          }
+        ]}
         {...props}
       />
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && <Text style={[styles.errorText, { color: colors.error }]}>{error}</Text>}
     </View>
   )
 }
@@ -62,26 +74,20 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    color: colors.textSecondary,
     marginBottom: 4,
-    ...typography.body,
   },
   input: {
-    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: colors.border,
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    color: colors.textPrimary,
     fontSize: 14,
   },
   inputCompact: {
     maxWidth: 200,
   },
-  inputError: { borderColor: colors.error || 'red' },
+  inputError: {},
   errorText: {
-    color: colors.error || 'red',
     fontSize: 12,
     marginTop: 4,
   },

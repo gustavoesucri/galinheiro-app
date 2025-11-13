@@ -1,21 +1,33 @@
 import React from 'react'
 import { TextInput, StyleSheet, View, Text } from 'react-native'
-import { colors, typography } from '../styles/theme'
+import { useTema } from '../hooks/useTema'
 
 export default function TextArea({ label, value, onChangeText, error }) {
+  const tema = useTema()
+  const { colors, typography } = tema
+  
   return (
     <View style={styles.container}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && <Text style={[styles.label, { color: colors.textSecondary }]}>{label}</Text>}
       <TextInput
-        style={[styles.input, error && styles.errorInput]}
+        style={[
+          styles.input, 
+          error && styles.errorInput,
+          {
+            backgroundColor: colors.surface,
+            borderColor: error ? colors.error : colors.border,
+            color: colors.textPrimary
+          }
+        ]}
         value={value}
         onChangeText={onChangeText}
         placeholder=""
+        placeholderTextColor={colors.textSecondary}
         multiline
         numberOfLines={4}
         textAlignVertical="top"
       />
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && <Text style={[styles.errorText, { color: colors.error }]}>{error}</Text>}
     </View>
   )
 }
@@ -24,23 +36,17 @@ const styles = StyleSheet.create({
   container: { marginBottom: 16 },
   label: { 
     marginBottom: 4, 
-    fontSize: typography.label.fontSize, 
-    color: colors.textPrimary 
+    fontSize: 14,
   },
   input: {
     borderWidth: 1,
-    borderColor: colors.border,
     borderRadius: 8,
     padding: 8,
-    fontSize: typography.body.fontSize,
-    backgroundColor: colors.surface,
+    fontSize: 14,
   },
-  errorInput: {
-    borderColor: colors.error,
-  },
+  errorInput: {},
   errorText: {
     marginTop: 4,
-    color: colors.error,
     fontSize: 12,
   },
 })

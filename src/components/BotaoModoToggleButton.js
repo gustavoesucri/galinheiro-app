@@ -20,9 +20,9 @@ export default function BotaoModoToggleButton() {
       style={{ paddingRight: 8, paddingLeft: 8 }}
     >
       <MaterialCommunityIcons
-        name={botoesClaros ? 'swap-horizontal' : 'palette'}
+        name={botoesClaros ? 'unfold-less-horizontal' : 'unfold-less-vertical'}
         size={24}
-        color={tema.colors.surface}
+        color={tema.colors.textPrimary}
       />
     </TouchableOpacity>
   )

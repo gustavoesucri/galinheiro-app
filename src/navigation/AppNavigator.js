@@ -34,7 +34,7 @@ export default function AppNavigator() {
     <Tab.Navigator
       screenOptions={{
         headerStyle: { backgroundColor: tema.colors.primary },
-        headerTintColor: tema.colors.surface,
+        headerTintColor: tema.colors.textPrimary,
         headerRight: () => (
           <View style={{ flexDirection: 'row' }}>
             <BotaoModoToggleButton />

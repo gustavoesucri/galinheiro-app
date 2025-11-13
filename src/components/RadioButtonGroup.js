@@ -2,17 +2,17 @@ import React from 'react'
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { useSelector } from 'react-redux'
 import { useTema } from '../hooks/useTema'
-import { colors, typography } from '../styles/theme'
 
 export default function RadioButtonGroup({ label, options, value, onChange }) {
   const botoesClaros = useSelector(state => state.botaoModo.botoesClaros)
   const tema = useTema()
+  const { colors, typography } = tema
   
   const selectedColor = botoesClaros ? tema.colors.primaryOrange : tema.colors.primary
 
   return (
     <View style={styles.container}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && <Text style={[styles.label, { color: colors.textSecondary }, typography.body]}>{label}</Text>}
 
       <View style={styles.optionsContainer}>
         {options.map((opt) => (
@@ -24,12 +24,12 @@ export default function RadioButtonGroup({ label, options, value, onChange }) {
             <View
               style={[
                 styles.radioOuter,
-                value === opt.value && { borderColor: selectedColor },
+                { borderColor: value === opt.value ? selectedColor : colors.border },
               ]}
             >
               {value === opt.value && <View style={[styles.radioInner, { backgroundColor: selectedColor }]} />}
             </View>
-            <Text style={styles.optionText}>{opt.label}</Text>
+            <Text style={[styles.optionText, { color: colors.textPrimary }]}>{opt.label}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -43,9 +43,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    color: colors.textSecondary,
     marginBottom: 8,
-    ...typography.body,
   },
   optionsContainer: {
     flexDirection: 'row',
@@ -62,7 +60,6 @@ const styles = StyleSheet.create({
     height: 20,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -73,6 +70,5 @@ const styles = StyleSheet.create({
   },
   optionText: {
     marginLeft: 8,
-    color: colors.textPrimary,
   },
 })

@@ -1,16 +1,28 @@
 import { View, Text, TextInput, StyleSheet } from 'react-native'
-import { colors, typography } from '../styles/theme'
+import { useTema } from '../hooks/useTema'
 
 export default function Input({ label, value, onChangeText, keyboardType = 'default', style, fullWidth = true, ...props }) {
+  const tema = useTema()
+  const { colors, typography } = tema
+  
   return (
     <View style={[styles.container, !fullWidth && styles.containerCompact, style]}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && <Text style={[styles.label, { color: colors.textSecondary }, typography.body]}>{label}</Text>}
       <TextInput
         value={value}
         onChangeText={onChangeText}
         keyboardType={keyboardType}
-        style={[styles.input, !fullWidth && styles.inputCompact]}
+        style={[
+          styles.input, 
+          !fullWidth && styles.inputCompact,
+          { 
+            backgroundColor: colors.surface, 
+            borderColor: colors.border,
+            color: colors.textPrimary 
+          }
+        ]}
         placeholder=""
+        placeholderTextColor={colors.textSecondary}
         {...props}
       />
     </View>
@@ -26,18 +38,13 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    color: colors.textSecondary,
     marginBottom: 4,
-    ...typography.body,
   },
   input: {
-    backgroundColor: colors.surface, // branco
     borderWidth: 1,
-    borderColor: colors.border,
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    color: colors.textPrimary,
     fontSize: 14,
   },
   inputCompact: {
