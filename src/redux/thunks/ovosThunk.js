@@ -16,23 +16,69 @@ export const carregarOvos = () => async (dispatch) => {
 
 export const adicionarOvoThunk = (ovo) => async (dispatch) => {
   try {
-    const response = await ovosAPI.create(ovo)
+    // Serializar data para ISO string se for um objeto Date e filtrar campos vazios
+    const ovoParaEnviar = {
+      ...ovo,
+      data: ovo.data instanceof Date 
+        ? ovo.data.toISOString() 
+        : ovo.data,
+      // Filtrar campos vazios ou undefined para campos opcionais
+      ...(ovo.galinhaId && ovo.galinhaId.trim() !== '' && { galinhaId: ovo.galinhaId }),
+      ...(ovo.ninhoId && ovo.ninhoId.trim() !== '' && { ninhoId: ovo.ninhoId }),
+      ...(ovo.observacoes && ovo.observacoes.trim() !== '' && { observacoes: ovo.observacoes })
+    }
+    
+    // Remover campos que podem estar vazios
+    if (!ovoParaEnviar.galinhaId) delete ovoParaEnviar.galinhaId
+    if (!ovoParaEnviar.ninhoId) delete ovoParaEnviar.ninhoId
+    if (!ovoParaEnviar.observacoes) delete ovoParaEnviar.observacoes
+    
+    console.log('📤 Enviando ovo para backend:', ovoParaEnviar)
+    console.log('📊 Tipos dos dados:', {
+      data: typeof ovoParaEnviar.data,
+      galinhaId: ovoParaEnviar.galinhaId ? 'presente' : 'ausente',
+      ninhoId: ovoParaEnviar.ninhoId ? 'presente' : 'ausente'
+    })
+    const response = await ovosAPI.create(ovoParaEnviar)
     dispatch(adicionarOvo(response.data))
     return response.data
   } catch (error) {
-    console.log('Erro ao adicionar ovo:', error.response?.data?.message || error.message)
+    console.log('❌ Erro ao adicionar ovo:', error.response?.data?.message || error.message)
+    if (error.response?.data) {
+      console.log('📋 Detalhes do erro:', JSON.stringify(error.response.data, null, 2))
+    }
     throw error
   }
 }
 
 export const atualizarOvoThunk = (ovo) => async (dispatch) => {
   try {
+    // Serializar data para ISO string se for um objeto Date e filtrar campos vazios
+    const ovoParaEnviar = {
+      ...ovo,
+      data: ovo.data instanceof Date 
+        ? ovo.data.toISOString() 
+        : ovo.data,
+      // Filtrar campos vazios ou undefined para campos opcionais
+      ...(ovo.galinhaId && ovo.galinhaId.trim() !== '' && { galinhaId: ovo.galinhaId }),
+      ...(ovo.ninhoId && ovo.ninhoId.trim() !== '' && { ninhoId: ovo.ninhoId }),
+      ...(ovo.observacoes && ovo.observacoes.trim() !== '' && { observacoes: ovo.observacoes })
+    }
+    
+    // Remover campos que podem estar vazios
+    if (!ovoParaEnviar.galinhaId) delete ovoParaEnviar.galinhaId
+    if (!ovoParaEnviar.ninhoId) delete ovoParaEnviar.ninhoId
+    if (!ovoParaEnviar.observacoes) delete ovoParaEnviar.observacoes
+    
     // RN-038: Data de coleta é imutável no backend também
-    const response = await ovosAPI.update(ovo.id, ovo)
+    const response = await ovosAPI.update(ovo.id, ovoParaEnviar)
     dispatch(atualizarOvo(response.data))
     return response.data
   } catch (error) {
-    console.log('Erro ao atualizar ovo:', error.response?.data?.message || error.message)
+    console.log('❌ Erro ao atualizar ovo:', error.response?.data?.message || error.message)
+    if (error.response?.data) {
+      console.log('📋 Detalhes do erro:', JSON.stringify(error.response.data, null, 2))
+    }
     throw error
   }
 }

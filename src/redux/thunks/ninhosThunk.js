@@ -18,11 +18,34 @@ export const carregarNinhos = () => async (dispatch) => {
 // Adicionar ninho no backend
 export const adicionarNinhoThunk = (ninho) => async (dispatch) => {
   try {
-    const response = await ninhosAPI.create(ninho)
+    // Serializar data para ISO string se for um objeto Date e filtrar campos vazios
+    const ninhoParaEnviar = {
+      ...ninho,
+      ultima_limpeza: ninho.ultima_limpeza instanceof Date 
+        ? ninho.ultima_limpeza.toISOString() 
+        : ninho.ultima_limpeza,
+      // Filtrar campos vazios ou undefined para campos opcionais
+      ...(ninho.galinhaId && ninho.galinhaId.trim() !== '' && { galinhaId: ninho.galinhaId }),
+      ...(ninho.observacoes && ninho.observacoes.trim() !== '' && { observacoes: ninho.observacoes })
+    }
+    
+    // Remover campos que podem estar vazios
+    if (!ninhoParaEnviar.galinhaId) delete ninhoParaEnviar.galinhaId
+    if (!ninhoParaEnviar.observacoes) delete ninhoParaEnviar.observacoes
+    
+    console.log('📤 Enviando ninho para backend:', ninhoParaEnviar)
+    console.log('📊 Tipos dos dados:', {
+      ultima_limpeza: typeof ninhoParaEnviar.ultima_limpeza,
+      galinhaId: ninhoParaEnviar.galinhaId ? 'presente' : 'ausente'
+    })
+    const response = await ninhosAPI.create(ninhoParaEnviar)
     dispatch(adicionarNinho(response.data))
     return response.data
   } catch (error) {
-    console.log('Erro ao adicionar ninho:', error.response?.data?.message || error.message)
+    console.log('❌ Erro ao adicionar ninho:', error.response?.data?.message || error.message)
+    if (error.response?.data) {
+      console.log('📋 Detalhes do erro:', JSON.stringify(error.response.data, null, 2))
+    }
     throw error
   }
 }
@@ -30,11 +53,29 @@ export const adicionarNinhoThunk = (ninho) => async (dispatch) => {
 // Atualizar ninho no backend
 export const atualizarNinhoThunk = (ninho) => async (dispatch) => {
   try {
-    const response = await ninhosAPI.update(ninho.id, ninho)
+    // Serializar data para ISO string se for um objeto Date e filtrar campos vazios
+    const ninhoParaEnviar = {
+      ...ninho,
+      ultima_limpeza: ninho.ultima_limpeza instanceof Date 
+        ? ninho.ultima_limpeza.toISOString() 
+        : ninho.ultima_limpeza,
+      // Filtrar campos vazios ou undefined para campos opcionais
+      ...(ninho.galinhaId && ninho.galinhaId.trim() !== '' && { galinhaId: ninho.galinhaId }),
+      ...(ninho.observacoes && ninho.observacoes.trim() !== '' && { observacoes: ninho.observacoes })
+    }
+    
+    // Remover campos que podem estar vazios
+    if (!ninhoParaEnviar.galinhaId) delete ninhoParaEnviar.galinhaId
+    if (!ninhoParaEnviar.observacoes) delete ninhoParaEnviar.observacoes
+    
+    const response = await ninhosAPI.update(ninho.id, ninhoParaEnviar)
     dispatch(atualizarNinho(response.data))
     return response.data
   } catch (error) {
-    console.log('Erro ao atualizar ninho:', error.response?.data?.message || error.message)
+    console.log('❌ Erro ao atualizar ninho:', error.response?.data?.message || error.message)
+    if (error.response?.data) {
+      console.log('📋 Detalhes do erro:', JSON.stringify(error.response.data, null, 2))
+    }
     throw error
   }
 }

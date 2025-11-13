@@ -22,22 +22,57 @@ export const carregarMedicoes = () => async (dispatch) => {
 
 export const adicionarMedicaoThunk = (medicao) => async (dispatch) => {
   try {
-    const response = await medicoesAPI.create(medicao)
+    // Garantir tipos corretos e serializar data para ISO string se for um objeto Date
+    const medicaoParaEnviar = {
+      ...medicao,
+      temperatura: parseFloat(medicao.temperatura) || 0,
+      umidade: parseFloat(medicao.umidade) || 0,
+      luminosidade: parseInt(medicao.luminosidade) || 0,
+      data_medicao: medicao.data_medicao instanceof Date 
+        ? medicao.data_medicao.toISOString() 
+        : medicao.data_medicao
+    }
+    
+    console.log('📤 Enviando medição para backend:', medicaoParaEnviar)
+    console.log('📊 Tipos dos dados:', {
+      temperatura: typeof medicaoParaEnviar.temperatura,
+      umidade: typeof medicaoParaEnviar.umidade,
+      luminosidade: typeof medicaoParaEnviar.luminosidade,
+      data_medicao: typeof medicaoParaEnviar.data_medicao
+    })
+    const response = await medicoesAPI.create(medicaoParaEnviar)
     dispatch(adicionarMedicao(response.data))
     return response.data
   } catch (error) {
-    console.log('Erro ao adicionar medição:', error.response?.data?.message || error.message)
+    console.log('❌ Erro ao adicionar medição:', error.response?.data?.message || error.message)
+    if (error.response?.data) {
+      console.log('📋 Detalhes do erro:', JSON.stringify(error.response.data, null, 2))
+    }
     throw error
   }
 }
 
 export const atualizarMedicaoThunk = (medicao) => async (dispatch) => {
   try {
-    const response = await medicoesAPI.update(medicao.id, medicao)
+    // Garantir tipos corretos e serializar data para ISO string se for um objeto Date
+    const medicaoParaEnviar = {
+      ...medicao,
+      temperatura: parseFloat(medicao.temperatura) || 0,
+      umidade: parseFloat(medicao.umidade) || 0,
+      luminosidade: parseInt(medicao.luminosidade) || 0,
+      data_medicao: medicao.data_medicao instanceof Date 
+        ? medicao.data_medicao.toISOString() 
+        : medicao.data_medicao
+    }
+    
+    const response = await medicoesAPI.update(medicao.id, medicaoParaEnviar)
     dispatch(atualizarMedicao(response.data))
     return response.data
   } catch (error) {
-    console.log('Erro ao atualizar medição:', error.response?.data?.message || error.message)
+    console.log('❌ Erro ao atualizar medição:', error.response?.data?.message || error.message)
+    if (error.response?.data) {
+      console.log('📋 Detalhes do erro:', JSON.stringify(error.response.data, null, 2))
+    }
     throw error
   }
 }

@@ -20,11 +20,34 @@ export const carregarGalpoes = () => async (dispatch) => {
 // Adicionar galpão no backend
 export const adicionarGalpaoThunk = (galpao) => async (dispatch) => {
   try {
-    const response = await galpoesAPI.create(galpao)
+    // Serializar data para ISO string se for um objeto Date
+    // Garantir que números inteiros sejam inteiros e floats sejam floats
+    const galpaoParaEnviar = {
+      ...galpao,
+      capacidade_maxima_galinhas: parseInt(galpao.capacidade_maxima_galinhas) || 0,
+      capacidade_maxima_ninhos: parseInt(galpao.capacidade_maxima_ninhos) || 0,
+      numero_ninhos_ocupados: parseInt(galpao.numero_ninhos_ocupados) || 0,
+      area_m2: parseFloat(galpao.area_m2) || 0,
+      data_ultima_manutencao: galpao.data_ultima_manutencao instanceof Date 
+        ? galpao.data_ultima_manutencao.toISOString() 
+        : galpao.data_ultima_manutencao
+    }
+    
+    console.log('📤 Enviando galpão para backend:', galpaoParaEnviar)
+    console.log('📊 Tipos dos dados:', {
+      capacidade_galinhas: typeof galpaoParaEnviar.capacidade_maxima_galinhas,
+      capacidade_ninhos: typeof galpaoParaEnviar.capacidade_maxima_ninhos,
+      area_m2: typeof galpaoParaEnviar.area_m2,
+      data: typeof galpaoParaEnviar.data_ultima_manutencao
+    })
+    const response = await galpoesAPI.create(galpaoParaEnviar)
     dispatch(adicionarGalpao(response.data))
     return response.data
   } catch (error) {
-    console.log('Erro ao adicionar galpão:', error.response?.data?.message || error.message)
+    console.log('❌ Erro ao adicionar galpão:', error.response?.data?.message || error.message)
+    if (error.response?.data) {
+      console.log('📋 Detalhes do erro:', JSON.stringify(error.response.data, null, 2))
+    }
     throw error
   }
 }
@@ -32,11 +55,27 @@ export const adicionarGalpaoThunk = (galpao) => async (dispatch) => {
 // Atualizar galpão no backend
 export const atualizarGalpaoThunk = (galpao) => async (dispatch) => {
   try {
-    const response = await galpoesAPI.update(galpao.id, galpao)
+    // Serializar data para ISO string se for um objeto Date
+    // Garantir que números inteiros sejam inteiros e floats sejam floats
+    const galpaoParaEnviar = {
+      ...galpao,
+      capacidade_maxima_galinhas: parseInt(galpao.capacidade_maxima_galinhas) || 0,
+      capacidade_maxima_ninhos: parseInt(galpao.capacidade_maxima_ninhos) || 0,
+      numero_ninhos_ocupados: parseInt(galpao.numero_ninhos_ocupados) || 0,
+      area_m2: parseFloat(galpao.area_m2) || 0,
+      data_ultima_manutencao: galpao.data_ultima_manutencao instanceof Date 
+        ? galpao.data_ultima_manutencao.toISOString() 
+        : galpao.data_ultima_manutencao
+    }
+    
+    const response = await galpoesAPI.update(galpaoParaEnviar.id, galpaoParaEnviar)
     dispatch(atualizarGalpao(response.data))
     return response.data
   } catch (error) {
-    console.log('Erro ao atualizar galpão:', error.response?.data?.message || error.message)
+    console.log('❌ Erro ao atualizar galpão:', error.response?.data?.message || error.message)
+    if (error.response?.data) {
+      console.log('📋 Detalhes do erro:', JSON.stringify(error.response.data, null, 2))
+    }
     throw error
   }
 }
