@@ -1,15 +1,15 @@
 import { View, Text, TextInput, StyleSheet } from 'react-native'
 import { colors, typography } from '../styles/theme'
 
-export default function Input({ label, value, onChangeText, keyboardType = 'default', style, ...props }) {
+export default function Input({ label, value, onChangeText, keyboardType = 'default', style, fullWidth = true, ...props }) {
   return (
-    <View style={[styles.container, style]}>
+    <View style={[styles.container, !fullWidth && styles.containerCompact, style]}>
       {label && <Text style={styles.label}>{label}</Text>}
       <TextInput
         value={value}
         onChangeText={onChangeText}
         keyboardType={keyboardType}
-        style={styles.input}
+        style={[styles.input, !fullWidth && styles.inputCompact]}
         placeholder=""
         {...props}
       />
@@ -20,6 +20,9 @@ export default function Input({ label, value, onChangeText, keyboardType = 'defa
 const styles = StyleSheet.create({
   container: {
     marginBottom: 12,
+  },
+  containerCompact: {
+    maxWidth: 200,
   },
   label: {
     fontSize: 14,
@@ -36,5 +39,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     color: colors.textPrimary,
     fontSize: 14,
+  },
+  inputCompact: {
+    maxWidth: 200,
   },
 })

@@ -40,7 +40,7 @@ export default function GalinhasForm({ route, navigation }) {
   }
 
   return (
-    <ScrollView contentContainerStyle={[layout.container, styles.container]}>
+    <ScrollView contentContainerStyle={[layout.formContainer, styles.container]}>
       <Text style={[typography.title, styles.title]}>
         {galinha ? 'Editar Galinha' : 'Cadastrar Galinha'}
       </Text>

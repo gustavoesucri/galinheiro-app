@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import { View, Platform, Button as RNButton } from 'react-native'
+import { View, Platform, Button as RNButton, StyleSheet } from 'react-native'
 import { Text } from 'react-native-paper'
 import { DatePickerModal } from 'react-native-paper-dates'
 
-export default function DatePickerField({ label, date, onChange, error }) {
+export default function DatePickerField({ label, date, onChange, error, fullWidth = true }) {
   const [open, setOpen] = useState(false)
 
   // Garante que date seja Date object
@@ -14,13 +14,13 @@ export default function DatePickerField({ label, date, onChange, error }) {
 
   if (Platform.OS === 'web') {
     return (
-      <View style={{ marginBottom: 16 }}>
+      <View style={[styles.container, !fullWidth && styles.containerCompact]}>
         <Text>{label}</Text>
         <input
           type="date"
           value={date ? date.toISOString().substr(0, 10) : ''}
           onChange={e => handleChange(e.target.value)}
-          style={{ padding: 8, marginTop: 4 }}
+          style={{ padding: 8, marginTop: 4, maxWidth: fullWidth ? '100%' : 200 }}
         />
         {error && <Text style={{ color: 'red' }}>{error}</Text>}
       </View>
@@ -28,7 +28,7 @@ export default function DatePickerField({ label, date, onChange, error }) {
   }
 
   return (
-    <View style={{ marginBottom: 16 }}>
+    <View style={[styles.container, !fullWidth && styles.containerCompact]}>
       <Text>{label}</Text>
       <RNButton
         title={date ? date.toLocaleDateString() : 'Selecionar data'}
@@ -49,3 +49,10 @@ export default function DatePickerField({ label, date, onChange, error }) {
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: { marginBottom: 16 },
+  containerCompact: {
+    maxWidth: 200,
+  },
+})

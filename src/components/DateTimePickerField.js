@@ -5,7 +5,7 @@ import DateTimePicker from '@react-native-community/datetimepicker'
 import { Text } from 'react-native-paper'
 import { colors, typography } from '../styles/theme'
 
-export default function DateTimePickerField({ label, date, onChange, error }) {
+export default function DateTimePickerField({ label, date, onChange, error, fullWidth = true }) {
   const [show, setShow] = useState(false)
 
   const handleChange = (_, selectedDate) => {
@@ -14,10 +14,10 @@ export default function DateTimePickerField({ label, date, onChange, error }) {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, !fullWidth && styles.containerCompact]}>
       <Text style={typography.label}>{label}</Text>
 
-      <TouchableOpacity onPress={() => setShow(true)} style={styles.field}>
+      <TouchableOpacity onPress={() => setShow(true)} style={[styles.field, !fullWidth && styles.fieldCompact]}>
         <Text style={typography.body}>
           {date
             ? `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {
@@ -44,6 +44,9 @@ export default function DateTimePickerField({ label, date, onChange, error }) {
 
 const styles = StyleSheet.create({
   container: { marginBottom: 16 },
+  containerCompact: {
+    maxWidth: 200,
+  },
   field: {
     borderWidth: 1,
     borderColor: colors.border,
@@ -51,6 +54,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 12,
     backgroundColor: colors.surface,
+  },
+  fieldCompact: {
+    maxWidth: 200,
   },
   error: {
     color: colors.error,

@@ -5,7 +5,6 @@ import { useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
 import { layout, typography, colors } from '../../styles/theme'
 import { carregarOvos, removerOvoThunk } from '../../redux/thunks/ovosThunk'
-import AddEggButton from '../../components/AddEggButton'
 
 export default function OvosList() {
   const navigation = useNavigation()
@@ -61,10 +60,14 @@ export default function OvosList() {
         )}
       />
 
-      <AddEggButton
+      <Button
+        mode="contained"
+        icon="plus"
         onPress={() => navigation.navigate('OvosForm')}
-        style={styles.addButton}
-      />
+        style={[layout.button, styles.addButton]}
+      >
+        <Text>Adicionar Ovo</Text>
+      </Button>
     </View>
   )
 }

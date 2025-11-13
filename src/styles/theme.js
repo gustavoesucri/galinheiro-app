@@ -52,6 +52,10 @@ export const layout = {
     padding: 16,
     marginTop: 16,
   },
+  formContainer: {
+    backgroundColor: colors.background,
+    paddingBottom: 32,
+  },
   card: {
     backgroundColor: colors.surface,
     borderRadius: 12,

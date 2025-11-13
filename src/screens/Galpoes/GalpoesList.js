@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { View, FlatList } from 'react-native'
+import { View, FlatList, StyleSheet } from 'react-native'
 import { Card, Text, Button } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 import { useDispatch, useSelector } from 'react-redux'
@@ -21,7 +21,7 @@ export default function GalpoesList() {
 
   return (
     <View style={layout.container}>
-      <Text style={[typography.title, { marginBottom: 12 }]}>Galpões</Text>
+      <Text style={[typography.title, styles.title]}>Galpões</Text>
 
       <FlatList
         data={galpoes}
@@ -68,10 +68,15 @@ export default function GalpoesList() {
         mode="contained"
         icon="plus"
         onPress={() => navigation.navigate('GalpoesForm')}
-        style={{ marginTop: 16 }}
+        style={[layout.button, styles.addButton]}
       >
-        Adicionar Galpão
+        <Text>Adicionar Galpão</Text>
       </Button>
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  addButton: { marginTop: 16 },
+  title: { marginBottom: 12 },
+})

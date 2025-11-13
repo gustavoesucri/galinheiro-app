@@ -50,7 +50,7 @@ export default function MedicaoAmbienteForm({ navigation, route }) {
   }
 
   return (
-    <ScrollView contentContainerStyle={[layout.container, styles.container]}>
+    <ScrollView contentContainerStyle={[layout.formContainer, styles.container]}>
       <Text style={[typography.title, styles.title]}>
         {medicao ? 'Editar Medição' : 'Nova Medição'}
       </Text>
@@ -64,6 +64,7 @@ export default function MedicaoAmbienteForm({ navigation, route }) {
       date={value}
       onChange={onChange}
       error={error?.message}
+      fullWidth={false}
     />
   )}
 />

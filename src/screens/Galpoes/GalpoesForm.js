@@ -56,7 +56,7 @@ export default function GalpoesForm({ navigation, route }) {
   }
 
   return (
-    <ScrollView contentContainerStyle={[layout.container, styles.container]}>
+    <ScrollView contentContainerStyle={[layout.formContainer, styles.container]}>
       <Text style={[typography.title, styles.title]}>
         {galpao ? 'Editar Galpão' : 'Cadastrar Galpão'}
       </Text>
@@ -115,7 +115,7 @@ export default function GalpoesForm({ navigation, route }) {
         control={control}
         name="area_m2"
         render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <InputFloat label="Área (m²)" value={value} onChange={onChange} error={error?.message} />
+          <InputFloat label="Área (m²)" value={value} onChange={onChange} error={error?.message} fullWidth={false} />
         )}
       />
 
@@ -170,6 +170,7 @@ export default function GalpoesForm({ navigation, route }) {
             date={value}
             onChange={onChange}
             error={error?.message}
+            fullWidth={false}
           />
         )}
       />

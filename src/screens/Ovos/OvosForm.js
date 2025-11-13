@@ -134,7 +134,7 @@ export default function OvosForm({ navigation, route }) {
   }
 
   return (
-    <ScrollView contentContainerStyle={[layout.container, styles.container]}>
+    <ScrollView contentContainerStyle={[layout.formContainer, styles.container]}>
       <Text style={[typography.title, styles.title]}>
         {ovo ? 'Editar Ovo' : 'Cadastrar Ovo'}
       </Text>
@@ -154,6 +154,7 @@ export default function OvosForm({ navigation, route }) {
             date={value}
             onChange={onChange}
             error={error?.message}
+            fullWidth={false}
           />
         )}
       />

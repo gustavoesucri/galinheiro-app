@@ -72,7 +72,7 @@ export default function NinhosForm({ navigation, route }) {
   }
 
   return (
-    <ScrollView contentContainerStyle={[layout.container, styles.container]}>
+    <ScrollView contentContainerStyle={[layout.formContainer, styles.container]}>
       <Text style={[typography.title, styles.title]}>
         {ninho ? 'Editar Ninho' : 'Cadastrar / Atualizar Ninho'}
       </Text>
@@ -143,6 +143,7 @@ export default function NinhosForm({ navigation, route }) {
             date={value}
             onChange={onChange}
             error={error?.message}
+            fullWidth={false}
           />
         )}
       />

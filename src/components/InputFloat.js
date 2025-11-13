@@ -9,6 +9,7 @@ export default function InputFloat({
   placeholder = '0,00',
   style,
   error,
+  fullWidth = true,
   ...props
 }) {
   const formatNumber = (numStr) => {
@@ -34,7 +35,7 @@ export default function InputFloat({
   }
 
   return (
-    <View style={[styles.container, style]}>
+    <View style={[styles.container, !fullWidth && styles.containerCompact, style]}>
       {label && <Text style={styles.label}>{label}</Text>}
       <TextInput
         keyboardType="numeric"
@@ -46,7 +47,7 @@ export default function InputFloat({
             : ''
         }
         onChangeText={handleChange}
-        style={[styles.input, error && styles.inputError]}
+        style={[styles.input, !fullWidth && styles.inputCompact, error && styles.inputError]}
         {...props}
       />
       {error && <Text style={styles.errorText}>{error}</Text>}
@@ -56,6 +57,9 @@ export default function InputFloat({
 
 const styles = StyleSheet.create({
   container: { marginBottom: 12 },
+  containerCompact: {
+    maxWidth: 200,
+  },
   label: {
     fontSize: 14,
     color: colors.textSecondary,
@@ -71,6 +75,9 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     color: colors.textPrimary,
     fontSize: 14,
+  },
+  inputCompact: {
+    maxWidth: 200,
   },
   inputError: { borderColor: colors.error || 'red' },
   errorText: {
