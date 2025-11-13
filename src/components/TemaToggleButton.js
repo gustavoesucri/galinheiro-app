@@ -16,10 +16,11 @@ export default function TemaToggleButton() {
 
   const getIconName = () => {
     switch (temaSelecionado) {
-      case 'tema1': return 'palette'
+      case 'tema1': return 'fruit-citrus'
       case 'tema2': return 'leaf'
-      case 'tema3': return 'moon-waning-crescent'
-      default: return 'palette'
+      case 'tema3': return 'weather-night'
+      case 'dark': return 'moon-waning-crescent'
+      default: return 'fruit-citrus'
     }
   }
 

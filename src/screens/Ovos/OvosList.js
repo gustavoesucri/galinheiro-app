@@ -17,7 +17,7 @@ export default function OvosList() {
   
   // Cor para botão Remover - laranja fixo ou cor do tema
   const removeColor = botoesClaros ? tema.colors.primaryOrange : tema.colors.primary
-  const removeTextColor = botoesClaros ? tema.colors.textOnPrimary : tema.colors.textOnPrimary
+  const removeTextColor = botoesClaros ? tema.colors.black : tema.colors.textOnPrimary
 
   useEffect(() => { 
     dispatch(carregarOvos()) 

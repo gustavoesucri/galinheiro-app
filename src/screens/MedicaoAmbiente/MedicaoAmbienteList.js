@@ -17,7 +17,7 @@ export default function MedicaoAmbienteList() {
   
   // Cor para botão Deletar - laranja fixo ou cor do tema
   const deleteColor = botoesClaros ? tema.colors.primaryOrange : tema.colors.primary
-  const deleteTextColor = botoesClaros ? tema.colors.textOnPrimary : tema.colors.textOnPrimary
+  const deleteTextColor = botoesClaros ? tema.colors.black : tema.colors.textOnPrimary
 
 
   useEffect(() => {

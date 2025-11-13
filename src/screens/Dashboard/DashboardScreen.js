@@ -174,7 +174,14 @@ export default function DashboardScreen() {
       const b = parseInt(hex.substring(4, 6), 16)
       return `rgba(${r}, ${g}, ${b}, ${opacity})`
     },
-    labelColor: (opacity = 1) => `rgba(45, 43, 38, ${opacity})`,
+    labelColor: (opacity = 1) => {
+      // Usa cor do texto primário do tema (claro no dark, escuro nos outros)
+      const hex = colors.textPrimary.replace('#', '')
+      const r = parseInt(hex.substring(0, 2), 16)
+      const g = parseInt(hex.substring(2, 4), 16)
+      const b = parseInt(hex.substring(4, 6), 16)
+      return `rgba(${r}, ${g}, ${b}, ${opacity})`
+    },
     strokeWidth: 2,
     barPercentage: 0.6,
     useShadowColorFromDataset: false,

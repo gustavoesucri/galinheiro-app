@@ -2,12 +2,18 @@ import React, { useState, useRef, useEffect } from 'react'
 import { View, TouchableOpacity, StyleSheet } from 'react-native'
 import { Text } from 'react-native-paper'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
-import { colors, typography } from '../styles/theme'
+import { useSelector } from 'react-redux'
+import { useTema } from '../hooks/useTema'
 
 export default function NumberSpinner({ value, onChange, label, step = 0.1, min = 0, max = 100 }) {
   const [isPressed, setIsPressed] = useState(null) // 'increase' ou 'decrease'
   const intervalRef = useRef(null)
   const valueRef = useRef(value)
+  const botoesClaros = useSelector(state => state.botaoModo.botoesClaros)
+  const tema = useTema()
+  
+  // Cor dinâmica - laranja fixo ou cor do tema
+  const spinnerColor = botoesClaros ? tema.colors.primaryOrange : tema.colors.primary
 
   // Atualiza a ref sempre que value muda
   useEffect(() => {
@@ -54,29 +60,40 @@ export default function NumberSpinner({ value, onChange, label, step = 0.1, min 
 
   return (
     <View style={styles.container}>
-      {label && <Text style={typography.label}>{label}</Text>}
+      {label && <Text style={tema.typography.label}>{label}</Text>}
 
       <View style={styles.spinner}>
         <TouchableOpacity
-          style={[styles.button, isPressed === 'decrease' && styles.buttonActive]}
+          style={[
+            styles.button,
+            { borderColor: spinnerColor, backgroundColor: tema.colors.surface },
+            isPressed === 'decrease' && { backgroundColor: spinnerColor }
+          ]}
           onPressIn={() => handlePressIn('decrease')}
           onPressOut={handlePressOut}
           activeOpacity={0.7}
         >
-          <MaterialCommunityIcons name="minus" size={20} color={colors.primary} />
+          <MaterialCommunityIcons name="minus" size={20} color={spinnerColor} />
         </TouchableOpacity>
 
-        <View style={styles.valueContainer}>
-          <Text style={styles.value}>{value.toFixed(1)}</Text>
+        <View style={[
+          styles.valueContainer,
+          { borderColor: spinnerColor, backgroundColor: tema.colors.surface }
+        ]}>
+          <Text style={[styles.value, { color: spinnerColor }]}>{value.toFixed(1)}</Text>
         </View>
 
         <TouchableOpacity
-          style={[styles.button, isPressed === 'increase' && styles.buttonActive]}
+          style={[
+            styles.button,
+            { borderColor: spinnerColor, backgroundColor: tema.colors.surface },
+            isPressed === 'increase' && { backgroundColor: spinnerColor }
+          ]}
           onPressIn={() => handlePressIn('increase')}
           onPressOut={handlePressOut}
           activeOpacity={0.7}
         >
-          <MaterialCommunityIcons name="plus" size={20} color={colors.primary} />
+          <MaterialCommunityIcons name="plus" size={20} color={spinnerColor} />
         </TouchableOpacity>
       </View>
     </View>
@@ -98,28 +115,20 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: colors.surface,
     borderWidth: 2,
-    borderColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  buttonActive: {
-    backgroundColor: colors.primary,
   },
   valueContainer: {
     width: 70,
     height: 44,
     borderRadius: 8,
-    backgroundColor: colors.surface,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: colors.primary,
   },
   value: {
     fontSize: 18,
     fontWeight: '600',
-    color: colors.primary,
   },
 })

@@ -328,11 +328,11 @@ export default function OvosForm({ navigation, route }) {
             <Text>Tem certeza que deseja remover este ovo?</Text>
           </Dialog.Content>
           <Dialog.Actions>
-            <DialogButton variant="delete" onPress={confirmDelete}>
-              Deletar
-            </DialogButton>
             <DialogButton variant="cancel" onPress={() => setShowDeleteDialog(false)}>
               Cancelar
+            </DialogButton>
+            <DialogButton variant="delete" onPress={confirmDelete}>
+              Deletar
             </DialogButton>
           </Dialog.Actions>
         </Dialog>

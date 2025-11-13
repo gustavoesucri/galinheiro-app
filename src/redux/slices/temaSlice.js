@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
-  ativo: 'tema1', // 'tema1' (laranja), 'tema2' (verde), 'tema3' (roxo)
+  ativo: 'tema1', // 'tema1' (laranja), 'tema2' (verde), 'tema3' (roxo), 'dark' (escuro)
 }
 
 const temaSlice = createSlice({
@@ -12,7 +12,7 @@ const temaSlice = createSlice({
       state.ativo = action.payload
     },
     alternarTema: (state) => {
-      const temas = ['tema1', 'tema2', 'tema3']
+      const temas = ['tema1', 'tema2', 'tema3', 'dark']
       const indiceAtual = temas.indexOf(state.ativo)
       const proximoIndice = (indiceAtual + 1) % temas.length
       state.ativo = temas[proximoIndice]

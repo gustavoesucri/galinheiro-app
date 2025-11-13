@@ -13,17 +13,19 @@ const DialogButton = ({ onPress, children, variant = 'primary' }) => {
   
   // Cor para botões "Remover" - laranja fixo ou cor do tema
   const deleteColor = botoesClaros ? tema.colors.primaryOrange : tema.colors.primary
+  // Texto: preto no laranja fixo, branco/preto conforme o tema nos outros
+  const deleteTextColor = botoesClaros ? tema.colors.black : tema.colors.textOnPrimary
 
   return (
     <Button
-      mode="contained"
+      mode={isCancel ? 'outlined' : 'contained'}
       labelStyle={styles.label}
       style={[
         styles.button,
-        isCancel && { backgroundColor: tema.colors.accent, borderColor: tema.colors.accent, borderWidth: 1.5 },
+        isCancel && { borderColor: tema.colors.accent },
         isDelete && { backgroundColor: deleteColor },
       ]}
-      textColor={tema.colors.white}
+      textColor={isCancel ? tema.colors.accent : (isDelete ? deleteTextColor : tema.colors.white)}
       onPress={onPress}
     >
       {children}

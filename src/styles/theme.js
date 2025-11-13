@@ -10,7 +10,7 @@ export const colors = {
   primaryOrange: '#e28f13',    // Laranja fixo para modo claro
   secondary: '#9B7522',        // Marrom médio
   accent: '#8A5E00',           // Marrom escuro (destaques)
-  background: '#E0A523FF',     // Fundo dourado
+  background: '#FFF3E0',       // Fundo laranja claro (consistente com verde/roxo)
   surface: '#FFFFFF',          // Branco (cards, inputs)
   textPrimary: '#2D2B26',      // Texto principal (escuro)
   textSecondary: '#6B6558',    // Texto secundário (médio)
