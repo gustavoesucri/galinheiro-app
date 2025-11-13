@@ -60,7 +60,7 @@ export default function NinhosList() {
   }
 
   return (
-    <View style={layout.container}>
+    <View style={{ flex: 1, backgroundColor: colors.background, padding: 16 }}>
       <Text style={[typography.title, styles.title]}>Ninhos</Text>
 
       <FlatList

@@ -9,6 +9,7 @@ import { ovosSchema } from '../../schemas/ovosSchema'
 import { adicionarOvoThunk, atualizarOvoThunk, removerOvoThunk } from '../../redux/thunks/ovosThunk'
 import { carregarGalinhas } from '../../redux/thunks/galinhasThunk'
 import { carregarNinhos } from '../../redux/thunks/ninhosThunk'
+import { validarIdadeParaPostura } from '../../utils/businessRules'
 import { useTema } from '../../hooks/useTema'
 import Button from '../../components/Button'
 import DialogButton from '../../components/DialogButton'
@@ -35,8 +36,8 @@ export default function OvosForm({ navigation, route }) {
     resolver: yupResolver(ovosSchema),
     defaultValues: {
       data: new Date(),
-      // se vier de GalinhasForm, preenche o ID da galinha; caso contrário, vazio
-      galinhaId: prefillGalinha?.id || '',
+      // se vier de GalinhasForm, preenche o ID da galinha; caso contrário, 'desconhecida'
+      galinhaId: prefillGalinha?.id || 'desconhecida',
       ninhoId: '',
       tamanho: 'Médio',
       cor: 'Branco',
@@ -66,7 +67,7 @@ export default function OvosForm({ navigation, route }) {
     if (ovo) {
       reset({
         data: ovo.data ? new Date(ovo.data) : new Date(),
-        galinhaId: ovo.galinhaId || '',
+        galinhaId: ovo.galinhaId || 'desconhecida',
         ninhoId: ovo.ninhoId || '',
         tamanho: ovo.tamanho || 'Médio',
         cor: ovo.cor || 'Branco',
@@ -88,29 +89,43 @@ export default function OvosForm({ navigation, route }) {
   }, [ovo, prefillGalinha, reset])
 
   const onSubmit = (data) => {
-    // Validação: máximo 2 ovos por galinha por dia
-    const eggsToday = ovos.filter(o => {
-      // Se estamos editando, não contar o ovo atual
-      if (ovo && o.id === ovo.id) return false
+    // RN-014: Validar idade mínima para postura (só se tiver galinha conhecida)
+    if (data.galinhaId && data.galinhaId !== 'desconhecida') {
+      const galinha = galinhas.find(g => String(g.id) === String(data.galinhaId))
+      if (galinha && galinha.data_nascimento) {
+        const resultadoIdade = validarIdadeParaPostura(galinha.data_nascimento, data.data)
+        if (!resultadoIdade.valido) {
+          setErrorMsg(resultadoIdade.mensagem)
+          return
+        }
+      }
+    }
+    
+    // Validação: máximo 2 ovos por galinha por dia (só para galinhas conhecidas)
+    if (data.galinhaId && data.galinhaId !== 'desconhecida') {
+      const eggsToday = ovos.filter(o => {
+        // Se estamos editando, não contar o ovo atual
+        if (ovo && o.id === ovo.id) return false
 
-      // Checar se é da mesma galinha
-      if (o.galinhaId !== data.galinhaId) return false
+        // Checar se é da mesma galinha
+        if (o.galinhaId !== data.galinhaId) return false
 
-      // Checar se é do mesmo dia
-      const ovoDate = new Date(o.data)
-      const dataDate = new Date(data.data)
+        // Checar se é do mesmo dia
+        const ovoDate = new Date(o.data)
+        const dataDate = new Date(data.data)
 
-      return (
-        ovoDate.getFullYear() === dataDate.getFullYear() &&
-        ovoDate.getMonth() === dataDate.getMonth() &&
-        ovoDate.getDate() === dataDate.getDate()
-      )
-    })
+        return (
+          ovoDate.getFullYear() === dataDate.getFullYear() &&
+          ovoDate.getMonth() === dataDate.getMonth() &&
+          ovoDate.getDate() === dataDate.getDate()
+        )
+      })
 
-    // Se já tem 2 ovos hoje e não é edição, rejeitar
-    if (!ovo && eggsToday.length >= 2) {
-      setErrorMsg('Esta galinha já pode colocar no máximo 2 ovos por dia!')
-      return
+      // Se já tem 2 ovos hoje e não é edição, rejeitar
+      if (!ovo && eggsToday.length >= 2) {
+        setErrorMsg('Esta galinha já pode colocar no máximo 2 ovos por dia!')
+        return
+      }
     }
 
     setErrorMsg(null)
@@ -168,6 +183,7 @@ export default function OvosForm({ navigation, route }) {
             onChange={onChange}
             error={error?.message}
             fullWidth={false}
+            disabled={!!ovo}
           />
         )}
       />
@@ -176,14 +192,17 @@ export default function OvosForm({ navigation, route }) {
         control={control}
         name="galinhaId"
         render={({ field: { value, onChange }, fieldState: { error } }) => {
-          const opcoesGalinhas = galinhas.map(g => ({
-            label: g.nome,
-            value: g.id,
-          }))
+          const opcoesGalinhas = [
+            { label: 'Desconhecida', value: 'desconhecida' },
+            ...galinhas.map(g => ({
+              label: g.nome,
+              value: g.id,
+            }))
+          ]
 
           // Se vier de GalinhasForm com galinha pré-definida, mostra um campo não editável
           // Ou se estiver editando um ovo que foi criado a partir de GalinhasList
-          if (ovo?.galinhaId && origin === 'GalinhasListEdit') {
+          if (ovo?.galinhaId && ovo.galinhaId !== 'desconhecida' && origin === 'GalinhasListEdit') {
             const galinhaSelecionada = galinhas.find(g => g.id === ovo.galinhaId)
             const nomePrefill = galinhaSelecionada?.nome || 'Galinha'
             return (

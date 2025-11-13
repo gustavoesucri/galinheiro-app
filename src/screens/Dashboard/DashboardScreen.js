@@ -347,7 +347,8 @@ export default function DashboardScreen({ navigation, route }) {
   return (
     <ScrollView 
       ref={scrollViewRef}
-      style={[layout.container, { backgroundColor: colors.background }]}
+      contentContainerStyle={{ padding: 16 }}
+      style={{ flex: 1, backgroundColor: colors.background }}
     >
       <Animated.View
         style={[

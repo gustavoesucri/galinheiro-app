@@ -4,7 +4,7 @@ import { Text } from 'react-native-paper'
 import { DatePickerModal } from 'react-native-paper-dates'
 import { useTema } from '../hooks/useTema'
 
-export default function DatePickerField({ label, date, onChange, error, fullWidth = true }) {
+export default function DatePickerField({ label, date, onChange, error, fullWidth = true, disabled = false }) {
   const tema = useTema()
   const { colors } = tema
   const [open, setOpen] = useState(false)
@@ -23,15 +23,17 @@ export default function DatePickerField({ label, date, onChange, error, fullWidt
           type="date"
           value={date ? date.toISOString().substr(0, 10) : ''}
           onChange={e => handleChange(e.target.value)}
+          disabled={disabled}
           style={{ 
             padding: 8, 
             marginTop: 4, 
             maxWidth: fullWidth ? '100%' : 200,
-            backgroundColor: colors.surface,
-            color: colors.textPrimary,
+            backgroundColor: disabled ? colors.disabled : colors.surface,
+            color: disabled ? colors.textDisabled : colors.textPrimary,
             borderColor: colors.border,
             borderWidth: 1,
-            borderRadius: 4
+            borderRadius: 4,
+            opacity: disabled ? 0.6 : 1,
           }}
         />
         {error && <Text style={{ color: colors.error }}>{error}</Text>}
@@ -42,11 +44,16 @@ export default function DatePickerField({ label, date, onChange, error, fullWidt
   return (
     <View style={[styles.container, !fullWidth && styles.containerCompact]}>
       <Text style={{ color: colors.textPrimary }}>{label}</Text>
-      <View style={[styles.buttonWrapper, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+      <View style={[styles.buttonWrapper, { 
+        backgroundColor: disabled ? colors.disabled : colors.surface, 
+        borderColor: colors.border,
+        opacity: disabled ? 0.6 : 1,
+      }]}>
         <RNButton
           title={date ? date.toLocaleDateString() : 'Selecionar data'}
           onPress={() => setOpen(true)}
           color={colors.primary}
+          disabled={disabled}
         />
       </View>
       <DatePickerModal

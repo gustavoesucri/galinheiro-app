@@ -1,11 +1,12 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
 import { Text } from 'react-native-paper'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm, Controller, useWatch } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { galpoesSchema } from '../../schemas/galpoesSchema'
 import { adicionarGalpaoThunk, atualizarGalpaoThunk } from '../../redux/thunks/galpoesThunk'
+import { validarDensidadeGalpao, validarNomeGalpaoUnico } from '../../utils/businessRules'
 import { useTema } from '../../hooks/useTema'
 import Button from '../../components/Button'
 import Input from '../../components/Input'
@@ -19,9 +20,12 @@ import SwitchField from '../../components/SwitchField'
 
 export default function GalpoesForm({ navigation, route }) {
   const tema = useTema()
-  const { layout, typography } = tema
+  const { layout, typography, colors } = tema
   const dispatch = useDispatch()
   const { galpao } = route.params || {}
+  const galpoes = useSelector(state => state.galpoes.lista)
+  const [densidadeAviso, setDensidadeAviso] = useState(null)
+  const [nomeErro, setNomeErro] = useState(null)
 
   const { control, handleSubmit, reset } = useForm({
     resolver: yupResolver(galpoesSchema),
@@ -38,6 +42,35 @@ export default function GalpoesForm({ navigation, route }) {
       observacoes: '',
     },
   })
+
+  // Watch para calcular densidade em tempo real
+  const areaM2 = useWatch({ control, name: 'area_m2' })
+  const capacidadeGalinhas = useWatch({ control, name: 'capacidade_maxima_galinhas' })
+  const nome = useWatch({ control, name: 'nome' })
+
+  // Validar densidade
+  useEffect(() => {
+    if (areaM2 && capacidadeGalinhas) {
+      const resultado = validarDensidadeGalpao(areaM2, capacidadeGalinhas)
+      if (resultado.aviso) {
+        setDensidadeAviso(resultado.mensagem)
+      } else {
+        setDensidadeAviso(null)
+      }
+    }
+  }, [areaM2, capacidadeGalinhas])
+
+  // Validar unicidade do nome
+  useEffect(() => {
+    if (nome && nome.trim()) {
+      const resultado = validarNomeGalpaoUnico(nome, galpoes, galpao?.id)
+      if (!resultado.valido) {
+        setNomeErro(resultado.mensagem)
+      } else {
+        setNomeErro(null)
+      }
+    }
+  }, [nome, galpoes, galpao])
 
   useEffect(() => {
     if (galpao) {
@@ -57,6 +90,12 @@ export default function GalpoesForm({ navigation, route }) {
   }, [galpao, reset])
 
   const onSubmit = (data) => {
+    // Validação final de nome único
+    if (nomeErro) {
+      alert(nomeErro)
+      return
+    }
+    
     if (galpao) {
       dispatch(atualizarGalpaoThunk({ ...galpao, ...data }))
     } else {
@@ -75,7 +114,29 @@ export default function GalpoesForm({ navigation, route }) {
         control={control}
         name="nome"
         render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <Input label="Nome" value={value} onChangeText={onChange} error={error?.message} />
+          <View>
+            <Input label="Nome" value={value} onChangeText={onChange} error={error?.message || nomeErro} />
+          </View>
+        )}
+      />
+
+      <Controller
+        control={control}
+        name="area_m2"
+        render={({ field: { onChange, value }, fieldState: { error } }) => (
+          <View>
+            <InputFloat
+              label="Área (m²)"
+              value={value}
+              onChangeText={onChange}
+              error={error?.message}
+            />
+            {densidadeAviso && (
+              <Text style={[typography.small, { color: colors.warning || '#f57c00', marginTop: 4 }]}>
+                ⚠️ {densidadeAviso}
+              </Text>
+            )}
+          </View>
         )}
       />
 

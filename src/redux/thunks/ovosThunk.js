@@ -22,8 +22,21 @@ export const adicionarOvoThunk = (ovo) => async (dispatch) => {
   dispatch(salvarOvos())
 }
 
-export const atualizarOvoThunk = (ovo) => async (dispatch) => {
-  dispatch(atualizarOvo(ovo))
+export const atualizarOvoThunk = (ovo) => async (dispatch, getState) => {
+  // RN-038: Data de coleta é imutável - preserva data original
+  const { lista } = getState().ovos
+  const ovoOriginal = lista.find(o => o.id === ovo.id)
+  
+  if (ovoOriginal) {
+    const ovoAtualizado = {
+      ...ovo,
+      data: ovoOriginal.data // Preserva data original
+    }
+    dispatch(atualizarOvo(ovoAtualizado))
+  } else {
+    dispatch(atualizarOvo(ovo))
+  }
+  
   dispatch(salvarOvos())
 }
 

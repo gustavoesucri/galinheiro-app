@@ -1,0 +1,412 @@
+{
+  "versao": "1.0",
+  "data": "2025-11-13",
+  "sistema": "Galinheiro App",
+  
+  "regras": {
+    "datas": [
+      {
+        "id": "RN-001",
+        "nome": "Data de nascimento não pode ser futura",
+        "prioridade": "CRITICA",
+        "implementada": true,
+        "entidade": "galinhas",
+        "campo": "data_nascimento",
+        "validacao": "data_nascimento <= hoje(23:59:59)",
+        "mensagemErro": "Data de nascimento não pode ser futura",
+        "bloqueante": true
+      },
+      {
+        "id": "RN-002",
+        "nome": "Data da última limpeza não pode ser futura",
+        "prioridade": "CRITICA",
+        "implementada": true,
+        "entidade": "ninhos",
+        "campo": "ultima_limpeza",
+        "validacao": "ultima_limpeza <= agora()",
+        "mensagemErro": "Data da última limpeza não pode ser futura",
+        "bloqueante": true
+      },
+      {
+        "id": "RN-003",
+        "nome": "Data de postura de ovo não pode ser futura",
+        "prioridade": "CRITICA",
+        "implementada": true,
+        "entidade": "ovos",
+        "campo": "data",
+        "validacao": "data <= hoje(23:59:59)",
+        "mensagemErro": "Data de postura não pode ser futura",
+        "bloqueante": true
+      },
+      {
+        "id": "RN-004",
+        "nome": "Data de medição ambiente não pode ser futura",
+        "prioridade": "CRITICA",
+        "implementada": true,
+        "entidade": "medicoes_ambiente",
+        "campo": "data_medicao",
+        "validacao": "data_medicao <= agora()",
+        "mensagemErro": "Data da medição não pode ser futura",
+        "bloqueante": true
+      },
+      {
+        "id": "RN-005",
+        "nome": "Data última manutenção do galpão não pode ser futura",
+        "prioridade": "CRITICA",
+        "implementada": true,
+        "entidade": "galpoes",
+        "campo": "data_ultima_manutencao",
+        "validacao": "data_ultima_manutencao <= agora()",
+        "mensagemErro": "Data da manutenção não pode ser futura",
+        "bloqueante": true
+      }
+    ],
+    
+    "capacidade": [
+      {
+        "id": "RN-006",
+        "nome": "Ninhos ocupados não pode exceder capacidade máxima",
+        "prioridade": "CRITICA",
+        "implementada": true,
+        "entidade": "galpoes",
+        "campos": ["numero_ninhos_ocupados", "capacidade_maxima_ninhos"],
+        "validacao": "numero_ninhos_ocupados <= capacidade_maxima_ninhos",
+        "mensagemErro": "Ninhos ocupados ({value}) não pode exceder a capacidade máxima ({max})",
+        "bloqueante": true
+      },
+      {
+        "id": "RN-007",
+        "nome": "Número de galinhas no galpão não pode exceder capacidade",
+        "prioridade": "CRITICA",
+        "implementada": true,
+        "entidades": ["galinhas", "galpoes"],
+        "validacao": "COUNT(galinhas WHERE local='galpao' AND galpaoId=X) <= galpao.capacidade_maxima_galinhas",
+        "mensagemErro": "Galpão tem {current} galinhas, mas capacidade máxima é {max}",
+        "bloqueante": true
+      },
+      {
+        "id": "RN-008",
+        "nome": "Densidade mínima por galinha",
+        "prioridade": "IMPORTANTE",
+        "implementada": true,
+        "entidade": "galpoes",
+        "campos": ["area_m2", "capacidade_maxima_galinhas"],
+        "validacao": {
+          "critico": "area_m2 / capacidade_maxima_galinhas >= 0.5",
+          "aviso": "area_m2 / capacidade_maxima_galinhas >= 1.0"
+        },
+        "mensagens": {
+          "critico": "Densidade muito alta: {densidade}m²/galinha. Mínimo: 0.5m²/galinha",
+          "aviso": "Densidade justa: {densidade}m²/galinha. Recomendado: 1m²/galinha",
+          "ok": "Densidade ideal: {densidade}m²/galinha"
+        },
+        "bloqueante": "critico_apenas"
+      },
+      {
+        "id": "RN-009",
+        "nome": "Ninho só pode ter galinha se estiver ocupado",
+        "prioridade": "CRITICA",
+        "implementada": true,
+        "entidade": "ninhos",
+        "campos": ["ocupado", "galinhaId"],
+        "validacao": {
+          "regra1": "IF ocupado=true THEN galinhaId IS NOT NULL",
+          "regra2": "IF ocupado=false THEN galinhaId IS NULL"
+        },
+        "mensagemErro": "Ninho ocupado deve ter galinha / Ninho desocupado não pode ter galinha",
+        "bloqueante": true,
+        "autoCorrecao": "RN-029"
+      },
+      {
+        "id": "RN-010",
+        "nome": "Galinha no ninho deve estar no mesmo galpão",
+        "prioridade": "CRITICA",
+        "implementada": true,
+        "entidades": ["galinhas", "ninhos"],
+        "validacao": "IF galinha.ninhoId THEN galinha.galpaoId = ninho.galpaoId",
+        "mensagemErro": "Galinha está em galpão diferente do ninho",
+        "bloqueante": true
+      }
+    ],
+    
+    "postura": [
+      {
+        "id": "RN-011",
+        "nome": "Máximo 2 ovos por galinha por dia",
+        "prioridade": "CRITICA",
+        "implementada": true,
+        "entidade": "ovos",
+        "campos": ["galinhaId", "data"],
+        "validacao": "COUNT(ovos WHERE galinhaId=X AND DATE(data)=DATE(Y)) <= 2",
+        "mensagemErro": "Esta galinha já atingiu o limite de 2 ovos por dia",
+        "bloqueante": true
+      },
+      {
+        "id": "RN-014",
+        "nome": "Galinha muito jovem não bota ovos",
+        "prioridade": "CRITICA",
+        "implementada": true,
+        "entidades": ["ovos", "galinhas"],
+        "validacao": "DATEDIFF(day, galinha.data_nascimento, ovo.data) >= 120",
+        "mensagemErro": "Galinha muito jovem para botar ovos. Idade: {idade} dias, mínimo: 120 dias",
+        "bloqueante": true,
+        "constantes": {
+          "IDADE_MINIMA_POSTURA": 120
+        }
+      },
+      {
+        "id": "RN-038",
+        "nome": "Data de coleta do ovo é imutável",
+        "prioridade": "CRITICA",
+        "implementada": true,
+        "entidade": "ovos",
+        "campo": "data",
+        "validacao": "ON UPDATE: IF OLD.data != NEW.data THEN SIGNAL ERROR",
+        "mensagemErro": "Data de coleta não pode ser alterada. Para corrigir, delete e recrie o registro",
+        "bloqueante": true,
+        "tipo": "IMUTAVEL",
+        "trigger": "BEFORE_UPDATE",
+        "justificativa": [
+          "Rastreabilidade de produção",
+          "Previne manipulação de histórico",
+          "Validações RN-011 e RN-014 dependem da data",
+          "Relatórios precisam de dados confiáveis"
+        ]
+      }
+    ],
+    
+    "quarentena": [
+      {
+        "id": "RN-016",
+        "nome": "Galinha em quarentena não pode estar em galpão",
+        "prioridade": "CRITICA",
+        "implementada": true,
+        "entidade": "galinhas",
+        "campos": ["emQuarentena", "local", "galpaoId", "ninhoId"],
+        "validacao": "IF emQuarentena=true THEN local='quarentena' AND galpaoId IS NULL AND ninhoId IS NULL",
+        "mensagemErro": "Galinha em quarentena não pode estar no galpão",
+        "bloqueante": true,
+        "autoCorrecao": true
+      },
+      {
+        "id": "RN-017",
+        "nome": "Galinha adoecida deveria estar em quarentena",
+        "prioridade": "RECOMENDACAO",
+        "implementada": true,
+        "entidade": "galinhas",
+        "campos": ["saude", "emQuarentena"],
+        "validacao": "IF saude='Adoecida' THEN SUGGEST emQuarentena=true",
+        "mensagemSugestao": "Galinha adoecida deveria estar em quarentena para evitar contágio",
+        "bloqueante": false,
+        "tipo": "sugestao"
+      },
+      {
+        "id": "RN-018",
+        "nome": "Alerta de muitas galinhas adoecidas no galpão",
+        "prioridade": "IMPORTANTE",
+        "implementada": true,
+        "entidades": ["galinhas", "galpoes"],
+        "validacao": {
+          "critico": "(COUNT(galinhas WHERE galpaoId=X AND saude='Adoecida') / COUNT(galinhas WHERE galpaoId=X)) > 0.20",
+          "atencao": "(COUNT(galinhas WHERE galpaoId=X AND saude='Adoecida') / COUNT(galinhas WHERE galpaoId=X)) > 0.10"
+        },
+        "mensagens": {
+          "critico": "CRÍTICO: {percentual}% das galinhas estão adoecidas ({quantidade}/{total})",
+          "atencao": "ATENÇÃO: {percentual}% das galinhas estão adoecidas ({quantidade}/{total})"
+        },
+        "bloqueante": false,
+        "tipo": "alerta"
+      }
+    ],
+    
+    "relacionamento": [
+      {
+        "id": "RN-029",
+        "nome": "Ninho desocupado remove galinhaId automaticamente",
+        "prioridade": "CRITICA",
+        "implementada": true,
+        "entidade": "ninhos",
+        "campos": ["ocupado", "galinhaId"],
+        "validacao": "IF ocupado=false THEN SET galinhaId=NULL",
+        "acao": "AUTO_CORRECAO",
+        "trigger": "BEFORE_UPDATE"
+      }
+    ],
+    
+    "consistencia": [
+      {
+        "id": "RN-030",
+        "nome": "Galinha só pode ter ninhoId se local='galpao'",
+        "prioridade": "CRITICA",
+        "implementada": true,
+        "entidade": "galinhas",
+        "campos": ["local", "ninhoId"],
+        "validacao": "IF local!='galpao' THEN ninhoId IS NULL",
+        "autoCorrecao": true,
+        "bloqueante": true
+      },
+      {
+        "id": "RN-031",
+        "nome": "Galinha com ninhoId deve ter galpaoId",
+        "prioridade": "CRITICA",
+        "implementada": true,
+        "entidade": "galinhas",
+        "campos": ["ninhoId", "galpaoId"],
+        "validacao": "IF ninhoId IS NOT NULL THEN galpaoId IS NOT NULL",
+        "mensagemErro": "Galinha com ninho deve ter um galpão associado",
+        "bloqueante": true
+      },
+      {
+        "id": "RN-032",
+        "nome": "Galpão inativo não pode receber novas entidades",
+        "prioridade": "IMPORTANTE",
+        "implementada": true,
+        "entidade": "galpoes",
+        "campo": "ativo",
+        "validacao": "IF galpao.ativo=false THEN BLOCK CREATE ON (ninhos, galinhas, medicoes)",
+        "mensagemErro": "Galpão '{nome}' está inativo e não pode receber {tipo}",
+        "bloqueante": true
+      }
+    ],
+    
+    "unicidade": [
+      {
+        "id": "RN-033",
+        "nome": "Nome de galpão deve ser único",
+        "prioridade": "IMPORTANTE",
+        "implementada": true,
+        "entidade": "galpoes",
+        "campo": "nome",
+        "validacao": "UNIQUE(LOWER(TRIM(nome)))",
+        "mensagemErro": "Já existe um galpão com o nome '{nome}'",
+        "bloqueante": true,
+        "constraint": "UNIQUE"
+      },
+      {
+        "id": "RN-034",
+        "nome": "Identificação de ninho única por galpão",
+        "prioridade": "IMPORTANTE",
+        "implementada": true,
+        "entidade": "ninhos",
+        "campos": ["identificacao", "galpaoId"],
+        "validacao": "UNIQUE(galpaoId, LOWER(TRIM(identificacao)))",
+        "mensagemErro": "Já existe um ninho com identificação '{id}' neste galpão",
+        "bloqueante": true,
+        "constraint": "UNIQUE_COMPOSITE"
+      },
+      {
+        "id": "RN-035",
+        "nome": "Nome de galinha único (opcional)",
+        "prioridade": "BAIXA",
+        "implementada": true,
+        "entidade": "galinhas",
+        "campo": "nome",
+        "validacao": "UNIQUE(LOWER(TRIM(nome))) -- DESABILITADO",
+        "mensagemErro": "Já existe uma galinha com o nome '{nome}'",
+        "bloqueante": false,
+        "habilitado": false
+      }
+    ],
+    
+    "calculados": [
+      {
+        "id": "RN-036",
+        "nome": "Calcular numero_ninhos_ocupados automaticamente",
+        "prioridade": "IMPORTANTE",
+        "implementada": true,
+        "entidade": "galpoes",
+        "campo": "numero_ninhos_ocupados",
+        "calculo": "COUNT(ninhos WHERE galpaoId=X AND ocupado=true)",
+        "tipo": "CAMPO_CALCULADO",
+        "trigger": "AFTER INSERT/UPDATE/DELETE ON ninhos"
+      },
+      {
+        "id": "RN-037",
+        "nome": "Status de saúde do galpão",
+        "prioridade": "RECOMENDACAO",
+        "implementada": true,
+        "entidade": "galpoes",
+        "tipo": "ENDPOINT",
+        "calculo": {
+          "adoecidas": "COUNT(galinhas WHERE galpaoId=X AND saude='Adoecida')",
+          "fragilizadas": "COUNT(galinhas WHERE galpaoId=X AND saude='Fragilizada')",
+          "total": "COUNT(galinhas WHERE galpaoId=X AND local='galpao')",
+          "percentual_adoecidas": "(adoecidas / total) * 100",
+          "percentual_problemas": "((adoecidas + fragilizadas) / total) * 100"
+        },
+        "niveis": {
+          "CRITICO": "percentual_adoecidas > 30",
+          "ATENCAO": "percentual_adoecidas > 10 OR percentual_problemas > 40",
+          "ALERTA": "percentual_problemas > 20",
+          "BOM": "default"
+        },
+        "endpoint": "GET /galpoes/:id/health-status"
+      }
+    ],
+    
+    "ambiente": [
+      {
+        "id": "RN-019",
+        "nome": "Temperatura confortável para galinhas",
+        "prioridade": "FUTURA",
+        "implementada": false,
+        "entidade": "medicoes_ambiente",
+        "campo": "temperatura",
+        "faixas": {
+          "ideal": {"min": 18, "max": 24},
+          "aviso": {"min": 10, "max": 30},
+          "critico": {"min": 5, "max": 35}
+        },
+        "tipo": "ALERTA"
+      },
+      {
+        "id": "RN-020",
+        "nome": "Umidade adequada",
+        "prioridade": "FUTURA",
+        "implementada": false,
+        "entidade": "medicoes_ambiente",
+        "campo": "umidade",
+        "faixas": {
+          "ideal": {"min": 50, "max": 70},
+          "aviso": {"min": 40, "max": 80}
+        },
+        "tipo": "ALERTA"
+      }
+    ]
+  },
+  
+  "implementacao": {
+    "fase1_criticas": ["RN-001", "RN-002", "RN-003", "RN-004", "RN-005", "RN-006", "RN-007", "RN-014", "RN-016", "RN-033", "RN-034"],
+    "fase2_importantes": ["RN-008", "RN-009", "RN-010", "RN-029", "RN-030", "RN-031", "RN-032", "RN-036"],
+    "fase3_recomendacoes": ["RN-017", "RN-018", "RN-037", "RN-019", "RN-020"]
+  },
+  
+  "estruturaResposta": {
+    "exemplo": {
+      "success": false,
+      "errors": [
+        {
+          "regra": "RN-001",
+          "campo": "data_nascimento",
+          "mensagem": "Data de nascimento não pode ser futura",
+          "nivel": "critico"
+        }
+      ],
+      "avisos": [
+        {
+          "regra": "RN-008",
+          "campo": "area_m2",
+          "mensagem": "Densidade adequada mas justa: 0.8m²/galinha",
+          "nivel": "atencao"
+        }
+      ],
+      "sugestoes": [
+        {
+          "regra": "RN-017",
+          "mensagem": "Galinha adoecida deveria estar em quarentena",
+          "nivel": "info"
+        }
+      ]
+    }
+  }
+}

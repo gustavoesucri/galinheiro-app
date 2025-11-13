@@ -38,7 +38,11 @@ function MainTabs() {
   return (
     <Tab.Navigator
       screenOptions={{
-        headerStyle: { backgroundColor: tema.colors.primary },
+        headerStyle: { 
+          backgroundColor: tema.colors.primary,
+          borderBottomWidth: 1,
+          borderBottomColor: tema.colors.border,
+        },
         headerTintColor: tema.colors.textPrimary,
         headerRight: () => (
           <View style={{ flexDirection: 'row' }}>
@@ -49,7 +53,11 @@ function MainTabs() {
         ),
         tabBarActiveTintColor: tema.colors.primary,
         tabBarInactiveTintColor: tema.colors.tabBarInactive,
-        tabBarStyle: { backgroundColor: tema.colors.surface, borderTopWidth: 0.5 },
+        tabBarStyle: { 
+          backgroundColor: tema.colors.surface, 
+          borderTopWidth: 1,
+          borderTopColor: tema.colors.border,
+        },
       }}
     >
       <Tab.Screen
@@ -127,7 +135,11 @@ export default function AppNavigator() {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerStyle: { backgroundColor: tema.colors.primary },
+        headerStyle: { 
+          backgroundColor: tema.colors.primary,
+          borderBottomWidth: 1,
+          borderBottomColor: tema.colors.border,
+        },
         headerTintColor: tema.colors.textPrimary,
         headerRight: () => (
           <View style={{ flexDirection: 'row' }}>
@@ -136,6 +148,9 @@ export default function AppNavigator() {
             <TemaToggleButton />
           </View>
         ),
+        contentStyle: {
+          backgroundColor: tema.colors.background,
+        },
       }}
     >
       <Stack.Screen 

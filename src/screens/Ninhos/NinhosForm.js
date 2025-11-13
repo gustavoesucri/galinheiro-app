@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
 import { Text, ActivityIndicator } from 'react-native-paper'
-import { useForm, Controller } from 'react-hook-form'
+import { useForm, Controller, useWatch } from 'react-hook-form'
 import { useTema } from '../../hooks/useTema'
 import Button from '../../components/Button'
 import Input from '../../components/Input'
@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { adicionarNinhoThunk, atualizarNinhoThunk } from '../../redux/thunks/ninhosThunk'
 import { carregarGalinhas } from '../../redux/thunks/galinhasThunk'
 import { carregarGalpoes } from '../../redux/thunks/galpoesThunk'
+import { autoCorrigirNinhoDesocupado, validarIdentificacaoNinhoUnica } from '../../utils/businessRules'
 
 export default function NinhosForm({ navigation, route }) {
   const tema = useTema()
@@ -22,10 +23,12 @@ export default function NinhosForm({ navigation, route }) {
   const dispatch = useDispatch()
   const galinhas = useSelector(state => state.galinhas.lista)
   const galpoes = useSelector((state) => state.galpoes.lista)
+  const ninhos = useSelector((state) => state.ninhos.lista)
   const [loadingGalinhas, setLoadingGalinhas] = useState(true)
+  const [identificacaoErro, setIdentificacaoErro] = useState(null)
   const { ninho } = route.params || {}
 
-  const { control, handleSubmit, reset } = useForm({
+  const { control, handleSubmit, reset, setValue } = useForm({
     resolver: yupResolver(ninhosSchema),
     defaultValues: {
       identificacao: '',
@@ -73,13 +76,72 @@ export default function NinhosForm({ navigation, route }) {
     }
   }, [ninho, galinhas, reset])
 
+  // RN-029: Auto-corrigir ninho desocupado
+  const ocupado = useWatch({ control, name: 'ocupado' })
+  const galinhaId = useWatch({ control, name: 'galinhaId' })
+  const identificacao = useWatch({ control, name: 'identificacao' })
+  const galpaoId = useWatch({ control, name: 'galpaoId' })
+
+  useEffect(() => {
+    const resultado = autoCorrigirNinhoDesocupado(ocupado, galinhaId)
+    if (resultado.corrigir) {
+      setValue('galinhaId', null)
+    }
+  }, [ocupado, galinhaId, setValue])
+
+  // RN-034: Validar unicidade da identificação por galpão
+  useEffect(() => {
+    if (identificacao && identificacao.trim() && galpaoId) {
+      const resultado = validarIdentificacaoNinhoUnica(identificacao, galpaoId, ninhos, ninho?.id)
+      if (!resultado.valido) {
+        setIdentificacaoErro(resultado.mensagem)
+      } else {
+        setIdentificacaoErro(null)
+      }
+    }
+  }, [identificacao, galpaoId, ninhos, ninho])
+
   const onSubmit = (data) => {
+    // Validação final
+    if (identificacaoErro) {
+      alert(identificacaoErro)
+      return
+    }
+
+    // RN-029: Garantir que ninho desocupado não tenha galinhaId
+    if (!data.ocupado) {
+      data.galinhaId = null
+    }
+
     if (ninho) {
       dispatch(atualizarNinhoThunk({ ...ninho, ...data }))
     } else {
       dispatch(adicionarNinhoThunk(data))
     }
     navigation.goBack()
+  }
+
+  // Se não há galpões cadastrados, mostrar aviso
+  if (galpoes.length === 0) {
+    return (
+      <View style={[layout.container, { justifyContent: 'center', padding: 20 }]}>
+        <Text style={[typography.title, { textAlign: 'center', marginBottom: 16 }]}>
+          Nenhum galpão cadastrado 🏚️
+        </Text>
+        <Text style={[typography.body, { textAlign: 'center', marginBottom: 24, color: colors.textSecondary }]}>
+          Você precisa cadastrar pelo menos um galpão antes de cadastrar ninhos.
+        </Text>
+        <Button onPress={() => navigation.navigate('GalpoesForm')}>
+          Cadastrar Galpão
+        </Button>
+        <Button 
+          onPress={() => navigation.goBack()}
+          style={{ marginTop: 12, backgroundColor: 'transparent' }}
+        >
+          <Text style={{ color: colors.accent }}>Voltar</Text>
+        </Button>
+      </View>
+    )
   }
 
   return (

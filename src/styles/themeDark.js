@@ -55,7 +55,6 @@ export const layout = {
     flex: 1,
     backgroundColor: colors.background,
     padding: 16,
-    marginTop: 16,
   },
   formContainer: {
     backgroundColor: colors.background,

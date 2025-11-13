@@ -10,6 +10,7 @@ import NumberSpinner from '../../components/NumberSpinner'
 import SwitchField from '../../components/SwitchField'
 import CheckboxField from '../../components/CheckboxField'
 import { adicionarMedicaoThunk, atualizarMedicaoThunk } from '../../redux/thunks/medicaoAmbienteThunk'
+import { carregarGalpoes } from '../../redux/thunks/galpoesThunk'
 import { medicaoAmbienteSchema } from '../../schemas/medicaoAmbienteSchema'
 import CustomSelectField from '../../components/CustomSelectField'
 import DateTimePickerField from '../../components/DateTimePickerField'
@@ -21,6 +22,10 @@ export default function MedicaoAmbienteForm({ navigation, route }) {
   const dispatch = useDispatch()
   const { medicao } = route.params || {}
   const galpoes = useSelector((state) => state.galpoes.lista)
+
+  useEffect(() => {
+    dispatch(carregarGalpoes())
+  }, [dispatch])
 
   const { control, handleSubmit, reset, setValue } = useForm({
     resolver: yupResolver(medicaoAmbienteSchema),
@@ -68,6 +73,29 @@ export default function MedicaoAmbienteForm({ navigation, route }) {
     if (medicao) dispatch(atualizarMedicaoThunk(novaMedicao))
     else dispatch(adicionarMedicaoThunk(novaMedicao))
     navigation.goBack()
+  }
+
+  // Se não há galpões cadastrados, mostrar aviso
+  if (galpoes.length === 0) {
+    return (
+      <View style={[layout.container, { justifyContent: 'center', padding: 20 }]}>
+        <Text style={[typography.title, { textAlign: 'center', marginBottom: 16 }]}>
+          Nenhum galpão cadastrado 🏚️
+        </Text>
+        <Text style={[typography.body, { textAlign: 'center', marginBottom: 24, color: colors.textSecondary }]}>
+          Você precisa cadastrar pelo menos um galpão antes de registrar medições ambientais.
+        </Text>
+        <Button onPress={() => navigation.navigate('GalpoesForm')}>
+          Cadastrar Galpão
+        </Button>
+        <Button 
+          onPress={() => navigation.goBack()}
+          style={{ marginTop: 12, backgroundColor: 'transparent' }}
+        >
+          <Text style={{ color: colors.accent }}>Voltar</Text>
+        </Button>
+      </View>
+    )
   }
 
   return (

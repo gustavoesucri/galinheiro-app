@@ -1,4 +1,4 @@
-import { View, StyleSheet, ScrollView } from 'react-native'
+import { View, StyleSheet, ScrollView, Alert } from 'react-native'
 import { Text } from 'react-native-paper'
 import { useForm, Controller, useWatch } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -17,17 +17,19 @@ import { useDispatch, useSelector } from 'react-redux'
 import { adicionarGalinhaThunk, atualizarGalinhaThunk } from '../../redux/thunks/galinhasThunk'
 import { carregarGalpoes } from '../../redux/thunks/galpoesThunk'
 import { carregarNinhos } from '../../redux/thunks/ninhosThunk'
+import { validarQuarentena, sugerirQuarentenaParaAdoecida } from '../../utils/businessRules'
 import RadioButtonGroup from '../../components/RadioButtonGroup'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function GalinhasForm({ route, navigation }) {
   const tema = useTema()
-  const { layout, typography } = tema
+  const { layout, typography, colors } = tema
   const galinha = route?.params?.galinha
   const dispatch = useDispatch()
   
   const galpoes = useSelector(state => state.galpoes.lista)
   const ninhos = useSelector(state => state.ninhos.lista)
+  const [sugestaoQuarentena, setSugestaoQuarentena] = useState(null)
 
   const { control, handleSubmit, setValue, reset } = useForm({
     resolver: yupResolver(galinhaSchema),
@@ -65,9 +67,20 @@ export default function GalinhasForm({ route, navigation }) {
     }
   }, [galinha, reset])
 
-  // Observa mudanças no campo 'local'
+  // Observa mudanças no campo 'local', 'emQuarentena' e 'saude'
   const localSelecionado = useWatch({ control, name: 'local' })
   const galpaoSelecionado = useWatch({ control, name: 'galpaoId' })
+  const emQuarentena = useWatch({ control, name: 'emQuarentena' })
+  const saude = useWatch({ control, name: 'saude' })
+
+  // RN-016: Limpa galpaoId e ninhoId quando em quarentena
+  useEffect(() => {
+    if (emQuarentena) {
+      setValue('local', 'quarentena')
+      setValue('galpaoId', '')
+      setValue('ninhoId', '')
+    }
+  }, [emQuarentena, setValue])
 
   // Limpa galpaoId e ninhoId quando mudar para campo/quarentena
   useEffect(() => {
@@ -82,7 +95,24 @@ export default function GalinhasForm({ route, navigation }) {
     setValue('ninhoId', '')
   }, [galpaoSelecionado, setValue])
 
+  // RN-017: Sugerir quarentena para galinhas adoecidas
+  useEffect(() => {
+    const resultado = sugerirQuarentenaParaAdoecida(saude, emQuarentena)
+    if (resultado.sugestao) {
+      setSugestaoQuarentena(resultado.mensagem)
+    } else {
+      setSugestaoQuarentena(null)
+    }
+  }, [saude, emQuarentena])
+
   const onSubmit = (data) => {
+    // RN-016: Validar quarentena
+    const resultadoQuarentena = validarQuarentena(data.emQuarentena, data.local, data.galpaoId, data.ninhoId)
+    if (!resultadoQuarentena.valido) {
+      Alert.alert('Erro de Validação', resultadoQuarentena.mensagem)
+      return
+    }
+
     if (galinha?.id) {
       dispatch(atualizarGalinhaThunk({ ...data, id: galinha.id }))
     } else {

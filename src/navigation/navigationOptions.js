@@ -6,7 +6,11 @@ import AlertaIconButton from '../components/AlertaIconButton'
 
 export const getStackScreenOptions = (tema) => {
   return {
-    headerStyle: { backgroundColor: tema.colors.primary },
+    headerStyle: { 
+      backgroundColor: tema.colors.primary,
+      borderBottomWidth: 1,
+      borderBottomColor: tema.colors.border,
+    },
     headerTintColor: tema.colors.textPrimary,
     headerTitleStyle: {
       color: tema.colors.textPrimary,
@@ -18,5 +22,8 @@ export const getStackScreenOptions = (tema) => {
         <TemaToggleButton />
       </View>
     ),
+    contentStyle: {
+      backgroundColor: tema.colors.background,
+    },
   }
 }

@@ -47,7 +47,7 @@ export default function MedicaoAmbienteList() {
   }
 
   return (
-    <View style={layout.container}>
+    <View style={{ flex: 1, backgroundColor: colors.background, padding: 16 }}>
       <Text style={[typography.title, styles.title]}>Medições Ambientais</Text>
 
       <FlatList

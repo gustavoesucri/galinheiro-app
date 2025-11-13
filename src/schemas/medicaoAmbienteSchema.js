@@ -1,7 +1,15 @@
 import * as yup from 'yup'
+import { validarDataMedicao } from '../utils/businessRules'
 
 export const medicaoAmbienteSchema = yup.object({
-  data_medicao: yup.date().required('Informe a data e hora da medição').typeError('Data inválida'),
+  data_medicao: yup
+    .date()
+    .required('Informe a data e hora da medição')
+    .typeError('Data inválida')
+    .test('data-futura', 'Data da medição não pode ser futura', function(value) {
+      const resultado = validarDataMedicao(value)
+      return resultado.valido
+    }),
   temperatura: yup
     .number()
     .min(-10, 'Temperatura mínima: -10°C')

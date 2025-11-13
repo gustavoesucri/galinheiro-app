@@ -1,4 +1,5 @@
 import * as yup from 'yup'
+import { validarDataNascimento } from '../utils/businessRules'
 
 export const galinhaSchema = yup.object().shape({
   id: yup.string().optional(),
@@ -16,5 +17,12 @@ export const galinhaSchema = yup.object().shape({
     .required('Local é obrigatório'),
   galpaoId: yup.string().nullable(),
   ninhoId: yup.string().nullable(),
-  data_nascimento: yup.date().required('Data de nascimento é obrigatória').typeError('Data inválida'),
+  data_nascimento: yup
+    .date()
+    .required('Data de nascimento é obrigatória')
+    .typeError('Data inválida')
+    .test('data-futura', 'Data de nascimento não pode ser futura', function(value) {
+      const resultado = validarDataNascimento(value)
+      return resultado.valido
+    }),
 })

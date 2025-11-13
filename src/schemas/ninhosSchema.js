@@ -1,4 +1,5 @@
 import * as yup from 'yup'
+import { validarDataLimpeza } from '../utils/businessRules'
 
 export const ninhosSchema = yup.object().shape({
   identificacao: yup
@@ -16,7 +17,11 @@ export const ninhosSchema = yup.object().shape({
   ultima_limpeza: yup
     .date()
     .required('Data da última limpeza é obrigatória')
-    .typeError('Data inválida'),
+    .typeError('Data inválida')
+    .test('data-futura', 'Data da última limpeza não pode ser futura', function(value) {
+      const resultado = validarDataLimpeza(value)
+      return resultado.valido
+    }),
   observacoes: yup.string().max(500, 'Máximo de 500 caracteres').nullable(),
   galinhaId: yup.string().nullable(),
 })

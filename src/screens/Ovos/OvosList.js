@@ -30,6 +30,7 @@ export default function OvosList() {
   }, [dispatch])
 
   const obterNomeGalinha = (galinhaId) => {
+    if (galinhaId === 'desconhecida') return 'Desconhecida'
     const galinha = galinhas.find(g => String(g.id) === String(galinhaId))
     return galinha ? galinha.nome : 'Galinha desconhecida'
   }
@@ -41,7 +42,7 @@ export default function OvosList() {
   }
 
   return (
-    <View style={layout.container}>
+    <View style={{ flex: 1, backgroundColor: colors.background, padding: 16 }}>
       <Text style={[typography.title, styles.title]}>Ovos</Text>
 
       <FlatList

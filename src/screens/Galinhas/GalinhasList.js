@@ -291,7 +291,7 @@ export default function GalinhasList() {
   }
 
   return (
-    <View style={layout.container}>
+    <View style={{ flex: 1, backgroundColor: colors.background, padding: 16 }}>
       <View style={styles.header}>
         <Text style={[typography.title, styles.title]}>Galinhas</Text>
         <View style={styles.filterContainer}>
