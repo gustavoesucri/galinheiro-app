@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useDispatch, useSelector } from 'react-redux'
 import { useTema } from '../../hooks/useTema'
 import Button from '../../components/Button'
-import NumberInput from '../../components/NumberInput'
+import NumberSpinner from '../../components/NumberSpinner'
 import SwitchField from '../../components/SwitchField'
 import { adicionarMedicaoThunk, atualizarMedicaoThunk } from '../../redux/thunks/medicaoAmbienteThunk'
 import { medicaoAmbienteSchema } from '../../schemas/medicaoAmbienteSchema'
@@ -74,15 +74,14 @@ export default function MedicaoAmbienteForm({ navigation, route }) {
       <Controller
         control={control}
         name="temperatura"
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <NumberInput
+        render={({ field: { onChange, value } }) => (
+          <NumberSpinner
             label="Temperatura (°C)"
             value={value}
             onChange={onChange}
             min={-10}
             max={50}
             step={0.1}
-            error={error?.message}
           />
         )}
       />
@@ -90,20 +89,19 @@ export default function MedicaoAmbienteForm({ navigation, route }) {
       <Controller
         control={control}
         name="umidade"
-        render={({ field: { onChange, value }, fieldState: { error } }) => (
-          <NumberInput
+        render={({ field: { onChange, value } }) => (
+          <NumberSpinner
             label="Umidade (%)"
             value={value}
             onChange={onChange}
             min={0}
             max={100}
             step={0.1}
-            error={error?.message}
           />
         )}
       />
 
-     <Controller
+      <Controller
   control={control}
   name="luminosidade"
   render={({ field: { onChange, value }, fieldState: { error } }) => (
