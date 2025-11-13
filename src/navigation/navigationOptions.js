@@ -1,4 +1,7 @@
+import React from 'react'
+import { View } from 'react-native'
 import TemaToggleButton from '../components/TemaToggleButton'
+import BotaoModoToggleButton from '../components/BotaoModoToggleButton'
 
 export const getStackScreenOptions = (tema) => {
   return {
@@ -7,6 +10,11 @@ export const getStackScreenOptions = (tema) => {
     headerTitleStyle: {
       color: tema.colors.surface,
     },
-    headerRight: () => <TemaToggleButton />,
+    headerRight: () => (
+      <View style={{ flexDirection: 'row' }}>
+        <BotaoModoToggleButton />
+        <TemaToggleButton />
+      </View>
+    ),
   }
 }

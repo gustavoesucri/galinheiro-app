@@ -1,23 +1,29 @@
 import React from 'react'
 import { StyleSheet } from 'react-native'
 import { Button } from 'react-native-paper'
+import { useSelector } from 'react-redux'
+import { useTema } from '../hooks/useTema'
 
 const DialogButton = ({ onPress, children, variant = 'primary' }) => {
+  const botoesClaros = useSelector(state => state.botaoModo.botoesClaros)
+  const tema = useTema()
+  
   const isCancel = variant === 'cancel'
   const isDelete = variant === 'delete'
+  
+  // Cor para botões "Remover" - laranja fixo ou cor do tema
+  const deleteColor = botoesClaros ? tema.colors.primaryOrange : tema.colors.primary
 
   return (
     <Button
-      mode={isCancel ? 'contained' : 'outlined'}
+      mode="contained"
       labelStyle={styles.label}
       style={[
         styles.button,
-        isCancel && styles.cancelButton,
-        isDelete && styles.deleteButton,
+        isCancel && { backgroundColor: tema.colors.accent, borderColor: tema.colors.accent, borderWidth: 1.5 },
+        isDelete && { backgroundColor: deleteColor },
       ]}
-      textColor={
-        isCancel ? '#FFFFFF' : isDelete ? '#D32F2F' : '#8A5E00'
-      }
+      textColor={tema.colors.white}
       onPress={onPress}
     >
       {children}
@@ -36,16 +42,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
     paddingVertical: 6,
     paddingHorizontal: 8,
-  },
-  cancelButton: {
-    backgroundColor: '#8A5E00',
-    borderColor: '#8A5E00',
-    borderWidth: 1.5,
-  },
-  deleteButton: {
-    backgroundColor: 'transparent',
-    borderColor: '#D32F2F',
-    borderWidth: 1.5,
   },
 })
 

@@ -13,6 +13,11 @@ export default function MedicaoAmbienteList() {
   const { layout, typography, colors } = tema
   const medicoes = useSelector((state) => state.medicoesAmbiente.lista)
   const galpoes = useSelector((state) => state.galpoes.lista)
+  const botoesClaros = useSelector(state => state.botaoModo.botoesClaros)
+  
+  // Cor para botão Deletar - laranja fixo ou cor do tema
+  const deleteColor = botoesClaros ? tema.colors.primaryOrange : tema.colors.primary
+  const deleteTextColor = botoesClaros ? tema.colors.textOnPrimary : tema.colors.textOnPrimary
 
 
   useEffect(() => {
@@ -74,7 +79,14 @@ const getNomeGalpao = (galpaoId) => {
                 >
                   Editar
                 </Button>
-                <Button onPress={() => deletar(item.id)}>Deletar</Button>
+                <Button
+                  mode="contained"
+                  buttonColor={deleteColor}
+                  textColor={deleteTextColor}
+                  onPress={() => deletar(item.id)}
+                >
+                  Deletar
+                </Button>
               </Card.Actions>
             </Card>
           )

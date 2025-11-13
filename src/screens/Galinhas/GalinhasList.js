@@ -18,8 +18,13 @@ export default function GalinhasList() {
   const dispatch = useDispatch()
   const galinhas = useSelector(state => state.galinhas.lista)
   const ovos = useSelector(state => state.ovos.lista)
+  const botoesClaros = useSelector(state => state.botaoModo.botoesClaros)
   const tema = useTema()
   const { layout, typography, colors } = tema
+  
+  // Cor para botão Deletar - laranja fixo ou cor do tema
+  const deleteColor = botoesClaros ? tema.colors.primaryOrange : tema.colors.primary
+  const deleteTextColor = botoesClaros ? tema.colors.textOnPrimary : tema.colors.textOnPrimary
 
   useEffect(() => {
     dispatch(carregarGalinhas())
@@ -67,7 +72,14 @@ export default function GalinhasList() {
           >
             Editar
           </Button>
-          <Button onPress={() => deletarGalinha(item.id)}>Deletar</Button>
+          <Button
+            mode="contained"
+            buttonColor={deleteColor}
+            textColor={deleteTextColor}
+            onPress={() => deletarGalinha(item.id)}
+          >
+            Deletar
+          </Button>
         </Card.Actions>
       </Card>
     )

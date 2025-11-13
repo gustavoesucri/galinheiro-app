@@ -23,6 +23,10 @@ export default function DashboardScreen() {
   const galpoes = useSelector(state => state.galpoes.lista)
   const ninhos = useSelector(state => state.ninhos.lista)
   const medicoes = useSelector(state => state.medicoesAmbiente.lista)
+  const botoesClaros = useSelector(state => state.botaoModo.botoesClaros)
+  
+  // Cor dos gráficos - laranja fixo ou cor do tema
+  const chartColor = botoesClaros ? tema.colors.primaryOrange : tema.colors.primary
 
   // Carregar dados ao montar
   useEffect(() => {
@@ -162,7 +166,14 @@ export default function DashboardScreen() {
   const chartConfig = {
     backgroundGradientFrom: colors.surface,
     backgroundGradientTo: colors.surface,
-    color: (opacity = 1) => `rgba(226, 143, 19, ${opacity})`,
+    color: (opacity = 1) => {
+      // Extrai RGB da cor do gráfico (hex)
+      const hex = chartColor.replace('#', '')
+      const r = parseInt(hex.substring(0, 2), 16)
+      const g = parseInt(hex.substring(2, 4), 16)
+      const b = parseInt(hex.substring(4, 6), 16)
+      return `rgba(${r}, ${g}, ${b}, ${opacity})`
+    },
     labelColor: (opacity = 1) => `rgba(45, 43, 38, ${opacity})`,
     strokeWidth: 2,
     barPercentage: 0.6,
@@ -184,13 +195,13 @@ export default function DashboardScreen() {
         <View style={styles.cardRow}>
           <View style={[layout.card, styles.card]}>
             <Text style={typography.subtitle}>🐔 Galinhas</Text>
-            <Text style={[styles.value, { color: colors.primary }]}>{metricas.totalGalinhas}</Text>
+            <Text style={[styles.value, { color: chartColor }]}>{metricas.totalGalinhas}</Text>
             <Text style={typography.small}>Total</Text>
           </View>
 
           <View style={[layout.card, styles.card]}>
             <Text style={typography.subtitle}>🥚 Ovos Hoje</Text>
-            <Text style={[styles.value, { color: colors.primary }]}>{metricas.ovosHoje}</Text>
+            <Text style={[styles.value, { color: chartColor }]}>{metricas.ovosHoje}</Text>
             <Text style={typography.small}>Produzidos</Text>
           </View>
         </View>
@@ -199,13 +210,13 @@ export default function DashboardScreen() {
         <View style={styles.cardRow}>
           <View style={[layout.card, styles.card]}>
             <Text style={typography.subtitle}>📅 Esta Semana</Text>
-            <Text style={[styles.value, { color: colors.primary }]}>{metricas.ovosSemana}</Text>
+            <Text style={[styles.value, { color: chartColor }]}>{metricas.ovosSemana}</Text>
             <Text style={typography.small}>Ovos</Text>
           </View>
 
           <View style={[layout.card, styles.card]}>
             <Text style={typography.subtitle}>📆 Este Mês</Text>
-            <Text style={[styles.value, { color: colors.primary }]}>{metricas.ovosMes}</Text>
+            <Text style={[styles.value, { color: chartColor }]}>{metricas.ovosMes}</Text>
             <Text style={typography.small}>Ovos</Text>
           </View>
         </View>
@@ -213,7 +224,7 @@ export default function DashboardScreen() {
         {/* Métrica de Média */}
         <View style={[layout.card, { marginTop: 12, alignItems: 'center' }]}>
           <Text style={typography.subtitle}>📊 Média por Galinha</Text>
-          <Text style={[styles.value, { color: colors.primary }]}>{metricas.mediaOvosGalinha}</Text>
+          <Text style={[styles.value, { color: chartColor }]}>{metricas.mediaOvosGalinha}</Text>
           <Text style={typography.small}>ovos/galinha este mês</Text>
         </View>
 

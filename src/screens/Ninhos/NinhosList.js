@@ -13,6 +13,11 @@ export default function NinhosList() {
   const { layout, typography, colors } = tema
   const ninhos = useSelector(state => state.ninhos.lista)
   const galpoes = useSelector(state => state.galpoes.lista)
+  const botoesClaros = useSelector(state => state.botaoModo.botoesClaros)
+  
+  // Cor para botão Deletar - laranja fixo ou cor do tema
+  const deleteColor = botoesClaros ? tema.colors.primaryOrange : tema.colors.primary
+  const deleteTextColor = botoesClaros ? tema.colors.textOnPrimary : tema.colors.textOnPrimary
 
   useEffect(() => {
     dispatch(carregarNinhos())
@@ -80,7 +85,14 @@ export default function NinhosList() {
               >
                 Editar
               </Button>
-              <Button onPress={() => deletarNinho(item.id)}>Deletar</Button>
+              <Button
+                mode="contained"
+                buttonColor={deleteColor}
+                textColor={deleteTextColor}
+                onPress={() => deletarNinho(item.id)}
+              >
+                Deletar
+              </Button>
             </Card.Actions>
           </Card>
         )}

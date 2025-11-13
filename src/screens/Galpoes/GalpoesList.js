@@ -12,6 +12,11 @@ export default function GalpoesList() {
   const tema = useTema()
   const { layout, typography, colors } = tema
   const galpoes = useSelector(state => state.galpoes.lista)
+  const botoesClaros = useSelector(state => state.botaoModo.botoesClaros)
+  
+  // Cor para botão Deletar - laranja fixo ou cor do tema
+  const deleteColor = botoesClaros ? tema.colors.primaryOrange : tema.colors.primary
+  const deleteTextColor = botoesClaros ? tema.colors.textOnPrimary : tema.colors.textOnPrimary
 
   useEffect(() => {
     dispatch(carregarGalpoes())
@@ -60,7 +65,14 @@ export default function GalpoesList() {
               >
                 Editar
               </Button>
-              <Button onPress={() => deletarGalpao(item.id)}>Deletar</Button>
+              <Button
+                mode="contained"
+                buttonColor={deleteColor}
+                textColor={deleteTextColor}
+                onPress={() => deletarGalpao(item.id)}
+              >
+                Deletar
+              </Button>
             </Card.Actions>
           </Card>
         )}

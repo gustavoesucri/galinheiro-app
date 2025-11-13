@@ -1,18 +1,28 @@
 // src/styles/theme2.js - Tema Verde
 
 export const colors = {
-  primary: '#4CAF50',        // Verde principal
-  secondary: '#388E3C',      // Verde médio
-  accent: '#1B5E20',         // Verde escuro
-  background: '#E8F5E9',     // Fundo verde claro
-  surface: '#FFFFFF',        // Branco (cards, inputs)
-  textPrimary: '#1B5E20',    // Texto verde escuro
-  textSecondary: '#558B2F',  // Texto verde médio
-  success: '#7CB342',        // Verde natural
-  warning: '#FFA000',        // Amarelo alerta
-  error: '#D32F2F',          // Vermelho erro
-  info: '#0288D1',           // Azul informativo
-  border: '#FFFFFF',         // Bordas brancas
+  primary: '#4CAF50',          // Verde principal
+  primaryOrange: '#e28f13',    // Laranja fixo para modo claro
+  secondary: '#388E3C',        // Verde médio
+  accent: '#1B5E20',           // Verde escuro
+  background: '#E8F5E9',       // Fundo verde claro
+  surface: '#FFFFFF',          // Branco (cards, inputs)
+  textPrimary: '#1B5E20',      // Texto verde escuro
+  textSecondary: '#558B2F',    // Texto verde médio
+  textLight: '#1B5E20',        // Texto em fundos claros (escuro)
+  textOnPrimary: '#FFFFFF',    // Texto em botões verdes (branco)
+  success: '#7CB342',          // Verde natural
+  warning: '#FFA000',          // Amarelo alerta
+  error: '#D32F2F',            // Vermelho erro
+  info: '#0288D1',             // Azul informativo
+  border: '#FFFFFF',           // Bordas brancas
+  white: '#FFFFFF',            // Branco puro
+  black: '#000000',            // Preto
+  tabBarInactive: '#8a8a8a',   // Cor da tab inativa
+  // Cores de alertas para aviso info boxes
+  alertBackground: '#FFF3CD',
+  alertBorder: '#FFB700',
+  alertText: '#856404',
 }
 
 export const typography = {
@@ -55,7 +65,7 @@ export const layout = {
     backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 12,
-    shadowColor: '#000',
+    shadowColor: colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 4,

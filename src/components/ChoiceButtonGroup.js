@@ -1,8 +1,15 @@
 import React from 'react'
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native'
+import { useSelector } from 'react-redux'
+import { useTema } from '../hooks/useTema'
 import { colors, typography } from '../styles/theme'
 
 export default function ChoiceButtonGroup({ label, options = [], value, onChange, style }) {
+  const botoesClaros = useSelector(state => state.botaoModo.botoesClaros)
+  const tema = useTema()
+  
+  const selectedColor = botoesClaros ? tema.colors.primaryOrange : tema.colors.primary
+
   return (
     <View style={[styles.container, style]}>
       {label && <Text style={styles.label}>{label}</Text>}
@@ -14,11 +21,11 @@ export default function ChoiceButtonGroup({ label, options = [], value, onChange
               key={option.value}
               style={[
                 styles.button,
-                selected && styles.buttonSelected,
+                selected && { backgroundColor: selectedColor, borderColor: selectedColor },
               ]}
               onPress={() => onChange(option.value)}
             >
-              <Text style={[styles.buttonText, selected && styles.buttonTextSelected]}>
+              <Text style={[styles.buttonText, selected && { color: tema.colors.white, fontWeight: 'bold' }]}>
                 {option.label}
               </Text>
             </TouchableOpacity>
@@ -53,16 +60,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     alignItems: 'center',
   },
-  buttonSelected: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-  },
   buttonText: {
     color: colors.textPrimary,
     fontSize: 14,
-  },
-  buttonTextSelected: {
-    color: '#fff',
-    fontWeight: 'bold',
   },
 })

@@ -1,4 +1,5 @@
 import React from 'react'
+import { View } from 'react-native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { useSelector } from 'react-redux'
@@ -21,6 +22,7 @@ import MedicaoAmbienteStack from './MedicaoAmbienteStack'
 
 // Componentes
 import TemaToggleButton from '../components/TemaToggleButton'
+import BotaoModoToggleButton from '../components/BotaoModoToggleButton'
 
 const Tab = createBottomTabNavigator()
 
@@ -33,9 +35,14 @@ export default function AppNavigator() {
       screenOptions={{
         headerStyle: { backgroundColor: tema.colors.primary },
         headerTintColor: tema.colors.surface,
-        headerRight: () => <TemaToggleButton />,
+        headerRight: () => (
+          <View style={{ flexDirection: 'row' }}>
+            <BotaoModoToggleButton />
+            <TemaToggleButton />
+          </View>
+        ),
         tabBarActiveTintColor: tema.colors.primary,
-        tabBarInactiveTintColor: '#8a8a8a',
+        tabBarInactiveTintColor: tema.colors.tabBarInactive,
         tabBarStyle: { backgroundColor: tema.colors.surface, borderTopWidth: 0.5 },
       }}
     >

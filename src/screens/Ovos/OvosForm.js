@@ -142,8 +142,11 @@ export default function OvosForm({ navigation, route }) {
       </Text>
 
       {errorMsg && (
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>⚠️ {errorMsg}</Text>
+        <View style={[styles.errorContainer, { 
+          backgroundColor: colors.alertBackground,
+          borderLeftColor: colors.alertBorder,
+        }]}>
+          <Text style={[styles.errorText, { color: colors.alertText }]}>{errorMsg}</Text>
         </View>
       )}
 
@@ -338,19 +341,16 @@ export default function OvosForm({ navigation, route }) {
   )
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.Create({
   container: { paddingBottom: 32 },
   title: { marginBottom: 16 },
   errorContainer: {
-    backgroundColor: '#FFF3CD',
     borderLeftWidth: 4,
-    borderLeftColor: '#FFB700',
     padding: 12,
     borderRadius: 6,
     marginBottom: 16,
   },
   errorText: {
-    color: '#856404',
     fontSize: 14,
     fontWeight: '500',
   },

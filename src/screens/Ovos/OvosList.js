@@ -13,6 +13,11 @@ export default function OvosList() {
   const { layout, typography, colors } = tema
   const ovos = useSelector(state => state.ovos.lista)
   const galinhas = useSelector(state => state.galinhas.lista)
+  const botoesClaros = useSelector(state => state.botaoModo.botoesClaros)
+  
+  // Cor para botão Remover - laranja fixo ou cor do tema
+  const removeColor = botoesClaros ? tema.colors.primaryOrange : tema.colors.primary
+  const removeTextColor = botoesClaros ? tema.colors.textOnPrimary : tema.colors.textOnPrimary
 
   useEffect(() => { 
     dispatch(carregarOvos()) 
@@ -54,7 +59,12 @@ export default function OvosList() {
               >
                 Editar
               </Button>
-              <Button onPress={() => dispatch(removerOvoThunk(item.id))}>
+              <Button
+                mode="contained"
+                buttonColor={removeColor}
+                textColor={removeTextColor}
+                onPress={() => dispatch(removerOvoThunk(item.id))}
+              >
                 Remover
               </Button>
             </Card.Actions>

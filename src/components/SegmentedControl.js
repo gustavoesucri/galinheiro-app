@@ -1,9 +1,17 @@
 // src/components/SegmentedControl.js
 import React from 'react'
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native'
+import { useSelector } from 'react-redux'
+import { useTema } from '../hooks/useTema'
 import { colors, typography } from '../styles/theme'
 
 export default function SegmentedControl({ label, options = [], value, onChange, style }) {
+  const botoesClaros = useSelector(state => state.botaoModo.botoesClaros)
+  const tema = useTema()
+  
+  // Se botoesClaros=true: usa laranja fixo, senão usa cor do tema
+  const selectedColor = botoesClaros ? tema.colors.primaryOrange : tema.colors.primary
+
   return (
     <View style={[styles.container, style]}>
       {label && <Text style={styles.label}>{label}</Text>}
@@ -17,13 +25,13 @@ export default function SegmentedControl({ label, options = [], value, onChange,
               key={option.value}
               style={[
                 styles.segment,
-                selected && styles.segmentSelected,
+                selected && { backgroundColor: selectedColor },
                 isFirst && styles.firstSegment,
                 isLast && styles.lastSegment,
               ]}
               onPress={() => onChange(option.value)}
             >
-              <Text style={[styles.segmentText, selected && styles.segmentTextSelected]}>
+              <Text style={[styles.segmentText, selected && { color: tema.colors.white, fontWeight: 'bold' }]}>
                 {option.label}
               </Text>
             </TouchableOpacity>
@@ -58,16 +66,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  segmentSelected: {
-    backgroundColor: colors.primary,
-  },
   segmentText: {
     fontSize: 14,
     color: colors.textPrimary,
-  },
-  segmentTextSelected: {
-    color: '#fff',
-    fontWeight: 'bold',
   },
   firstSegment: {
     borderTopLeftRadius: 8,

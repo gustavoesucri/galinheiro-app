@@ -1,8 +1,15 @@
 import React from 'react'
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { useSelector } from 'react-redux'
+import { useTema } from '../hooks/useTema'
 import { colors, typography } from '../styles/theme'
 
 export default function RadioButtonGroup({ label, options, value, onChange }) {
+  const botoesClaros = useSelector(state => state.botaoModo.botoesClaros)
+  const tema = useTema()
+  
+  const selectedColor = botoesClaros ? tema.colors.primaryOrange : tema.colors.primary
+
   return (
     <View style={styles.container}>
       {label && <Text style={styles.label}>{label}</Text>}
@@ -17,10 +24,10 @@ export default function RadioButtonGroup({ label, options, value, onChange }) {
             <View
               style={[
                 styles.radioOuter,
-                value === opt.value && styles.radioOuterSelected,
+                value === opt.value && { borderColor: selectedColor },
               ]}
             >
-              {value === opt.value && <View style={styles.radioInner} />}
+              {value === opt.value && <View style={[styles.radioInner, { backgroundColor: selectedColor }]} />}
             </View>
             <Text style={styles.optionText}>{opt.label}</Text>
           </TouchableOpacity>
@@ -59,14 +66,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  radioOuterSelected: {
-    borderColor: colors.accent,
-  },
   radioInner: {
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: colors.accent,
   },
   optionText: {
     marginLeft: 8,
