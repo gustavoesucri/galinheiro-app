@@ -67,7 +67,10 @@ export default function GalpoesList() {
         }
         renderItem={({ item }) => (
           <Card style={layout.card}>
-            <Card.Title title={item.nome} />
+            <Card.Title 
+              title={item.nome}
+              titleStyle={{ color: colors.textPrimary }}
+            />
             <Card.Content style={{ gap: 4 }}>
               <Text style={typography.body}>Galinhas: {item.capacidade_maxima_galinhas}</Text>
               <Text style={typography.body}>Ninhos: {item.capacidade_maxima_ninhos}</Text>

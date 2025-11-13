@@ -64,6 +64,8 @@ export default function MedicaoAmbienteList() {
               <Card.Title
                 title={getNomeGalpao(item.galpaoId)}
                 subtitle={formatarDataHora(item.data_medicao)}
+                titleStyle={{ color: colors.textPrimary }}
+                subtitleStyle={{ color: colors.textSecondary }}
               />
               <Card.Content style={{ gap: 4 }}>
                 <Text style={typography.body}>Temperatura: {item.temperatura} °C</Text>

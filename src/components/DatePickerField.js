@@ -28,12 +28,12 @@ export default function DatePickerField({ label, date, onChange, error, fullWidt
             padding: 8, 
             marginTop: 4, 
             maxWidth: fullWidth ? '100%' : 200,
-            backgroundColor: disabled ? colors.disabled : colors.surface,
-            color: disabled ? colors.textDisabled : colors.textPrimary,
+            backgroundColor: disabled ? colors.surface : colors.surface,
+            color: disabled ? colors.textSecondary : colors.textPrimary,
             borderColor: colors.border,
             borderWidth: 1,
             borderRadius: 4,
-            opacity: disabled ? 0.6 : 1,
+            opacity: disabled ? 0.7 : 1,
           }}
         />
         {error && <Text style={{ color: colors.error }}>{error}</Text>}
@@ -45,14 +45,14 @@ export default function DatePickerField({ label, date, onChange, error, fullWidt
     <View style={[styles.container, !fullWidth && styles.containerCompact]}>
       <Text style={{ color: colors.textPrimary }}>{label}</Text>
       <View style={[styles.buttonWrapper, { 
-        backgroundColor: disabled ? colors.disabled : colors.surface, 
+        backgroundColor: disabled ? colors.surface : colors.surface, 
         borderColor: colors.border,
-        opacity: disabled ? 0.6 : 1,
+        opacity: disabled ? 0.7 : 1,
       }]}>
         <RNButton
           title={date ? date.toLocaleDateString() : 'Selecionar data'}
           onPress={() => setOpen(true)}
-          color={colors.primary}
+          color={disabled ? colors.textSecondary : colors.primary}
           disabled={disabled}
         />
       </View>

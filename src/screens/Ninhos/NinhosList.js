@@ -73,7 +73,10 @@ export default function NinhosList() {
         }
         renderItem={({ item }) => (
           <Card style={layout.card}>
-            <Card.Title title={item.identificacao} />
+            <Card.Title 
+              title={item.identificacao}
+              titleStyle={{ color: colors.textPrimary }}
+            />
             <Card.Content style={{ gap: 4 }}>
               <Text style={typography.body}>Material: {item.tipo_material}</Text>
               <Text style={typography.body}>Galpão: {getNomeGalpao(item.galpaoId)}</Text>

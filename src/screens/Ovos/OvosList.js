@@ -55,7 +55,10 @@ export default function OvosList() {
         }
         renderItem={({ item }) => (
           <Card style={layout.card}>
-            <Card.Title title={`Ovo - ${obterNomeGalinha(item.galinhaId)}`} />
+            <Card.Title 
+              title={`Ovo - ${obterNomeGalinha(item.galinhaId)}`}
+              titleStyle={{ color: colors.textPrimary }}
+            />
             <Card.Content style={{ gap: 4 }}>
               <Text style={typography.body}>Data: {new Date(item.data).toLocaleDateString()}</Text>
               <Text style={typography.body}>Ninho: {obterNomeNinho(item.ninhoId)}</Text>

@@ -218,7 +218,10 @@ export default function GalinhasList() {
 
     return (
       <Card style={layout.card}>
-        <Card.Title title={item.nome || 'Sem nome'} />
+        <Card.Title 
+          title={item.nome || 'Sem nome'}
+          titleStyle={{ color: colors.textPrimary }}
+        />
         <Card.Content style={{ gap: 4 }}>
           <Text style={typography.body}>Saúde: {item.saude || 'Não informada'}</Text>
           <Text style={typography.body}>Raça: {item.raca || 'Não informada'}</Text>
