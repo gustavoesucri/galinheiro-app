@@ -46,8 +46,8 @@ export default function GalinhasList() {
     raca: '',
     quarentena: '',
     local: '',
-    idadeMin: 0,
-    idadeMax: 365,
+    idadeMin: null,  // null = filtro não aplicado
+    idadeMax: null,  // null = filtro não aplicado
   })
   
   // Cor para botão Deletar - laranja fixo ou cor do tema
@@ -115,9 +115,9 @@ export default function GalinhasList() {
       return false
     }
 
-    // Filtro por idade
+    // Filtro por idade - só aplica se não for null
     const idade = calcularIdadeEmDias(galinha.data_nascimento)
-    if (idade !== null) {
+    if (filtrosAplicados.idadeMin !== null && filtrosAplicados.idadeMax !== null && idade !== null) {
       if (idade < filtrosAplicados.idadeMin || idade > filtrosAplicados.idadeMax) {
         return false
       }
@@ -134,15 +134,15 @@ export default function GalinhasList() {
     setFiltroLocal('')
     setFiltroIdadeMin(0)
     setFiltroIdadeMax(365)
-    // Aplica filtros limpos imediatamente
+    // Aplica filtros limpos imediatamente - idade como null desativa
     setFiltrosAplicados({
       nome: '',
       saude: '',
       raca: '',
       quarentena: '',
       local: '',
-      idadeMin: 0,
-      idadeMax: 365,
+      idadeMin: null,
+      idadeMax: null,
     })
   }
 
@@ -166,8 +166,8 @@ export default function GalinhasList() {
     filtrosAplicados.raca !== '' ||
     filtrosAplicados.quarentena !== '' ||
     filtrosAplicados.local !== '' ||
-    filtrosAplicados.idadeMin !== 0 ||
-    filtrosAplicados.idadeMax !== 365
+    filtrosAplicados.idadeMin !== null ||
+    filtrosAplicados.idadeMax !== null
 
   const deletarGalinha = (id) => {
     dispatch(removerGalinhaThunk(id))

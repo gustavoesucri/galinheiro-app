@@ -124,8 +124,8 @@ export default function DashboardScreen({ navigation, route }) {
       const galpao = galpoes.find(g => String(g.id) === String(m.galpaoId))
       const nomeGalpao = galpao ? galpao.nome : 'Galpão desconhecido'
       
-      // Se alertaGalpoesInativos está desmarcado, pular medições de galpões inativos
-      if (!configAlertas.alertaGalpoesInativos && galpao && !galpao.ativo) {
+      // Se checkbox desmarcado (false), pular medições de galpões inativos
+      if (configAlertas.alertaGalpoesInativos === false && galpao && galpao.ativo === false) {
         return // Pula esta medição
       }
       
@@ -186,8 +186,8 @@ export default function DashboardScreen({ navigation, route }) {
         // Buscar galpão do ninho
         const galpao = galpoes.find(g => String(g.id) === String(n.galpaoId))
         
-        // Se alertaGalpoesInativos está desmarcado, pular ninhos de galpões inativos
-        if (!configAlertas.alertaGalpoesInativos && galpao && !galpao.ativo) {
+        // Se checkbox desmarcado (false), pular ninhos de galpões inativos
+        if (configAlertas.alertaGalpoesInativos === false && galpao && galpao.ativo === false) {
           return // Pula este ninho
         }
         
@@ -208,14 +208,14 @@ export default function DashboardScreen({ navigation, route }) {
 
     // Percentual de galinhas adoecidas
     if (configAlertas.alertaGalinhasAdoecidas && galinhas.length > 0) {
-      // Filtrar galinhas: se alertaGalpoesInativos desmarcado, considerar só de galpões ativos
+      // Filtrar galinhas: se checkbox desmarcado (false), considerar só de galpões ativos
       let galinhasParaContar = galinhas
       
-      if (!configAlertas.alertaGalpoesInativos) {
+      if (configAlertas.alertaGalpoesInativos === false) {
         galinhasParaContar = galinhas.filter(g => {
           if (g.local !== 'galpao' || !g.galpaoId) return true // Galinhas fora de galpão sempre contam
           const galpao = galpoes.find(gp => String(gp.id) === String(g.galpaoId))
-          return galpao && galpao.ativo // Só conta se galpão está ativo
+          return galpao && galpao.ativo === true // Só conta se galpão está ativo
         })
       }
       
@@ -241,10 +241,10 @@ export default function DashboardScreen({ navigation, route }) {
     // Galinhas com idade máxima excedida
     if (configAlertas.alertaIdadeMaximaGalinhas && galinhas.length > 0) {
       galinhas.forEach((g) => {
-        // Se alertaGalpoesInativos desmarcado, pular galinhas de galpões inativos
-        if (!configAlertas.alertaGalpoesInativos && g.local === 'galpao' && g.galpaoId) {
+        // Se checkbox desmarcado (false), pular galinhas de galpões inativos
+        if (configAlertas.alertaGalpoesInativos === false && g.local === 'galpao' && g.galpaoId) {
           const galpao = galpoes.find(gp => String(gp.id) === String(g.galpaoId))
-          if (galpao && !galpao.ativo) {
+          if (galpao && galpao.ativo === false) {
             return // Pula esta galinha
           }
         }
